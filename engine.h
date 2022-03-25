@@ -38,7 +38,7 @@ class Engine {
   /**
    * Set the root object of the engine.
    */
-  void setRootObject(Object * object);
+  // void setRootObject(Object * object);
 
   /**
    * Start the main run loop. Call this if you don't have an existing run loop and want fluxe to create one for you.

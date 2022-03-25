@@ -2,11 +2,77 @@ require "fetchDependencies"
 
 workspace "fluxe"
   configurations { "Debug", "Release" }
+  location "dev"
+
+project "fluxe-example-window"
+  kind "WindowedApp"
+  language "C++"
+  cppdialect "C++20"
+  location "dev/examples-window"
+
+  -- files {
+  --   "engine.h",
+  --   "engine.cc",
+  -- }
+
+  -- files {
+  --   "examples/window/*"
+  -- }
+
+
+  -- links {
+  --   "skia"
+  -- }
+
+  includedirs {
+    "."
+  }
+
+  filter "system:macosx"
+    systemversion "10.15"
+
+    files {
+      "examples/window/mac.mm"
+    }
+
+    links { 
+      "Cocoa.framework",
+      "QuartzCore.framework",
+    }
+
+    files {
+      "shell/mac/*"
+    }
+
 
 project "fluxe-example-canvas"
   kind "WindowedApp"
   language "C++"
+  cppdialect "C++20"
   location "dev/example-canvas"
-  files {
-    "examples/canvas/*"
+
+  includedirs {
+    ".",
+    "./third_party/skia",
   }
+
+  filter "system:macosx"
+    systemversion "10.15"
+    
+    files {
+      "examples/canvas/mac.mm"
+    }
+
+    libdirs {
+      "third_party/skia/out/Static"
+    }
+
+    links { 
+      "Cocoa.framework",
+      "QuartzCore.framework",
+      "skia",
+    }
+
+    files {
+      "shell/mac/*"
+    }
