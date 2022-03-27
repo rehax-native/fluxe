@@ -6,36 +6,38 @@
 
 namespace fluxe {
 
-class Paint {
- public:
-  Paint() = default;
-  // Paint(Dart_Handle paint_objects, Dart_Handle paint_data);
+typedef SkPaint Paint;
 
-  const SkPaint* paint(SkPaint& paint) const;
+// class Paint {
+//  public:
+//   Paint() = default;
+//   // Paint(Dart_Handle paint_objects, Dart_Handle paint_data);
 
-  // /// Synchronize the Dart properties to the display list according
-  // /// to the attribute flags that indicate which properties are needed.
-  // /// The return value indicates if the paint was non-null and can
-  // /// either be DCHECKed or used to indicate to the DisplayList
-  // /// draw operation whether or not to use the synchronized attributes
-  // /// (mainly the drawImage and saveLayer methods).
-  // bool sync_to(DisplayListBuilder* builder,
-  //              const DisplayListAttributeFlags& flags) const;
+//   const SkPaint* paint(SkPaint& paint) const;
 
-  // bool isNull() const { return Dart_IsNull(paint_data_); }
-  // bool isNotNull() const { return !Dart_IsNull(paint_data_); }
+//   // /// Synchronize the Dart properties to the display list according
+//   // /// to the attribute flags that indicate which properties are needed.
+//   // /// The return value indicates if the paint was non-null and can
+//   // /// either be DCHECKed or used to indicate to the DisplayList
+//   // /// draw operation whether or not to use the synchronized attributes
+//   // /// (mainly the drawImage and saveLayer methods).
+//   // bool sync_to(DisplayListBuilder* builder,
+//   //              const DisplayListAttributeFlags& flags) const;
 
- private:
-  // friend struct tonic::DartConverter<Paint>;
+//   // bool isNull() const { return Dart_IsNull(paint_data_); }
+//   // bool isNotNull() const { return !Dart_IsNull(paint_data_); }
 
-  // Dart_Handle paint_objects_;
-  // Dart_Handle paint_data_;
-};
+//  private:
+//   // friend struct tonic::DartConverter<Paint>;
 
-// // The PaintData argument is a placeholder to receive encoded data for Paint
-// // objects. The data is actually processed by DartConverter<Paint>, which reads
-// // both at the given index and at the next index (which it assumes is a byte
-// // data for a Paint object).
-// class PaintData {};
+//   // Dart_Handle paint_objects_;
+//   // Dart_Handle paint_data_;
+// };
+
+// // // The PaintData argument is a placeholder to receive encoded data for Paint
+// // // objects. The data is actually processed by DartConverter<Paint>, which reads
+// // // both at the given index and at the next index (which it assumes is a byte
+// // // data for a Paint object).
+// // class PaintData {};
 
 }  // namespace fluxe
