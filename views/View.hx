@@ -16,13 +16,6 @@ class View {
         subViews.remove(view);
     }
 
-    var left:Float;
-    var top:Float;
-    var width:Float;
-    var height:Float;
-    var right:Float;
-    var bottom:Float;
-
     function layout():Void {
         var minWidth, minHeight, maxWidth, maxHeight;
         for (child in subViews) {
