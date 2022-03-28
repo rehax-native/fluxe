@@ -22,4 +22,8 @@ class ViewBuilder {
         }
         return layers[layers.length - 1];
     }
+
+    public function compose() {
+        this.canvas;
+    }
 }

@@ -1,6 +1,6 @@
 package views;
 
-class View {
+class View implements ILayoutObject {
     static var defaultRenderStrategy:RenderStrategy = RasterizeAllViewsRenderStrategy()
     static function renderStrategy():RenderStrategy {
         return renderStrategy;
@@ -16,11 +16,14 @@ class View {
         subViews.remove(view);
     }
 
-    function layout():Void {
-        var minWidth, minHeight, maxWidth, maxHeight;
-        for (child in subViews) {
-            child.layout();
+    var layout:Null<ILayout> = null;
+
+    function measureLayout():Void {
+        var layout = this.layout;
+        if (layout == null) {
+            layout = new StackLayout();
         }
+        this.layoutSize = layout.layout(this.subViews);
     }
 
     function build(builder:ViewBuilder) {

@@ -32,3 +32,23 @@ extern class Canvas {
     extern public function drawCircle(cx:Float, cy:Float, radius:Float);
     extern public function drawRoundRect(rect:Rect, rx:Float, ry:Float, paint:Paint);
 }
+
+
+extern class Engine {
+    public static function startWithView(view:View) {
+        var engine = new Engine();
+        var window = engine.createPlatformWindow();
+        engine.attachToPlatformWindow(window);
+        engine.setRootView(view);
+        engine.startMainLoop();
+        engine.detachFromPlatformWindow();
+        engine.closePlatformWindow(window);
+    }
+
+    extern public function createPlatformWindow():Window;
+    extern public function attachToPlatformWindow(window:Window):Void;
+    extern public function setRootView(view:View):Void;
+    extern public function startMainLoop():Void;
+    extern public function detachFromPlatformWindow():Void;
+    extern public function closePlatformWindow(window:Window):Void;
+}

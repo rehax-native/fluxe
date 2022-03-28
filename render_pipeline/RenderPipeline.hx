@@ -2,6 +2,7 @@ package render_pipeline;
 
 class RenderPipeline {
     var rootView:View;
+    var viewBuilder = new ViewBuilder();
 
     public function render() {
         layout()
@@ -9,24 +10,24 @@ class RenderPipeline {
         compose()
     }
 
+    function layout() {
+        rootView.measureLayout()
+    }
+
     function build() {
-        var viewBuilder = new ViewBuilder();
         buildTraverse(rootView, viewBuilder);
     }
 
     function buildTraverse(view:View, viewBuilder:ViewBuilder) {
         viewBuilder.currentRenderStrategy = view.renderStrategy;
         view.build(viewBuilder);
-        for (var i = 0; i < view.subViews.length; i++) {
-            buildTraverse(view.subViews[i], viewBuilder);
+        for (subView in view.subViews) {
+            buildTraverse(subViews, viewBuilder);
         }
-    }
-
-    function layout() {
-        rootView.layout()
     }
 
     function compose() {
         // Paint all different canvases we have from the build phase into one surface
+        viewBuilder.compose();
     }
 }
