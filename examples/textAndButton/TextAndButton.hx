@@ -1,5 +1,10 @@
 package examples.textAndButton;
 
+using views.View;
+using views.Button;
+using views.Text;
+using views.Externs;
+
 class TextAndButton {
     public static function main() {
         var text = new Text();
@@ -12,6 +17,6 @@ class TextAndButton {
         container.addSubView(text);
         container.addSubView(button);
 
-        Engine.startWithView(container);
+        EngineUtility.startWithView(container);
     }
 }

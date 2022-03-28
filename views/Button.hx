@@ -1,5 +1,8 @@
 package views;
 
+using layout.Padding;
+using views.Externs;
+
 enum ButtonState {
     Up;
     Down;
@@ -11,11 +14,13 @@ class Button extends View {
     public var title:Text;
     public var padding:Padding;
 
-    public new() {
+    public function new() {
+        super();
         this.title = new Text();
+        this.addSubView(title);
     }
 
-    public override measureLayout() {
+    public override function measureLayout() {
         this.title.measureLayout();
         this.layoutSize = {
             width: this.title.layoutSize.width + this.padding.left + this.padding.right,
@@ -28,9 +33,10 @@ class Button extends View {
     }
 
     public override function build(builder:ViewBuilder) {
-        var oval = new RRect();
-        oval.setOval(Rect::MakeXYWH(0, 0, 100, 20));
-        builder.canvas.drawRect(oval, Paint::MakeColor(0xFF000000));
+        var paint = new Paint();
+        paint.setColor(new Color(0x20FF0020));
+        // set paint color
+        builder.canvas.drawRRect(RRect.MakeRectXY(Rect.MakeXYWH(0, 0, 100, 20), 5, 5), paint);
         // draw text
     }
 }

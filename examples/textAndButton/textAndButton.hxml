@@ -1,0 +1,7 @@
+-p ../..
+--cpp out
+--main examples.textAndButton.TextAndButton
+# -D STDLIBCPP
+# -D HXCPP_CPP11
+-D HXCPP_NO_CPP11
+-D HXCPP_GCC

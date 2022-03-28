@@ -1,5 +1,7 @@
 #pragma once
 
+#include "render_backend/skia/canvas.h"
+
 namespace fluxe {
 
 /**
@@ -36,9 +38,9 @@ class Engine {
   void detachFromPlatformWindow();
 
   /**
-   * Set the root object of the engine.
+   * Render the canvas to screen
    */
-  // void setRootObject(Object * object);
+  void renderCanvas(Canvas * canvas);
 
   /**
    * Start the main run loop. Call this if you don't have an existing run loop and want fluxe to create one for you.

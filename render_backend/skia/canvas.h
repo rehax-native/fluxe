@@ -21,6 +21,8 @@ namespace fluxe {
 typedef SkRect Rect;
 typedef SkRRect RRect;
 
+typedef SkPaint Paint;
+
 typedef SkCanvas Canvas;
 
 // class Canvas {
