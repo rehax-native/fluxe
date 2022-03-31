@@ -7,24 +7,29 @@ using layout.LayoutSize;
 using layout.LayoutPosition;
 using layout.StackLayout;
 
-using views.RenderStrategy;
+using render_pipeline.RenderStrategy;
 
 class View implements ILayoutObject {
-    static public var defaultRenderStrategy:RenderStrategy = new RasterizeAllViewsRenderStrategy();
-    static function renderStrategy():RenderStrategy {
+    public static var defaultRenderStrategy:RenderStrategy = new PaintAlwaysRenderStrategy();
+    public function renderStrategy():RenderStrategy {
         return defaultRenderStrategy;
     }
 
     public function new() {}
 
-    var subViews:Array<View> = [];
+    var _subViews:Array<View> = [];
+    public var subViews(get, null):Array<View>;
+
+    public function get_subViews():Array<View> {
+        return [for (i in _subViews) i];
+    }
 
     public function addSubView(view:View) {
-        subViews.push(view);
+        _subViews.push(view);
     }
 
     public function removeSubView(view:View) {
-        subViews.remove(view);
+        _subViews.remove(view);
     }
 
     public var layout:Null<ILayout> = null;

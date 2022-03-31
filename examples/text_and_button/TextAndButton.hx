@@ -1,4 +1,4 @@
-package examples.textAndButton;
+package examples.text_and_button;
 
 using views.View;
 using views.Button;

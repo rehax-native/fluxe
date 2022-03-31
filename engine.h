@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "render_backend/skia/canvas.h"
 
 namespace fluxe {
@@ -40,7 +41,8 @@ class Engine {
   /**
    * Render the canvas to screen
    */
-  void renderCanvas(Canvas * canvas);
+  // void renderCanvas(Canvas * canvas);
+  void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int)> callback);
 
   /**
    * Start the main run loop. Call this if you don't have an existing run loop and want fluxe to create one for you.

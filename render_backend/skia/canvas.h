@@ -3,6 +3,7 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkRect.h"
 #include "third_party/skia/include/core/SkRRect.h"
+#include "third_party/skia/include/core/SkSurface.h"
 
 // #include "flutter/display_list/display_list_blend_mode.h"
 
@@ -24,6 +25,7 @@ typedef SkRRect RRect;
 typedef SkPaint Paint;
 
 typedef SkCanvas Canvas;
+typedef SkSurface Surface;
 
 // class Canvas {
 

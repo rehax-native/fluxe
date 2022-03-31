@@ -1,4 +1,4 @@
-package views;
+package render_pipeline;
 
 abstract class RenderStrategy {
     abstract public function shouldCreateNewRasterizeLayer(?tag:Int):Bool;

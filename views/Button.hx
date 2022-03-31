@@ -12,7 +12,12 @@ enum ButtonState {
 
 class Button extends View {
     public var title:Text;
-    public var padding:Padding;
+    public var padding:Padding = {
+        left: 10,
+        right: 10,
+        top: 5,
+        bottom: 5,
+    };
 
     public function new() {
         super();
@@ -34,9 +39,10 @@ class Button extends View {
 
     public override function build(builder:ViewBuilder) {
         var paint = new Paint();
-        paint.setColor(new Color(0x20FF0020));
+        paint.setColor(new Color(0xFFFF0020));
+        // paint.setStyle(Stroke);
         // set paint color
-        builder.canvas.drawRRect(RRect.MakeRectXY(Rect.MakeXYWH(0, 0, 100, 20), 5, 5), paint);
+        builder.canvas.drawRRect(RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 5, 5), paint);
         // draw text
     }
 }

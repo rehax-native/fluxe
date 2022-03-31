@@ -1,0 +1,11 @@
+-p ../..
+-lib hxcpp
+--cpp out
+# --main examples.text_and_button.TextAndButton
+examples.text_and_button.TextAndButton
+# -D STDLIBCPP
+# -D HXCPP_CPP11
+-D HXCPP_NO_CPP11
+-D HXCPP_GCC
+-D static_link
+--macro "views.Build.config()"

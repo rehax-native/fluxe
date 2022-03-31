@@ -19,6 +19,6 @@ class StackLayout implements ILayout {
       maxHeight = Math.max(maxHeight, item.layoutSize.height);
     }
 
-    return { width: maxWidth, height: maxHeight };
+    return { width: maxWidth, height: y };
   }
 }

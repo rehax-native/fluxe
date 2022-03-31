@@ -11,7 +11,7 @@ class Text extends View {
     public override function measureLayout() {
         this.layoutSize = {
             width: 100,
-            height: 15,
+            height: 34,
         };
     }
 
