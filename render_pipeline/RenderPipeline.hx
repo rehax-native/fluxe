@@ -17,13 +17,13 @@ class RenderPipeline {
     public function render(width:Int, height:Int):RenderSurface {
         this.width = width;
         this.height = height;
-        viewBuilder.surface = new RenderSurface(width, height);
+        viewBuilder.rootNode.surface = new RenderSurface(width, height);
 
         layout();
         build();
         // compose();
 
-        return viewBuilder.surface;
+        return viewBuilder.rootNode.surface;
     }
 
     public function layout() {

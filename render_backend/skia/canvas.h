@@ -4,6 +4,9 @@
 #include "third_party/skia/include/core/SkRect.h"
 #include "third_party/skia/include/core/SkRRect.h"
 #include "third_party/skia/include/core/SkSurface.h"
+#include "third_party/skia/include/core/SkTypeface.h"
+#include "third_party/skia/include/core/SkFont.h"
+#include "third_party/skia/include/core/SkTextBlob.h"
 
 // #include "flutter/display_list/display_list_blend_mode.h"
 
@@ -18,6 +21,10 @@
 // #include "third_party/skia/include/utils/SkShadowUtils.h"
 
 namespace fluxe {
+
+typedef SkTypeface Typeface;
+typedef SkFont Font;
+typedef SkTextBlob TextBlob;
 
 typedef SkRect Rect;
 typedef SkRRect RRect;

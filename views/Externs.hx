@@ -8,13 +8,51 @@ abstract Color(cpp.UInt32) {
     inline public function new(i:cpp.UInt32) {
         this = i;
     }
+
+    static public function RGBA(r:Float, g:Float, b:Float, a:Float):Color {
+        var nr = Std.int(r * 255.0);
+        var ng = Std.int(g * 255.0);
+        var nb = Std.int(b * 255.0);
+        var na = Std.int(a * 255.0);
+        var color:cpp.UInt32 = (na << 24) | (nr << 16) | (ng << 8) | nb;
+        return new Color(color);
+    }
 }
 
-@:enum
-abstract PaintStyle(cpp.UInt8) {
-    var Fill = 0;
-    var Stroke = 1;
-    var StrokeAndFill = 2;
+@:include("render_backend/skia/canvas.h")
+@:structAccess
+@:native("fluxe::Paint::Style")
+extern class NativePaintStyle {
+}
+
+class PaintStyle {
+    public static var Stroke:NativePaintStyle = untyped __cpp__("fluxe::Paint::Style::kStroke_Style");
+    public static var Fill:NativePaintStyle = untyped __cpp__("fluxe::Paint::Style::kFill_Style");
+    public static var StrokeAndFill:NativePaintStyle = untyped __cpp__("fluxe::Paint::Style::kStrokeAndFill_Style");
+}
+
+@:include("render_backend/skia/canvas.h")
+@:native("sk_sp<fluxe::Typeface>")
+@:structAccess
+extern class Typeface {
+    @:native("fluxe::Typeface::MakeDefault")
+    public static function MakeDefault():Typeface;
+}
+
+@:include("render_backend/skia/canvas.h")
+@:native("fluxe::Font")
+@:structAccess
+extern class Font {
+    @:native("fluxe::Font")
+    extern public static function Create(typeface:Typeface, size:cpp.Float64):Font;
+}
+
+@:include("render_backend/skia/canvas.h")
+@:native("sk_sp<fluxe::TextBlob>")
+@:structAccess
+extern class TextBlob {
+    @:native("fluxe::TextBlob::MakeFromString")
+    public static function MakeFromString(text:String, font:Font):TextBlob;
 }
 
 @:include("render_backend/skia/canvas.h")
@@ -46,8 +84,9 @@ extern class RRect {
 @:structAccess
 extern class Paint {
     extern public function new();
-    extern public function setStyle(style:PaintStyle):Void;
+    extern public function setStyle(style:NativePaintStyle):Void;
     extern public function setAntiAlias(antiAlias:Bool):Void;
+    extern public function setDither(dither:Bool):Void;
     extern public function setStrokeWidth(width:Float):Void;
     extern public function setColor(color:Color):Void;
 }
@@ -64,6 +103,8 @@ extern class NativeCanvas {
     extern public function drawRRect(rrect:RRect, paint:Paint):Void;
     extern public function drawCircle(cx:cpp.Float64, cy:cpp.Float64, radius:cpp.Float64, paint:Paint):Void;
     extern public function drawRoundRect(rect:Rect, rx:cpp.Float64, ry:cpp.Float64, paint:Paint):Void;
+    extern public function drawTextBlob(blob:TextBlob, x:cpp.Float64, y:cpp.Float64, paint:Paint):Void;
+
     extern public function translate(dx:cpp.Float32, dy:cpp.Float32):Void;
 }
 
@@ -90,6 +131,9 @@ class Canvas {
     }
     public function drawRoundRect(rect:Rect, rx:Float, ry:Float, paint:Paint):Void {
         _canvas.ptr.drawRoundRect(rect, rx, ry, paint);
+    }
+    public function drawTextBlob(blob:TextBlob, x:Float, y:Float, paint:Paint):Void {
+        _canvas.ptr.drawTextBlob(blob, x, y, paint);
     }
     public function translate(dx:Float, dy:Float):Void {
         _canvas.ptr.translate(dx, dy);

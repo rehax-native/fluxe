@@ -18,6 +18,8 @@ class Button extends View {
         top: 5,
         bottom: 5,
     };
+    
+    private var state:ButtonState = ButtonState.Up;
 
     public function new() {
         super();
@@ -38,11 +40,16 @@ class Button extends View {
     }
 
     public override function build(builder:ViewBuilder) {
+        var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 5, 5);
+
         var paint = new Paint();
-        paint.setColor(new Color(0xFFFF0020));
-        // paint.setStyle(Stroke);
-        // set paint color
-        builder.canvas.drawRRect(RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 5, 5), paint);
-        // draw text
+        paint.setAntiAlias(true);
+        paint.setColor(Color.RGBA(0.6, 0.6, 0.6, 0.8));
+        paint.setStyle(PaintStyle.Stroke);
+        builder.canvas.drawRRect(rrect, paint);
+
+        paint.setColor(Color.RGBA(0.2, 0.2, 0.2, 0.6));
+        paint.setStyle(PaintStyle.Fill);
+        builder.canvas.drawRRect(rrect, paint);
     }
 }

@@ -3,33 +3,48 @@ package views;
 using views.Externs;
 using render_pipeline.RenderStrategy;
 
-class ViewBuilder {
+class LayerTreeNode {
     public function new() {}
 
-    public var currentRenderStrategy:RenderStrategy = View.defaultRenderStrategy;
-    var layers:Array<ViewBuilder> = [];
-
+    public var children:Array<LayerTreeNode> = [];
+    public var parent:LayerTreeNode = null;
     public var surface:RenderSurface;
     public var canvas(get, null):Canvas;
 
     public function get_canvas() {
         return surface.getCanvas();
     }
+}
 
-    public function pushLayer(?tag:Int):ViewBuilder {
-        if (currentRenderStrategy.shouldCreateNewRasterizeLayer(tag)) {
-            var layer = new ViewBuilder();
-            layers.push(layer);
-            return layer;
-        }
-        return layers[layers.length - 1];
+class ViewBuilder {
+    public function new() {
+        this.currentNode = rootNode;
     }
 
-    public function popLayer(?tag:Int):ViewBuilder {
+    public var currentRenderStrategy:RenderStrategy = View.defaultRenderStrategy;
+    public var rootNode = new LayerTreeNode();
+    private var currentNode:LayerTreeNode;
+
+    public var canvas(get, null):Canvas;
+
+    public function get_canvas() {
+        return currentNode.canvas;
+    }
+
+    public function pushLayer(width:Int, height:Int, ?tag:Int):Void {
         if (currentRenderStrategy.shouldCreateNewRasterizeLayer(tag)) {
-            layers.pop();
+            var newNode = new LayerTreeNode();
+            newNode.surface = new RenderSurface(width, height);
+            newNode.parent = currentNode;
+            currentNode.children.push(newNode);
+            currentNode = newNode;
         }
-        return layers[layers.length - 1];
+    }
+
+    public function popLayer(?tag:Int):Void {
+        if (currentRenderStrategy.shouldCreateNewRasterizeLayer(tag)) {
+            currentNode = currentNode.parent;
+        }
     }
 
     public function compose() {
