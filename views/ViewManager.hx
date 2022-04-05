@@ -106,23 +106,33 @@ class ViewManager {
         _actionManager.onAction(INSERT_STRING(str));
     }
 
-    public function moveLeftCallback():Void {
-        _actionManager.onAction(LEFT);
+    public function moveLeftCallback(select:Bool):Void {
+        _actionManager.onAction(select ? LEFT_AND_SELECT : LEFT);
         // _keyManager.onKeyDown(CHAR(str));
     }
 
-    public function moveRightCallback():Void {
-        _actionManager.onAction(RIGHT);
+    public function moveRightCallback(select:Bool):Void {
+        _actionManager.onAction(select ? RIGHT_AND_SELECT : RIGHT);
         // _keyManager.onKeyDown(CHAR(str));
     }
 
-    public function moveBackwardCallback():Void {
-        _actionManager.onAction(BACKWARD);
+    public function moveWordLeftCallback(select:Bool):Void {
+        _actionManager.onAction(select ? WORD_LEFT_AND_SELECT : WORD_LEFT);
         // _keyManager.onKeyDown(CHAR(str));
     }
 
-    public function moveForwardCallback():Void {
-        _actionManager.onAction(FORWARD);
+    public function moveWordRightCallback(select:Bool):Void {
+        _actionManager.onAction(select ? WORD_RIGHT_AND_SELECT : WORD_RIGHT);
+        // _keyManager.onKeyDown(CHAR(str));
+    }
+
+    public function moveBackwardCallback(select:Bool):Void {
+        _actionManager.onAction(BACKWARD); // todo handle select
+        // _keyManager.onKeyDown(CHAR(str));
+    }
+
+    public function moveForwardCallback(select:Bool):Void {
+        _actionManager.onAction(FORWARD); // todo handle select
         // _keyManager.onKeyDown(CHAR(str));
     }
 

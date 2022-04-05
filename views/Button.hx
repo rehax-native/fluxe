@@ -50,7 +50,7 @@ class Button extends View implements IMouseEventListenerContainer implements IPr
     }
 
     public override function build(builder:ViewBuilder) {
-        var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 5, 5);
+        var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 3, 3);
 
         var paint = new Paint();
         paint.setAntiAlias(true);

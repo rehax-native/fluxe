@@ -215,10 +215,12 @@ class EngineUtility {
         untyped __cpp__ ("this->engine->ptr->setKeyUpCallback([this] (int code) { return viewManager->keyUpCallback(code); })");
         untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { return viewManager->textCallback(String(str)); })");
 
-        untyped __cpp__ ("this->engine->ptr->setMoveLeftCallback([this] () { return viewManager->moveLeftCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveRightCallback([this] () { return viewManager->moveRightCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveBackwardCallback([this] () { return viewManager->moveBackwardCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveForwardCallback([this] () { return viewManager->moveForwardCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveLeftCallback([this] (bool select) { return viewManager->moveLeftCallback(select); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveRightCallback([this] (bool select) { return viewManager->moveRightCallback(select); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveWordLeftCallback([this] (bool select) { return viewManager->moveWordLeftCallback(select); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveWordRightCallback([this] (bool select) { return viewManager->moveWordRightCallback(select); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveBackwardCallback([this] (bool select) { return viewManager->moveBackwardCallback(select); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveForwardCallback([this] (bool select) { return viewManager->moveForwardCallback(select); })");
         untyped __cpp__ ("this->engine->ptr->setDeleteBackwardCallback([this] () { return viewManager->deleteBackwardCallback(); })");
         untyped __cpp__ ("this->engine->ptr->setDeleteForwardCallback([this] () { return viewManager->deleteForwardCallback(); })");
         untyped __cpp__ ("this->engine->ptr->setSelectAllCallback([this] () { return viewManager->selectAllCallback(); })");

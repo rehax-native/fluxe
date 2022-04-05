@@ -51,10 +51,12 @@ class Engine {
   void setKeyDownCallback(std::function<void(int code)> callback);
   void setKeyUpCallback(std::function<void(int code)> callback);
   
-  void setMoveLeftCallback(std::function<void(void)> callback);
-  void setMoveRightCallback(std::function<void(void)> callback);
-  void setMoveBackwardCallback(std::function<void(void)> callback);
-  void setMoveForwardCallback(std::function<void(void)> callback);
+  void setMoveLeftCallback(std::function<void(bool select)> callback);
+  void setMoveRightCallback(std::function<void(bool select)> callback);
+  void setMoveWordLeftCallback(std::function<void(bool select)> callback);
+  void setMoveWordRightCallback(std::function<void(bool select)> callback);
+  void setMoveBackwardCallback(std::function<void(bool select)> callback);
+  void setMoveForwardCallback(std::function<void(bool select)> callback);
   void setDeleteBackwardCallback(std::function<void(void)> callback);
   void setDeleteForwardCallback(std::function<void(void)> callback);
   void setSelectAllCallback(std::function<void(void)> callback);

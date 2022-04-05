@@ -16,10 +16,12 @@ std::function<void(float left, float top)> mouseMoveCallback;
 std::function<void(const char * str)> textCallback;
 std::function<void(int code)> keyDownCallback;
 std::function<void(int code)> keyUpCallback;
-std::function<void(void)> moveLeftCallback;
-std::function<void(void)> moveRightCallback;
-std::function<void(void)> moveBackwardCallback;
-std::function<void(void)> moveForwardCallback;
+std::function<void(bool select)> moveLeftCallback;
+std::function<void(bool select)> moveRightCallback;
+std::function<void(bool select)> moveWordLeftCallback;
+std::function<void(bool select)> moveWordRightCallback;
+std::function<void(bool select)> moveBackwardCallback;
+std::function<void(bool select)> moveForwardCallback;
 std::function<void(void)> deleteBackwardCallback;
 std::function<void(void)> deleteForwardCallback;
 std::function<void(void)> selectAllCallback;
@@ -86,20 +88,20 @@ std::function<void(void)> selectAllCallback;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    // [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-  // keyDownCallback(0); // TODO
   [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+  if ([@"a" isEqualToString:theEvent.characters] && theEvent.modifierFlags & NSEventModifierFlagCommand) {
+    selectAllCallback();
+  }
 }
 
 - (void)keyUp:(NSEvent *)theEvent {
-    // [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
 }
 
 - (void)insertText:(NSString *)string { textCallback([string UTF8String]); }
-- (void)moveForward:(nullable id)sender { moveForwardCallback(); }
-- (void)moveRight:(nullable id)sender { moveRightCallback(); }
-- (void)moveBackward:(nullable id)sender { moveBackwardCallback(); }
-- (void)moveLeft:(nullable id)sender { moveLeftCallback(); }
+- (void)moveForward:(nullable id)sender { moveForwardCallback(false); }
+- (void)moveRight:(nullable id)sender { moveRightCallback(false); }
+- (void)moveBackward:(nullable id)sender { moveBackwardCallback(false); }
+- (void)moveLeft:(nullable id)sender { moveLeftCallback(false); }
 
 //- (void)moveUp:(nullable id)sender;
 //- (void)moveDown:(nullable id)sender;
@@ -115,10 +117,10 @@ std::function<void(void)> selectAllCallback;
 //- (void)pageUp:(nullable id)sender;
 //- (void)centerSelectionInVisibleArea:(nullable id)sender;
 //
-//- (void)moveBackwardAndModifySelection:(nullable id)sender;
-//- (void)moveForwardAndModifySelection:(nullable id)sender;
-//- (void)moveWordForwardAndModifySelection:(nullable id)sender;
-//- (void)moveWordBackwardAndModifySelection:(nullable id)sender;
+- (void)moveBackwardAndModifySelection:(nullable id)sender { NSLog(@"x1"); }
+- (void)moveForwardAndModifySelection:(nullable id)sender { NSLog(@"x2"); }
+- (void)moveWordForwardAndModifySelection:(nullable id)sender { NSLog(@"y1"); }
+- (void)moveWordBackwardAndModifySelection:(nullable id)sender { NSLog(@"y2"); }
 //- (void)moveUpAndModifySelection:(nullable id)sender;
 //- (void)moveDownAndModifySelection:(nullable id)sender;
 //
@@ -133,12 +135,12 @@ std::function<void(void)> selectAllCallback;
 //- (void)moveParagraphForwardAndModifySelection:(nullable id)sender;
 //- (void)moveParagraphBackwardAndModifySelection:(nullable id)sender;
 //
-//- (void)moveWordRight:(nullable id)sender;
-//- (void)moveWordLeft:(nullable id)sender;
-//- (void)moveRightAndModifySelection:(nullable id)sender;
-//- (void)moveLeftAndModifySelection:(nullable id)sender;
-//- (void)moveWordRightAndModifySelection:(nullable id)sender;
-//- (void)moveWordLeftAndModifySelection:(nullable id)sender;
+- (void)moveWordRight:(nullable id)sender { moveWordRightCallback(false); }
+- (void)moveWordLeft:(nullable id)sender { moveWordLeftCallback(false); }
+- (void)moveRightAndModifySelection:(nullable id)sender { moveRightCallback(true); } // this works
+- (void)moveLeftAndModifySelection:(nullable id)sender { moveLeftCallback(true); } // this works
+- (void)moveWordRightAndModifySelection:(nullable id)sender { moveWordRightCallback(true); } // this works
+- (void)moveWordLeftAndModifySelection:(nullable id)sender { moveWordLeftCallback(true); } // this works
 //
 //- (void)moveToLeftEndOfLine:(nullable id)sender API_AVAILABLE(macos(10.6));
 //- (void)moveToRightEndOfLine:(nullable id)sender API_AVAILABLE(macos(10.6));
@@ -296,10 +298,12 @@ void fluxe::Engine::setTextCallback(std::function<void(const char *)> callback)
   textCallback = callback;
 }
 
-void fluxe::Engine::setMoveLeftCallback(std::function<void(void)> callback) { moveLeftCallback = callback; }
-void fluxe::Engine::setMoveRightCallback(std::function<void(void)> callback) { moveRightCallback = callback; }
-void fluxe::Engine::setMoveBackwardCallback(std::function<void(void)> callback) { moveBackwardCallback = callback; }
-void fluxe::Engine::setMoveForwardCallback(std::function<void(void)> callback) { moveForwardCallback = callback; }
+void fluxe::Engine::setMoveLeftCallback(std::function<void(bool select)> callback) { moveLeftCallback = callback; }
+void fluxe::Engine::setMoveRightCallback(std::function<void(bool select)> callback) { moveRightCallback = callback; }
+void fluxe::Engine::setMoveWordLeftCallback(std::function<void(bool select)> callback) { moveWordLeftCallback = callback; }
+void fluxe::Engine::setMoveWordRightCallback(std::function<void(bool select)> callback) { moveWordRightCallback = callback; }
+void fluxe::Engine::setMoveBackwardCallback(std::function<void(bool select)> callback) { moveBackwardCallback = callback; }
+void fluxe::Engine::setMoveForwardCallback(std::function<void(bool select)> callback) { moveForwardCallback = callback; }
 void fluxe::Engine::setDeleteBackwardCallback(std::function<void(void)> callback) { deleteBackwardCallback = callback; }
 void fluxe::Engine::setDeleteForwardCallback(std::function<void(void)> callback) { deleteForwardCallback = callback; }
 void fluxe::Engine::setSelectAllCallback(std::function<void(void)> callback) { selectAllCallback = callback; }

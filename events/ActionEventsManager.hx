@@ -5,6 +5,12 @@ enum Action {
     DOWN;
     LEFT;
     RIGHT;
+    WORD_LEFT;
+    WORD_RIGHT;
+    LEFT_AND_SELECT;
+    RIGHT_AND_SELECT;
+    WORD_LEFT_AND_SELECT;
+    WORD_RIGHT_AND_SELECT;
     FORWARD;
     BACKWARD;
     ENTER;
@@ -13,6 +19,9 @@ enum Action {
     DELETE_FORWARD;
     DELETE_BACKWARD;
     SELECT_ALL;
+    COPY;
+    PASTE;
+    CUT;
     // TAB;
     // SHIFT;
     // CTRL;

@@ -52,6 +52,9 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
             width: width,
             height: this.text.layoutSize.height + this.padding.top + this.padding.bottom,
         };
+        if (caretHeight < 1.0) {
+            caretHeight = this.text.layoutSize.height;
+        }
         this.text.layoutPosition = {
             left: this.padding.left,
             top: this.padding.top,
@@ -62,10 +65,11 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         x: 0.0,
         y: 0.0,
     };
+    private var caretHeight = 0.0;
     private var selectionRects:Array<views.Text.TextBox> = [];
 
     public override function build(builder:ViewBuilder) {
-        var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 5, 5);
+        var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 3, 3);
 
         var paint = new Paint();
         paint.setAntiAlias(true);
@@ -90,16 +94,26 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
 
         if (needsCaretUpdate) {
             var hasSelection = this.selectionRange.start != this.selectionRange.end;
-            var startSel = hasSelection ? this.selectionRange.start : 0;
+            var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
 
-            var rects = this.text.getRectsForRange(startSel, selectionRange.end);
+            var rangeStart = 0;
+            if (hasSelection) {
+                rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
+            }
+            var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
+
+            var rects = this.text.getRectsForRange(rangeStart, rangeEnd);
             if (rects.length > 0) {
                 var caretRect = rects[rects.length - 1];
+                if (isSelectionReverse) {
+                    caretRect = rects[0];
+                }
 
                 caretPosition = {
-                    x: caretRect.right,
+                    x: isSelectionReverse ? caretRect.left : caretRect.right,
                     y: caretRect.top,
                 };
+                caretHeight = caretRect.bottom - caretRect.top;
             } else {
                 caretPosition = {
                     x: 0.0,
@@ -121,7 +135,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         }
 
         if (isShowingCaret) {
-            var caretRect = Rect.MakeXYWH(this.text.layoutPosition.left + caretPosition.x, this.text.layoutPosition.top + caretPosition.y, 1, this.text.layoutSize.height);
+            var caretRect = Rect.MakeXYWH(this.text.layoutPosition.left + caretPosition.x, this.text.layoutPosition.top + caretPosition.y, 1, caretHeight);
             paint.setStyle(PaintStyle.Fill);
             paint.setColor(Color.RGBA(1.0, 1.0, 1.0, 1.0));
             builder.canvas.drawRect(caretRect, paint);
@@ -130,7 +144,27 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
 
     public function didGainFocus():Void {
         this.isFocused = true;
+        startCaretBlink();
+    }
+
+    public function didLoseFocus():Void {
+        this.isFocused = false;
+        stopCaretBlink();
+    }
+
+    private function stopCaretBlink() {
         this.isShowingCaret = false;
+        this.needsRerender = true;
+        if (caretTimer != null) {
+            animation.Timer.stopTimer(caretTimer);
+            caretTimer = null;
+        }
+    }
+
+    private function startCaretBlink() {
+        stopCaretBlink();
+
+        this.isShowingCaret = true;
         if (caretTimer == null) {
             caretTimer = animation.Timer.startInterval(500, () -> {
                 this.isShowingCaret = !this.isShowingCaret;
@@ -138,16 +172,6 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
             });
         }
         this.needsRerender = true;
-    }
-
-    public function didLoseFocus():Void {
-        this.isFocused = false;
-        this.isShowingCaret = false;
-        this.needsRerender = true;
-        if (caretTimer != null) {
-            animation.Timer.stopTimer(caretTimer);
-            caretTimer = null;
-        }
     }
 
     public function onPressStarted(event:PressStartedEvent) {
@@ -161,52 +185,119 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
     }
 
     public function onAction(action:Action):Void {
+        // trace(action);
         switch (action) {
             case INSERT_STRING(str):
-                this.text.text = this.text.text.substring(0, this.selectionRange.end) + str + this.text.text.substring(this.selectionRange.end);
+                var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
+                var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
+                var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
+
+                this.text.text = this.text.text.substring(0, rangeStart) + str + this.text.text.substring(rangeEnd);
                 this.needsRerender = true;
                 this.needsCaretUpdate = true;
-                this.selectionRange.end = this.selectionRange.end + 1;
+                this.selectionRange.end = rangeStart + str.length;
                 this.selectionRange.start = this.selectionRange.end;
-            case LEFT, BACKWARD:
+                startCaretBlink();
+            case LEFT, BACKWARD, LEFT_AND_SELECT:
+                var select = action == LEFT_AND_SELECT;
                 this.selectionRange.end = this.selectionRange.end - 1;
                 if (this.selectionRange.end < 0) {
                     this.selectionRange.end = 0;
                 }
-                this.selectionRange.start = this.selectionRange.end;
+                if (!select) {
+                    this.selectionRange.start = this.selectionRange.end;
+                }
                 this.needsRerender = true;
                 this.needsCaretUpdate = true;
-            case RIGHT, FORWARD:
+                startCaretBlink();
+            case RIGHT, FORWARD, RIGHT_AND_SELECT:
+                var select = action == RIGHT_AND_SELECT;
                 this.selectionRange.end = this.selectionRange.end + 1;
                 if (this.selectionRange.end > this.text.text.length) {
                     this.selectionRange.end = this.text.text.length;
                 }
-                this.selectionRange.start = this.selectionRange.end;
+                if (!select) {
+                    this.selectionRange.start = this.selectionRange.end;
+                }
                 this.needsRerender = true;
                 this.needsCaretUpdate = true;
+                startCaretBlink();
+            case WORD_LEFT:
+                var i = this.selectionRange.end - 1;
+                var foundWhitespace = false;
+                while (i > 0) {
+                    if (StringTools.isSpace(this.text.text, i)) {
+                        foundWhitespace = true;
+                    } else if (foundWhitespace) {
+                        i++;
+                        break;
+                    }
+                    i--;
+                }
+                if (i < 0) {
+                    i = 0;
+                }
+                this.selectionRange.end = i;
+                this.selectionRange.start = this.selectionRange.end;
+                this.needsCaretUpdate = true;
+                startCaretBlink();
+            case WORD_RIGHT:
+                var i = this.selectionRange.end;
+                var foundWhitespace = false;
+                while (i < this.text.text.length) {
+                    if (StringTools.isSpace(this.text.text, i)) {
+                        foundWhitespace = true;
+                    } else if (foundWhitespace) {
+                        break;
+                    }
+                    i++;
+                }
+                this.selectionRange.end = i;
+                this.selectionRange.start = this.selectionRange.end;
+                this.needsCaretUpdate = true;
+                startCaretBlink();
+
             case DELETE_FORWARD:
-                if (this.selectionRange.end < this.text.text.length) {
-                    this.text.text = this.text.text.substring(0, this.selectionRange.end) + this.text.text.substring(this.selectionRange.end + 1);
+                var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
+                var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
+                var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
+                if (rangeEnd < this.text.text.length) {
+                    this.text.text = this.text.text.substring(0, rangeStart) + this.text.text.substring(rangeEnd + 1);
                     this.needsRerender = true;
                     this.needsCaretUpdate = true;
-                    this.selectionRange.end = this.selectionRange.end + 1;
+                    this.selectionRange.end = rangeEnd + 1;
                     this.selectionRange.start = this.selectionRange.end;
+                    startCaretBlink();
                 }
             case DELETE_BACKWARD:
-                if (this.selectionRange.end > 0) {
-                    this.text.text = this.text.text.substring(0, this.selectionRange.end - 1) + this.text.text.substring(this.selectionRange.end);
+                var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
+                var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
+                var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
+                if (rangeStart == rangeEnd) {
+                    rangeStart = rangeEnd - 1;
+                }
+                if (rangeEnd > 0) {
+                    this.text.text = this.text.text.substring(0, rangeStart) + this.text.text.substring(rangeEnd);
                     this.needsRerender = true;
                     this.needsCaretUpdate = true;
-                    this.selectionRange.end = this.selectionRange.end - 1;
+                    this.selectionRange.end = rangeStart;
                     this.selectionRange.start = this.selectionRange.end;
+                    startCaretBlink();
                 }
             case SELECT_ALL:
-                trace('all');
                 this.selectionRange.start = 0;
                 this.selectionRange.end = this.text.text.length;
                 this.needsRerender = true;
                 this.needsCaretUpdate = true;
+
+    // WORD_LEFT_AND_SELECT;
+    // WORD_RIGHT_AND_SELECT;
+    // COPY;
+    // PASTE;
+    // CUT;
             default:
         }
+
+        // trace('pos', this.selectionRange.start, this.selectionRange.end);
     }
 }
