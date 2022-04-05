@@ -212,7 +212,7 @@ std::function<void(void)> selectAllCallback;
 //- (void)deleteToEndOfLine:(nullable id)sender;
 //- (void)deleteToBeginningOfParagraph:(nullable id)sender;
 //- (void)deleteToEndOfParagraph:(nullable id)sender;
-//
+
 - (void)yank:(nullable id)sender {
   NSLog(@"YANK");
 }

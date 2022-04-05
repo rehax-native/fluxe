@@ -26,6 +26,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
     }
 
     private var text = new Text();
+    public var value(default, set): String;
     private var caretTimer:Null<animation.Timer> = null;
     private var isShowingCaret = false;
     private var selectionRange = {
@@ -37,9 +38,34 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
     public var padding:Padding = {
         left: 10,
         right: 10,
-        top: 5,
+        top: 7,
         bottom: 5,
     };
+
+    public var isHiddenCharacters(default, set) = false;
+
+    public function set_isHiddenCharacters(hidden:Bool):Bool {
+        needsRerender = true;
+        text.needsRerender = true;
+        return hidden;
+    }
+
+    public function get_value():String {
+        return this.value;
+    }
+
+    public function set_value(value:String):String {
+        this.value = value;
+        if (isHiddenCharacters) {
+            text.text = '';
+            for (i in 0...value.length) {
+                text.text += '•';
+            }
+        } else {
+            text.text = value;
+        }
+        return value;
+    }
 
     public override function measureLayout() {
         this.text.measureLayout();
@@ -78,8 +104,11 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         builder.canvas.drawRRect(rrect, paint);
 
         if (this.isFocused) {
-            paint.setColor(Color.RGBA(1.0, 0.6, 0.6, 0.8));
+            paint.setColor(Color.RGBA(0.6, 0.8, 1.0, 0.8));
+            paint.setStrokeWidth(2);
+            var rrect = RRect.MakeRectXY(Rect.MakeXYWH(1, 1, this.layoutSize.width - 2, this.layoutSize.height - 2), 3, 3);
             builder.canvas.drawRRect(rrect, paint);
+            paint.setStrokeWidth(1);
         //     paint.setColor(Color.RGBA(0.2, 0.2, 0.2, 0.6));
         // } else {
         //     paint.setColor(Color.RGBA(0.2, 0.2, 0.2, 0.2));
@@ -192,7 +221,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
                 var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
                 var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
 
-                this.text.text = this.text.text.substring(0, rangeStart) + str + this.text.text.substring(rangeEnd);
+                this.value = this.value.substring(0, rangeStart) + str + this.value.substring(rangeEnd);
                 this.needsRerender = true;
                 this.needsCaretUpdate = true;
                 this.selectionRange.end = rangeStart + str.length;
@@ -213,8 +242,8 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
             case RIGHT, FORWARD, RIGHT_AND_SELECT:
                 var select = action == RIGHT_AND_SELECT;
                 this.selectionRange.end = this.selectionRange.end + 1;
-                if (this.selectionRange.end > this.text.text.length) {
-                    this.selectionRange.end = this.text.text.length;
+                if (this.selectionRange.end > this.value.length) {
+                    this.selectionRange.end = this.value.length;
                 }
                 if (!select) {
                     this.selectionRange.start = this.selectionRange.end;
@@ -226,7 +255,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
                 var i = this.selectionRange.end - 1;
                 var foundWhitespace = false;
                 while (i > 0) {
-                    if (StringTools.isSpace(this.text.text, i)) {
+                    if (StringTools.isSpace(this.value, i)) {
                         foundWhitespace = true;
                     } else if (foundWhitespace) {
                         i++;
@@ -244,8 +273,8 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
             case WORD_RIGHT:
                 var i = this.selectionRange.end;
                 var foundWhitespace = false;
-                while (i < this.text.text.length) {
-                    if (StringTools.isSpace(this.text.text, i)) {
+                while (i < this.value.length) {
+                    if (StringTools.isSpace(this.value, i)) {
                         foundWhitespace = true;
                     } else if (foundWhitespace) {
                         break;
@@ -261,8 +290,8 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
                 var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
                 var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
                 var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
-                if (rangeEnd < this.text.text.length) {
-                    this.text.text = this.text.text.substring(0, rangeStart) + this.text.text.substring(rangeEnd + 1);
+                if (rangeEnd < this.value.length) {
+                    this.value = this.value.substring(0, rangeStart) + this.value.substring(rangeEnd + 1);
                     this.needsRerender = true;
                     this.needsCaretUpdate = true;
                     this.selectionRange.end = rangeEnd + 1;
@@ -277,7 +306,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
                     rangeStart = rangeEnd - 1;
                 }
                 if (rangeEnd > 0) {
-                    this.text.text = this.text.text.substring(0, rangeStart) + this.text.text.substring(rangeEnd);
+                    this.value = this.value.substring(0, rangeStart) + this.value.substring(rangeEnd);
                     this.needsRerender = true;
                     this.needsCaretUpdate = true;
                     this.selectionRange.end = rangeStart;
@@ -286,7 +315,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
                 }
             case SELECT_ALL:
                 this.selectionRange.start = 0;
-                this.selectionRange.end = this.text.text.length;
+                this.selectionRange.end = this.value.length;
                 this.needsRerender = true;
                 this.needsCaretUpdate = true;
 
