@@ -2,34 +2,55 @@ package events;
 
 using views.View;
 
-class MouseUpEvent {
-    public function new () {}
+typedef MouseUpEvent = {
     public var left:Float;
     public var top:Float;
     public var button:Int;
 }
 
-class MouseDownEvent {
-    public function new () {}
+typedef MouseDownEvent = {
     public var left:Float;
     public var top:Float;
     public var button:Int;
 }
 
-class MouseMoveEvent {
-    public function new () {}
+typedef MouseMoveEvent = {
     public var left:Float;
     public var top:Float;
 }
 
-interface IMouseDownListener {
+typedef MouseEnterEvent = {
+    public var left:Float;
+    public var top:Float;
+}
+
+typedef MouseExitEvent = {
+    public var left:Float;
+    public var top:Float;
+}
+
+interface IMouseEventListener {
+}
+
+interface IMouseEventListenerContainer {
+    public var mouseEventListeners:Array<IMouseEventListener>;
+}
+
+
+interface IMouseDownEventListener extends IMouseEventListener {
     public function onMouseDown(event:MouseDownEvent):Void;
 }
-interface IMouseUpListener {
+interface IMouseUpEventListener extends IMouseEventListener {
     public function onMouseUp(event:MouseUpEvent):Void;
 }
-interface IMouseMoveListener {
+interface IMouseMoveEventListener extends IMouseEventListener {
     public function onMouseMove(event:MouseMoveEvent):Void;
+}
+interface IMouseEnterEventListener extends IMouseEventListener {
+    public function onMouseEnter(event:MouseEnterEvent):Void;
+}
+interface IMouseExitEventListener extends IMouseEventListener {
+    public function onMouseExit(event:MouseExitEvent):Void;
 }
 
 class MouseEventsManager {
@@ -39,40 +60,19 @@ class MouseEventsManager {
         this.rootView = rootView;
     }
 
-    // private var mouseUpListeners:Array<IMouseUpListener> = [];
-    // private var mouseDownListeners:Array<IMouseDownListener> = [];
-    // private var mouseMoveListeners:Array<IMouseMoveListener> = [];
-
-    // public function addMouseUpListener(view:IMouseUpListener) {
-    //     mouseUpListeners.push(view);
-    // }
-
-    // public function addMouseDownListener(view:IMouseDownListener) {
-    //     mouseDownListeners.push(view);
-    // }
-
-    // public function addMouseMoveListener(view:IMouseMoveListener) {
-    //     mouseMoveListeners.push(view);
-    // }
-
-	// public function removeMouseUpListener(view:IMouseUpListener):Void {
-	// 	mouseUpListeners.remove(view);
-	// }
-
-	// public function removeMouseDownListener(view:IMouseDownListener):Void {
-	// 	mouseDownListeners.remove(view);
-	// }
-
-	// public function removeMouseMoveListener(view:IMouseMoveListener):Void {
-	// 	mouseMoveListeners.remove(view);
-	// }
-
     public function handleMouseDown(event:MouseDownEvent) {
         var hitView = findViewAtPosition(event.left, event.top, rootView);
         while (hitView != null) {
-            if (Std.isOfType(hitView, IMouseDownListener)) {
-                var listener = cast(hitView, IMouseDownListener);
-                listener.onMouseDown(event);
+            if (Std.isOfType(hitView, IMouseEventListenerContainer)) {
+                var eventView = cast(hitView, IMouseEventListenerContainer);
+                for (listener in eventView.mouseEventListeners) {
+                    if (Std.isOfType(listener, IMouseDownEventListener)) {
+                        cast(listener, IMouseDownEventListener).onMouseDown(event);
+                    }
+                }
+            }
+            if (Std.isOfType(hitView, IMouseDownEventListener)) {
+                cast(hitView, IMouseDownEventListener).onMouseDown(event);
             }
             hitView = hitView.parent;
         }
@@ -81,9 +81,16 @@ class MouseEventsManager {
     public function handleMouseUp(event:MouseUpEvent) {
         var hitView = findViewAtPosition(event.left, event.top, rootView);
         while (hitView != null) {
-            if (Std.isOfType(hitView, IMouseUpListener)) {
-                var listener = cast(hitView, IMouseUpListener);
-                listener.onMouseUp(event);
+            if (Std.isOfType(hitView, IMouseEventListenerContainer)) {
+                var eventView = cast(hitView, IMouseEventListenerContainer);
+                for (listener in eventView.mouseEventListeners) {
+                    if (Std.isOfType(listener, IMouseUpEventListener)) {
+                        cast(listener, IMouseUpEventListener).onMouseUp(event);
+                    }
+                }
+            }
+            if (Std.isOfType(hitView, IMouseUpEventListener)) {
+                cast(hitView, IMouseUpEventListener).onMouseUp(event);
             }
             hitView = hitView.parent;
         }
@@ -92,9 +99,16 @@ class MouseEventsManager {
     public function handleMouseMove(event:MouseMoveEvent) {
         var hitView = findViewAtPosition(event.left, event.top, rootView);
         while (hitView != null) {
-            if (Std.isOfType(hitView, IMouseMoveListener)) {
-                var listener = cast(hitView, IMouseMoveListener);
-                listener.onMouseMove(event);
+            if (Std.isOfType(hitView, IMouseEventListenerContainer)) {
+                var eventView = cast(hitView, IMouseEventListenerContainer);
+                for (listener in eventView.mouseEventListeners) {
+                    if (Std.isOfType(listener, IMouseMoveEventListener)) {
+                        cast(listener, IMouseMoveEventListener).onMouseMove(event);
+                    }
+                }
+            }
+            if (Std.isOfType(hitView, IMouseMoveEventListener)) {
+                cast(hitView, IMouseMoveEventListener).onMouseMove(event);
             }
             hitView = hitView.parent;
         }

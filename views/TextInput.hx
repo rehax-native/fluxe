@@ -2,6 +2,7 @@ package views;
 
 using views.Externs;
 using events.MouseEventsManager;
+using events.PressEvent;
 using events.ActionEventsManager;
 using events.FocusManager;
 using layout.Padding;
@@ -11,11 +12,17 @@ typedef TextSelectionRange = {
     var end:Int;
 }
 
-class TextInput extends View implements IFocusable implements IMouseUpListener implements IActionListener {
+class TextInput extends View implements IFocusable implements IMouseEventListenerContainer implements IPressEventListener implements IActionListener {
+
+    public var mouseEventListeners:Array<IMouseEventListener>;
 
     public function new() {
         super();
         this.addSubView(text);
+
+        mouseEventListeners = [
+            new PressDetector(this),
+        ];
     }
 
     private var text = new Text();
@@ -143,8 +150,14 @@ class TextInput extends View implements IFocusable implements IMouseUpListener i
         }
     }
 
-    public function onMouseUp(event:MouseUpEvent):Void {
+    public function onPressStarted(event:PressStartedEvent) {
+    }
+
+    public function onPressFinished(event:PressFinishedEvent) {
         this.viewManager.focusManager.gainFocus(this);
+    }
+
+    public function onPressCanceled(event:PressCanceledEvent) {
     }
 
     public function onAction(action:Action):Void {

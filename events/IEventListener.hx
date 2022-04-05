@@ -1,7 +1,15 @@
 package events;
 
-interface IEventListener<Event> {
-	public function onEvent(event:Event):Void;
+// interface IEventListener<Event> {
+// 	public function onEvent(event:Event):Void;
+// }
+
+interface IEventListener {
+	// public function onEvent(event:Event):Void;
+}
+
+interface IEventListenerContainer {
+    private var eventListeners:Array<IEventListener>;
 }
 
 // class EventEmitter<Event> {

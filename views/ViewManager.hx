@@ -71,26 +71,26 @@ class ViewManager {
     }
 
     public function mouseDownCallback(left:Float, top:Float, buttonIndex:Int):Void {
-        var event = new MouseDownEvent();
-        event.left = left;
-        event.top = top;
-        event.button = buttonIndex;
-        mouseManager.handleMouseDown(event);
+        mouseManager.handleMouseDown({
+            left: left,
+            top: top,
+            button: buttonIndex,
+        });
     }
 
     public function mouseUpCallback(left:Float, top:Float, buttonIndex:Int):Void {
-        var event = new MouseUpEvent();
-        event.left = left;
-        event.top = top;
-        event.button = buttonIndex;
-        mouseManager.handleMouseUp(event);
+        mouseManager.handleMouseUp({
+            left: left,
+            top: top,
+            button: buttonIndex,
+        });
     }
 
     public function mouseMoveCallback(left:Float, top:Float):Void {
-        var event = new MouseMoveEvent();
-        event.left = left;
-        event.top = top;
-        mouseManager.handleMouseMove(event);
+        mouseManager.handleMouseMove({
+            left: left,
+            top: top,
+        });
     }
 
     public function keyDownCallback(code:Int):Void {

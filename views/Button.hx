@@ -3,6 +3,7 @@ package views;
 using layout.Padding;
 using views.Externs;
 using events.MouseEventsManager;
+using events.PressEvent;
 using events.FocusManager;
 
 enum ButtonState {
@@ -12,7 +13,7 @@ enum ButtonState {
     Disabled;
 }
 
-class Button extends View implements IMouseDownListener implements IMouseUpListener implements IFocusable {
+class Button extends View implements IMouseEventListenerContainer implements IPressEventListener implements IFocusable {
     public var title:Text;
     public var padding:Padding = {
         left: 10,
@@ -23,10 +24,15 @@ class Button extends View implements IMouseDownListener implements IMouseUpListe
     
     private var state:ButtonState = ButtonState.Up;
 
+    public var mouseEventListeners:Array<IMouseEventListener>;
+
     public function new() {
         super();
         this.title = new Text();
         this.addSubView(title);
+        mouseEventListeners = [
+            new PressDetector(this),
+        ];
     }
 
     public var onClick:(button:Button) -> Void = (btn:Button) -> {};
@@ -66,17 +72,22 @@ class Button extends View implements IMouseDownListener implements IMouseUpListe
         builder.canvas.drawRRect(rrect, paint);
     }
 
-    public function onMouseDown(event:MouseDownEvent):Void {
+    public function onPressStarted(event:PressStartedEvent) {
         this.viewManager.focusManager.gainFocus(this);
         this.state = ButtonState.Down;
         this.needsRerender = true;
     }
 
-    public function onMouseUp(event:MouseUpEvent):Void {
+    public function onPressFinished(event:PressFinishedEvent) {
         this.state = ButtonState.Up;
         this.needsRerender = true;
 
-        onClick(this);
+        this.onClick(this);
+    }
+
+    public function onPressCanceled(event:PressCanceledEvent) {
+        this.state = ButtonState.Up;
+        this.needsRerender = true;
     }
 
     public function didGainFocus():Void {
