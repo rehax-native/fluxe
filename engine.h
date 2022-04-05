@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <string>
 #include "render_backend/skia/canvas.h"
 
 namespace fluxe {
@@ -43,6 +44,22 @@ class Engine {
    */
   // void renderCanvas(Canvas * canvas);
   void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int)> callback);
+  void setMouseDownCallback(std::function<void(float left, float top, int button)> callback);
+  void setMouseMoveCallback(std::function<void(float left, float top)> callback);
+  void setMouseUpCallback(std::function<void(float left, float top, int button)> callback);
+  void setTextCallback(std::function<void(const char* str)> callback);
+  void setKeyDownCallback(std::function<void(int code)> callback);
+  void setKeyUpCallback(std::function<void(int code)> callback);
+  
+  void setMoveLeftCallback(std::function<void(void)> callback);
+  void setMoveRightCallback(std::function<void(void)> callback);
+  void setMoveBackwardCallback(std::function<void(void)> callback);
+  void setMoveForwardCallback(std::function<void(void)> callback);
+  void setDeleteBackwardCallback(std::function<void(void)> callback);
+  void setDeleteForwardCallback(std::function<void(void)> callback);
+  void setSelectAllCallback(std::function<void(void)> callback);
+
+  void setNeedsRerender();
 
   /**
    * Start the main run loop. Call this if you don't have an existing run loop and want fluxe to create one for you.

@@ -8,7 +8,7 @@ class LayerTreeNode {
 
     public var children:Array<LayerTreeNode> = [];
     public var parent:LayerTreeNode = null;
-    public var surface:RenderSurface;
+    public var surface:Null<RenderSurface> = null;
     public var canvas(get, null):Canvas;
 
     public function get_canvas() {

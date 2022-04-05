@@ -1,7 +1,5 @@
 package views;
 
-using render_pipeline.RenderPipeline;
-
 typedef Window = cpp.RawPointer<Void>;
 
 abstract Color(cpp.UInt32) {
@@ -106,10 +104,11 @@ extern class NativeCanvas {
     extern public function drawTextBlob(blob:TextBlob, x:cpp.Float64, y:cpp.Float64, paint:Paint):Void;
 
     extern public function translate(dx:cpp.Float32, dy:cpp.Float32):Void;
+    extern public function scale(sx:cpp.Float32, sy:cpp.Float32):Void;
 }
 
 class Canvas {
-    var _canvas:cpp.Pointer<NativeCanvas>;
+    public var _canvas:cpp.Pointer<NativeCanvas>;
     public function new(?canvas:cpp.Pointer<NativeCanvas>) {
         if (canvas != null) {
             _canvas = canvas;
@@ -138,6 +137,9 @@ class Canvas {
     public function translate(dx:Float, dy:Float):Void {
         _canvas.ptr.translate(dx, dy);
     }
+    public function scale(sx:Float, sy:Float):Void {
+        _canvas.ptr.scale(sx, sy);
+    }
 }
 
 @:include("render_backend/skia/canvas.h")
@@ -150,13 +152,20 @@ extern class NativeSurface {
 }
 
 class RenderSurface {
-    public var _surface:NativeSurface;
+    public var _surface:Null<NativeSurface>;
     public function new(width:Int, height:Int) {
-        _surface = NativeSurface.Create(width, height);
+        var scale = 2.0; // TODO this scale should come from the shell
+        _surface = NativeSurface.Create(Std.int(width * scale), Std.int(height * scale));
+        var canvas = _surface.getCanvas();
+        canvas.ptr.scale(scale, scale);
     }
     public function getCanvas():Canvas {
         var canvas = _surface.getCanvas();
         return new Canvas(canvas);
+    }
+
+    public function destroy() {
+        this._surface = untyped __cpp__ ("nullptr");
     }
 }
 
@@ -168,53 +177,54 @@ extern class Engine {
 
     extern public function createPlatformWindow():Window;
     extern public function attachToPlatformWindow(window:Window):Void;
-    // extern public function renderCanvas(canvas:Canvas):Void;
     extern public function setRenderCallback(callback:(width:Int, height:Int) -> NativeSurface):Void;
     extern public function startMainLoop():Void;
     extern public function detachFromPlatformWindow():Void;
     extern public function closePlatformWindow(window:Window):Void;
+
+    extern public function setNeedsRerender():Void;
+
+    extern public function setMouseDownCallback(callback:(left:Float, top:Float, button:Int) -> Void):Void;
+    extern public function setMouseUpCallback(callback:(left:Float, top:Float, button:Int) -> Void):Void;
+    extern public function setMouseMoveCallback(callback:(left:Float, top:Float, button:Int) -> Void):Void;
 }
 
 @:unreflective
 class EngineUtility {
     public static function startWithView(view:View):Void {
-        // var engine = Engine.Create();
-        // var window = engine.ptr.createPlatformWindow();
-        // engine.ptr.attachToPlatformWindow(window);
-        // // engine.ptr.setRootView(view);
-        // var pipeline = new RenderPipeline(view);
-
-        // var callback:(width:Int, height:Int) -> NativeSurface = function(width:Int, height:Int) {
-        //     var surface = pipeline.render(width, height);
-        //     return surface._surface;
-        // };
-        // engine.ptr.setRenderCallback(callback);
-        // engine.ptr.startMainLoop();
-        // engine.ptr.detachFromPlatformWindow();
-        // engine.ptr.closePlatformWindow(window);
-        // engine.destroy();
         var util = new EngineUtility(view);
         trace(util);
     }
 
 
     var engine = Engine.Create();
-    var pipeline:RenderPipeline;
+    var viewManager:ViewManager;
 
     private function new(view:View) {
         var window = engine.ptr.createPlatformWindow();
         engine.ptr.attachToPlatformWindow(window);
-        pipeline = new RenderPipeline(view);
-        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h) { return this->renderCallback(w, h); })");
-        // engine.ptr.setRenderCallback(untyped __cpp__ ("renderCallback"));
+        viewManager = new ViewManager(view);
+        viewManager.onNeedsRerender = () -> {
+            engine.ptr.setNeedsRerender();
+        };
+        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h) { return viewManager->renderCallback(w, h); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseDownCallback([this] (float l, float t, int n) { return viewManager->mouseDownCallback(l, t, n); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseMoveCallback([this] (float l, float t) { return viewManager->mouseMoveCallback(l, t); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseUpCallback([this] (float l, float t, int n) { return viewManager->mouseUpCallback(l, t, n); })");
+        untyped __cpp__ ("this->engine->ptr->setKeyDownCallback([this] (int code) { return viewManager->keyDownCallback(code); })");
+        untyped __cpp__ ("this->engine->ptr->setKeyUpCallback([this] (int code) { return viewManager->keyUpCallback(code); })");
+        untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { return viewManager->textCallback(String(str)); })");
+
+        untyped __cpp__ ("this->engine->ptr->setMoveLeftCallback([this] () { return viewManager->moveLeftCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveRightCallback([this] () { return viewManager->moveRightCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveBackwardCallback([this] () { return viewManager->moveBackwardCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveForwardCallback([this] () { return viewManager->moveForwardCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setDeleteBackwardCallback([this] () { return viewManager->deleteBackwardCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setDeleteForwardCallback([this] () { return viewManager->deleteForwardCallback(); })");
+        untyped __cpp__ ("this->engine->ptr->setSelectAllCallback([this] () { return viewManager->selectAllCallback(); })");
         engine.ptr.startMainLoop();
         engine.ptr.detachFromPlatformWindow();
         engine.ptr.closePlatformWindow(window);
         engine.destroy();
-    }
-
-    public function renderCallback(width:Int, height:Int):NativeSurface {
-        var surface = pipeline.render(width, height);
-        return surface._surface;
     }
 }

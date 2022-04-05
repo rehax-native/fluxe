@@ -17,6 +17,9 @@ class RenderPipeline {
     public function render(width:Int, height:Int):RenderSurface {
         this.width = width;
         this.height = height;
+        if (viewBuilder.rootNode.surface != null) {
+            viewBuilder.rootNode.surface.destroy();
+        }
         viewBuilder.rootNode.surface = new RenderSurface(width, height);
 
         layout();

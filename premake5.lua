@@ -109,6 +109,8 @@ project "fluxe-cpp-core"
   files {
     "engine.h",
     "engine.mm",
+    "shell/timer.h",
+    "shell/timer.mm",
   }
 
   filter "system:macosx"
@@ -122,9 +124,11 @@ project "fluxe-cpp-core"
     }
 
     links { 
+      "Foundation.framework",
       "Cocoa.framework",
       "QuartzCore.framework",
       "skia",
+      "skparagraph",
     }
 
 project "fluxe-example-text-and-button"
@@ -170,7 +174,11 @@ project "fluxe-example-text-and-button"
     }
 
     links { 
+      "Foundation.framework",
       "Cocoa.framework",
       "QuartzCore.framework",
       "skia",
+      "skparagraph",
+      "skshaper",
+      "skunicode",
     }

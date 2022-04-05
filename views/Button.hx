@@ -2,6 +2,8 @@ package views;
 
 using layout.Padding;
 using views.Externs;
+using events.MouseEventsManager;
+using events.FocusManager;
 
 enum ButtonState {
     Up;
@@ -10,7 +12,7 @@ enum ButtonState {
     Disabled;
 }
 
-class Button extends View {
+class Button extends View implements IMouseDownListener implements IMouseUpListener implements IFocusable {
     public var title:Text;
     public var padding:Padding = {
         left: 10,
@@ -26,6 +28,8 @@ class Button extends View {
         this.title = new Text();
         this.addSubView(title);
     }
+
+    public var onClick:(button:Button) -> Void = (btn:Button) -> {};
 
     public override function measureLayout() {
         this.title.measureLayout();
@@ -48,8 +52,36 @@ class Button extends View {
         paint.setStyle(PaintStyle.Stroke);
         builder.canvas.drawRRect(rrect, paint);
 
-        paint.setColor(Color.RGBA(0.2, 0.2, 0.2, 0.6));
+        if (this.state == ButtonState.Up) {
+            paint.setColor(Color.RGBA(0.2, 0.2, 0.2, 0.6));
+        } else if (this.state == ButtonState.Down) {
+            paint.setColor(Color.RGBA(0.2, 0.2, 0.2, 0.2));
+        // } else if (this.state == ButtonState.Hover) {
+        //     paint.setColor(Color.RGBA(0.8, 0.8, 0.8, 0.8));
+        // } else if (this.state == ButtonState.Disabled) {
+        //     paint.setColor(Color.RGBA(0.6, 0.6, 0.6, 0.8));
+        }
+
         paint.setStyle(PaintStyle.Fill);
         builder.canvas.drawRRect(rrect, paint);
+    }
+
+    public function onMouseDown(event:MouseDownEvent):Void {
+        this.viewManager.focusManager.gainFocus(this);
+        this.state = ButtonState.Down;
+        this.needsRerender = true;
+    }
+
+    public function onMouseUp(event:MouseUpEvent):Void {
+        this.state = ButtonState.Up;
+        this.needsRerender = true;
+
+        onClick(this);
+    }
+
+    public function didGainFocus():Void {
+    }
+
+    public function didLoseFocus():Void {
     }
 }
