@@ -16,11 +16,9 @@ class Build {
 			return Context.getBuildFields();
 		}
 
-        var coreLib = Context.definedValue("FLUXE_CORE_LIB");
-
-        var basePath = sys.FileSystem.absolutePath('../../..');
-        var skiaPath = sys.FileSystem.absolutePath('../../../third_party/skia');
-        var skiaIncludePath = sys.FileSystem.absolutePath('../../../third_party/skia/include/core');
+        var basePath = sys.FileSystem.absolutePath(_info.file + '/../../..');
+        var skiaPath = sys.FileSystem.absolutePath(_info.file + '/../../../third_party/skia');
+        var skiaIncludePath = sys.FileSystem.absolutePath(_info.file + '/../../../third_party/skia/include/core');
 
 		var xml = '
         <files id="haxe">
