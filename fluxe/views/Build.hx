@@ -16,9 +16,14 @@ class Build {
 			return Context.getBuildFields();
 		}
 
-        var basePath = sys.FileSystem.absolutePath(_info.file + '/../../..');
-        var skiaPath = sys.FileSystem.absolutePath(_info.file + '/../../../third_party/skia');
-        var skiaIncludePath = sys.FileSystem.absolutePath(_info.file + '/../../../third_party/skia/include/core');
+        var dir = _info.file;
+        var parts = _info.file.split('/');
+        parts.pop();
+        dir = parts.join('/');
+
+        var basePath = sys.FileSystem.absolutePath(dir + '/../..');
+        var skiaPath = sys.FileSystem.absolutePath(dir + '/../../third_party/skia');
+        var skiaIncludePath = sys.FileSystem.absolutePath(dir + '/../../third_party/skia/include/core');
 
 		var xml = '
         <files id="haxe">
