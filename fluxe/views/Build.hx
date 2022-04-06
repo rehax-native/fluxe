@@ -25,6 +25,13 @@ class Build {
         var skiaPath = sys.FileSystem.absolutePath(dir + '/../../third_party/skia');
         var skiaIncludePath = sys.FileSystem.absolutePath(dir + '/../../third_party/skia/include/core');
 
+		var injectedSkiaInclude = Context.definedValue("SKIA_INCLUDE");
+		if (injectedSkiaInclude != null) {
+            injectedSkiaInclude = '<compilerflag value="-I$injectedSkiaInclude" />';
+		} else {
+            injectedSkiaInclude = '';
+        }
+
 		var xml = '
         <files id="haxe">
             <compilerflag value="-std=c++20" />
@@ -33,6 +40,7 @@ class Build {
             <compilerflag value="-I$basePath" />
             <compilerflag value="-I$skiaPath" />
             <compilerflag value="-I$skiaIncludePath" />
+            $injectedSkiaInclude
         </files>
         <files id="__lib__">
             <compilerflag value="-std=c++20" />
