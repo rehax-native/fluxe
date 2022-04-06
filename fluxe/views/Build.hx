@@ -18,14 +18,18 @@ class Build {
 
         var coreLib = Context.definedValue("FLUXE_CORE_LIB");
 
+        var basePath = sys.FileSystem.absolutePath('../../..');
+        var skiaPath = sys.FileSystem.absolutePath('../../../third_party/skia');
+        var skiaIncludePath = sys.FileSystem.absolutePath('../../../third_party/skia/include/core');
+
 		var xml = '
         <files id="haxe">
             <compilerflag value="-std=c++20" />
             <compilerflag value="-stdlib=libc++" />
             <compilerflag value="-mmacosx-version-min=10.9" />
-            <compilerflag value="-I../../.." />
-            <compilerflag value="-I../../../third_party/skia" />
-            <compilerflag value="-I../../../third_party/skia/include/core" />
+            <compilerflag value="-I$basePath" />
+            <compilerflag value="-I$skiaPath" />
+            <compilerflag value="-I$skiaIncludePath" />
         </files>
         <files id="__lib__">
             <compilerflag value="-std=c++20" />
