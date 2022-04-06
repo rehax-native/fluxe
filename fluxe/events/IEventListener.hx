@@ -1,4 +1,4 @@
-package events;
+package fluxe.events;
 
 // interface IEventListener<Event> {
 // 	public function onEvent(event:Event):Void;

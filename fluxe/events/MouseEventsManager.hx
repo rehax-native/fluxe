@@ -1,6 +1,6 @@
-package events;
+package fluxe.events;
 
-using views.View;
+using fluxe.views.View;
 
 typedef MouseUpEvent = {
     public var left:Float;

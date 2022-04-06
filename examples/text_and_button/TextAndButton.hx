@@ -1,11 +1,11 @@
 package examples.text_and_button;
 
-using views.View;
-using views.Button;
-using views.Text;
-using views.TextInput;
-using views.Externs;
-using layout.StackLayout;
+using fluxe.views.View;
+using fluxe.views.Button;
+using fluxe.views.Text;
+using fluxe.views.TextInput;
+using fluxe.views.Externs;
+using fluxe.layout.StackLayout;
 
 class TextAndButton {
     public static function main() {

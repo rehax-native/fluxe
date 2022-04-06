@@ -1,0 +1,13 @@
+{
+  "name": "fluxe",
+  "url" : "https://github.com/rehax-native/fluxe/",
+  "license": "MIT",
+  "tags": ["cross", "ui"],
+  "description": "Build UIs with haxe and Skia",
+  "version": "1.0.0",
+  "classPath": ".",
+  "releasenote": "Initial release",
+  "contributors": ["Denis"],
+  "dependencies": {
+  }
+}

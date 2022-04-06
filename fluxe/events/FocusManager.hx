@@ -1,6 +1,6 @@
-package events;
+package fluxe.events;
 
-using views.View;
+using fluxe.views.View;
 
 interface IFocusable {
     public function didGainFocus():Void;

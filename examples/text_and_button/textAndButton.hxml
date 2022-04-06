@@ -8,4 +8,4 @@ examples.text_and_button.TextAndButton
 -D HXCPP_NO_CPP11
 -D HXCPP_GCC
 -D static_link
---macro "views.Build.config()"
+--macro "fluxe.views.Build.config()"

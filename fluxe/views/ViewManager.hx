@@ -1,11 +1,11 @@
-package views;
+package fluxe.views;
 
-using render_pipeline.RenderPipeline;
-using events.MouseEventsManager;
-using events.KeyEventsManager;
-using events.ActionEventsManager;
-using events.FocusManager;
-using views.Externs;
+using fluxe.render_pipeline.RenderPipeline;
+using fluxe.events.MouseEventsManager;
+using fluxe.events.KeyEventsManager;
+using fluxe.events.ActionEventsManager;
+using fluxe.events.FocusManager;
+using fluxe.views.Externs;
 
 class ViewsContainer extends View {
     var _viewManager:ViewManager;

@@ -1,4 +1,4 @@
-package views;
+package fluxe.views;
 
 import haxe.macro.Expr.ExprDef.EConst;
 import haxe.macro.Expr.Field;

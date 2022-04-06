@@ -1,4 +1,4 @@
-package layout;
+package fluxe.layout;
 
 class StackLayout implements ILayout {
   public function new() {}

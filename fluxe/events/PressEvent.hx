@@ -1,7 +1,7 @@
-package events;
+package fluxe.events;
 
-using views.View;
-using events.MouseEventsManager;
+using fluxe.views.View;
+using fluxe.events.MouseEventsManager;
 
 typedef PressStartedEvent = {}
 

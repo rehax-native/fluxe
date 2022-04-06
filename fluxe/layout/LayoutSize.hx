@@ -1,4 +1,4 @@
-package layout;
+package fluxe.layout;
 
 typedef LayoutSize = {
   var width:Float;

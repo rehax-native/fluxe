@@ -1,4 +1,4 @@
-package views;
+package fluxe.views;
 
 class SmartScrollViewRenderStrategy extends RenderStrategy {
     public function shouldCreateNewRasterizeLayer(?tag:Int):Bool {

@@ -1,11 +1,11 @@
-package views;
+package fluxe.views;
 
-using views.Externs;
-using events.MouseEventsManager;
-using events.PressEvent;
-using events.ActionEventsManager;
-using events.FocusManager;
-using layout.Padding;
+using fluxe.views.Externs;
+using fluxe.events.MouseEventsManager;
+using fluxe.events.PressEvent;
+using fluxe.events.ActionEventsManager;
+using fluxe.events.FocusManager;
+using fluxe.layout.Padding;
 
 typedef TextSelectionRange = {
     var start:Int;
@@ -27,7 +27,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
 
     private var text = new Text();
     public var value(default, set): String;
-    private var caretTimer:Null<animation.Timer> = null;
+    private var caretTimer:Null<fluxe.animation.Timer> = null;
     private var isShowingCaret = false;
     private var selectionRange = {
         start: 0,
@@ -92,7 +92,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         y: 0.0,
     };
     private var caretHeight = 0.0;
-    private var selectionRects:Array<views.Text.TextBox> = [];
+    private var selectionRects:Array<fluxe.views.Text.TextBox> = [];
 
     public override function build(builder:ViewBuilder) {
         var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 3, 3);
@@ -185,7 +185,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         this.isShowingCaret = false;
         this.needsRerender = true;
         if (caretTimer != null) {
-            animation.Timer.stopTimer(caretTimer);
+            fluxe.animation.Timer.stopTimer(caretTimer);
             caretTimer = null;
         }
     }
@@ -195,7 +195,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
 
         this.isShowingCaret = true;
         if (caretTimer == null) {
-            caretTimer = animation.Timer.startInterval(500, () -> {
+            caretTimer = fluxe.animation.Timer.startInterval(500, () -> {
                 this.isShowingCaret = !this.isShowingCaret;
                 this.needsRerender = true;
             });

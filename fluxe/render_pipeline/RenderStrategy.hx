@@ -1,4 +1,4 @@
-package render_pipeline;
+package fluxe.render_pipeline;
 
 abstract class RenderStrategy {
     abstract public function shouldCreateNewRasterizeLayer(?tag:Int):Bool;

@@ -1,4 +1,4 @@
-package layout;
+package fluxe.layout;
 
 typedef Padding = {
     var left:Float;

@@ -1,4 +1,4 @@
-package events;
+package fluxe.events;
 
 enum Action {
     UP;

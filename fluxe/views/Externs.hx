@@ -1,4 +1,4 @@
-package views;
+package fluxe.views;
 
 typedef Window = cpp.RawPointer<Void>;
 
@@ -89,7 +89,7 @@ extern class Paint {
     extern public function setColor(color:Color):Void;
 }
 
-@:build(views.Build.config())
+@:build(fluxe.views.Build.config())
 @:include("render_backend/skia/canvas.h")
 @:native("fluxe::Canvas")
 @:unreflective

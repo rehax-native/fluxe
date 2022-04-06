@@ -1,6 +1,6 @@
-package views;
+package fluxe.views;
 
-using views.Externs;
+using fluxe.views.Externs;
 
 
 @:include("render_backend/skia/canvas.h")

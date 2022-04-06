@@ -1,10 +1,10 @@
-package views;
+package fluxe.views;
 
-using layout.Padding;
-using views.Externs;
-using events.MouseEventsManager;
-using events.PressEvent;
-using events.FocusManager;
+using fluxe.layout.Padding;
+using fluxe.views.Externs;
+using fluxe.events.MouseEventsManager;
+using fluxe.events.PressEvent;
+using fluxe.events.FocusManager;
 
 enum ButtonState {
     Up;

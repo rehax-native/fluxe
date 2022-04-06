@@ -1,8 +1,8 @@
-package render_pipeline;
+package fluxe.render_pipeline;
 
-using views.View;
-using views.ViewBuilder;
-using views.Externs;
+using fluxe.views.View;
+using fluxe.views.ViewBuilder;
+using fluxe.views.Externs;
 
 class RenderPipeline {
     public function new(view:View) {

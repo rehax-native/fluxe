@@ -1,4 +1,4 @@
-package layout;
+package fluxe.layout;
 
 typedef LayoutConstraint = {
   var explicitWidth:Null<Float>;

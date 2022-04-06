@@ -1,4 +1,4 @@
-package animation;
+package fluxe.animation;
 
 @:include("shell/timer.h")
 @:structAccess

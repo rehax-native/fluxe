@@ -1,7 +1,7 @@
-package views;
+package fluxe.views;
 
-using views.Externs;
-using render_pipeline.RenderStrategy;
+using fluxe.views.Externs;
+using fluxe.render_pipeline.RenderStrategy;
 
 class LayerTreeNode {
     public function new() {}

@@ -1,4 +1,4 @@
-package layout;
+package fluxe.layout;
 
 interface ILayoutObject {
   var layoutConstraints:Null<LayoutConstraint>;

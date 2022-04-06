@@ -1,13 +1,13 @@
-package views;
+package fluxe.views;
 
-using layout.ILayout;
-using layout.ILayoutObject;
-using layout.LayoutConstraint;
-using layout.LayoutSize;
-using layout.LayoutPosition;
-using layout.StackLayout;
+using fluxe.layout.ILayout;
+using fluxe.layout.ILayoutObject;
+using fluxe.layout.LayoutConstraint;
+using fluxe.layout.LayoutSize;
+using fluxe.layout.LayoutPosition;
+using fluxe.layout.StackLayout;
 
-using render_pipeline.RenderStrategy;
+using fluxe.render_pipeline.RenderStrategy;
 
 class View implements ILayoutObject {
     public static var defaultRenderStrategy:RenderStrategy = new PaintAlwaysRenderStrategy();
