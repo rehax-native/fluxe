@@ -27,7 +27,7 @@ class Build {
 
 		var injectedSkiaInclude = Context.definedValue("SKIA_INCLUDE");
 		if (injectedSkiaInclude != null) {
-            var paths = injectedSkiaInclude.split(':')
+            var paths = injectedSkiaInclude.split(':');
             injectedSkiaInclude = paths.map(item -> '<compilerflag value="-I$item" />').join('');
 		} else {
             injectedSkiaInclude = '';
