@@ -8,17 +8,26 @@ newaction {
     description = "Fetch dependencies such as Skia",
 
     onStart = function()
-        -- print("Starting Lua generation")
-        skia_git = "https://skia.googlesource.com/skia"
-        repo_path = "third_party/skia"
-
         if not os.isdir("third_party") then
           os.mkdir("third_party")
         end
 
+        skia_git = "https://skia.googlesource.com/skia"
+        repo_path = "third_party/skia"
+
         if not os.isdir(repo_path) then
           print("Cloning skia repository")
           cmd = "git clone " .. skia_git .. " " .. repo_path .. " && cd " .. repo_path .. " && git checkout 2bfcfe016daba3a72af4d43eb98f8eb10209ad70"
+          print(cmd)
+          os.execute(cmd)
+        end
+
+        depot_tools_git = "https://chromium.googlesource.com/chromium/tools/depot_tools.git"
+        repo_path = "third_party/depot_tools"
+
+        if not os.isdir(repo_path) then
+          print("Cloning depot_tools repository")
+          cmd = "git clone " .. depot_tools_git .. " " .. repo_path
           print(cmd)
           os.execute(cmd)
         end

@@ -1,20 +1,21 @@
 This project is using premake to generate project files (Xcode, Visual Studio) for local development, as well as ninja files for building releases.
 
-To get your build environment set up, you first need to get premake and haxe for your machine, and then run these commands:
-
-1. Download dependencies such as Skia
+To get your build environment set up, you first need to get premake and haxe for your machine, and then run this command:
 
 ```
-premake5 fetchDependencies
+python prepare.py
+```
+This will give you a project file in the `dev` directory that you can use to run different examples.
+
+
+The following command will build Skia and the fluxe static library. You need these to run the examples and to create a release.
+
+```
+python build.py
 ```
 
-2. Generate the project file
+Finally, to publish the static library and header files to github, run:
 
 ```
-premake5 generateProject xcode
-premake5 generateProject vs2022
+python publish.py
 ```
-
-You now have a project file in the [TBD] directory that you can use to run different examples.
-
-In order to build a release, you run `premake5 fetchDependencies` and `premake5 ninja` to create the ninja files. Then you can run `ninja -C [TBD]` to build the release.

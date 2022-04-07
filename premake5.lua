@@ -15,7 +15,7 @@ project "fluxe-example-window"
   }
 
   filter "system:macosx"
-    systemversion "10.15"
+    systemversion "10.9"
 
     files {
       "examples/window/mac.mm"
@@ -43,7 +43,7 @@ project "fluxe-example-canvas"
   }
 
   filter "system:macosx"
-    systemversion "10.15"
+    systemversion "10.9"
     
     files {
       "examples/canvas/mac.mm"
@@ -75,7 +75,7 @@ project "fluxe-example-render-backend"
   }
 
   filter "system:macosx"
-    systemversion "10.15"
+    systemversion "10.9"
     
     files {
       "examples/render_backend/mac.mm"
@@ -106,18 +106,18 @@ project "fluxe-cpp-core"
     "./third_party/skia",
   }
 
-  files {
-    "engine.h",
-    "engine.mm",
-    "shell/timer.h",
-    "shell/timer.mm",
-  }
 
   filter "system:macosx"
     files {
+      "engine.h",
+      "engine.mm",
+      "shell/timer.h",
+      "shell/timer.mm",
+    }
+    files {
       "shell/mac/*"
     }
-    systemversion "10.15"
+    systemversion "10.9"
     
     libdirs {
       "third_party/skia/out/Static"
@@ -167,7 +167,7 @@ project "fluxe-example-text-and-button"
     }
 
   filter "system:macosx"
-    systemversion "10.15"
+    systemversion "10.9"
     
     libdirs {
       "third_party/skia/out/Static"
