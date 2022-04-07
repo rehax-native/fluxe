@@ -7,7 +7,47 @@ This eliminates the need to bridge between different languages, avoids marshalli
 
 fluxe is in an early stage of development.
 
-# Building
+## Example
+
+```haxe
+package examples.text_and_button;
+
+using fluxe.views.View;
+using fluxe.views.Button;
+using fluxe.views.Text;
+using fluxe.views.TextInput;
+using fluxe.views.Externs;
+using fluxe.views.Engine;
+using fluxe.layout.StackLayout;
+
+class TextAndButton {
+    public static function main() {
+        var text = new Text();
+        text.text = "Hello World";
+
+        var button = new Button();
+        button.title.text = "Click Me";
+        button.onClick = (btn:Button) -> {
+            trace("Clicked!");
+        };
+
+        var textInput = new TextInput();
+
+        var container = new View();
+        var layout = new StackLayout();
+        layout.spacing = 10.0;
+        container.layout = layout;
+        container.addSubView(text);
+        container.addSubView(button);
+        container.addSubView(textInput);
+
+        EngineUtility.startWithView(container);
+    }
+}
+```
+
+
+## Building
 
 This project is using premake to generate project files (Xcode, Visual Studio) for local development, as well as makefiles for building releases.
 
