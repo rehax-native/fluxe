@@ -1,8 +1,8 @@
 # fluxe
 
-Fluxe is a library that lets you write cross platform user interfaces using the Haxe programming language and Skia as the rendering backend.
+Fluxe is a library that lets you write cross platform user interfaces using the [Haxe](https://haxe.org/) programming language and [Skia](https://skia.org/) as the rendering backend.
 
-It shares commonalities with flutter, but has the advantage that there is no need for a dart runtime, since Haxe transpiles to the target's native language (C++/Java/JavaScript).
+It shares commonalities with [Flutter](https://flutter.dev/), but has the advantage that there is no need for a dart runtime, since Haxe transpiles to the target's native language (C++/Java/JavaScript).
 This eliminates the need to bridge between different languages, avoids marshalling, and reduces bundle size.
 
 fluxe is in an early stage of development.
