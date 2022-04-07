@@ -46,6 +46,8 @@ class TextAndButton {
 }
 ```
 
+![Example](./example.png)
+
 
 ## Building
 
