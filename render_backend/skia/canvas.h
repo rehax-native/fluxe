@@ -1,18 +1,18 @@
 #pragma once
 
-#include "third_party/skia/include/core/SkCanvas.h"
-#include "third_party/skia/include/core/SkRect.h"
-#include "third_party/skia/include/core/SkRRect.h"
-#include "third_party/skia/include/core/SkSurface.h"
-#include "third_party/skia/include/core/SkTypeface.h"
-#include "third_party/skia/include/core/SkFont.h"
-#include "third_party/skia/include/core/SkTextBlob.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRRect.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkTypeface.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkTextBlob.h"
 
-#include "third_party/skia/modules/skparagraph/include/Paragraph.h"
-#include "third_party/skia/modules/skparagraph/include/ParagraphBuilder.h"
-#include "third_party/skia/modules/skparagraph/include/TextStyle.h"
-#include "third_party/skia/modules/skparagraph/include/FontCollection.h"
-#include "third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h"
+#include "modules/skparagraph/include/Paragraph.h"
+#include "modules/skparagraph/include/ParagraphBuilder.h"
+#include "modules/skparagraph/include/TextStyle.h"
+#include "modules/skparagraph/include/FontCollection.h"
+#include "modules/skparagraph/src/ParagraphBuilderImpl.h"
 
 // #include "flutter/display_list/display_list_blend_mode.h"
 
