@@ -4,6 +4,7 @@ import sys
 import pathlib
 from distutils.dir_util import copy_tree
 import shutil
+import glob
 
 # is_win = sys.platform
 # is_mac = sys.platform == 'darwin'
@@ -44,10 +45,12 @@ for lib in copy_libs:
 header_source_paths = [
   ('third_party/skia/include', 'build/out/include/third_party/skia/include'),
   ('third_party/skia/modules/skparagraph/include', 'build/out/include/third_party/skia/modules/skparagraph/include'),
+  ('third_party/skia/modules/skshaper/include', 'build/out/include/third_party/skia/modules/skshaper/include'),
+  ('third_party/skia/modules/skunicode/include', 'build/out/include/third_party/skia/modules/skunicode/include'),
 ]
 header_files = [
   ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'build/out/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'),
-]
+] + [[path, 'build/out/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
 
 print('Building fluxe core')
 os.system('cd dev && make fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a ../build/libfluxe.a')
