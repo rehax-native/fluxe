@@ -35,6 +35,8 @@ copy_libs = [
   'skparagraph',
   'skshaper',
   'sktext',
+  'icu',
+  'skunicode',
 ]
 for lib in copy_libs:
   os.system('cp third_party/skia/out/Static/lib{}.a build/lib{}.a'.format(lib, lib))
@@ -47,8 +49,8 @@ header_files = [
   ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'build/out/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'),
 ]
 
-# print('Building fluxe core')
-# os.system('cd dev && make fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a ../build/libfluxe.a')
+print('Building fluxe core')
+os.system('cd dev && make fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a ../build/libfluxe.a')
 
 for source, target in header_source_paths:
   copy_tree(source, target)

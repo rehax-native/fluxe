@@ -19,4 +19,4 @@ if res == 256:
 
 val = input('Upload release files now?')
 if val.lower() == 'y':
-  os.system('gh release upload v{} build/fluxe-static.zip'.format(version))
+  os.system('gh release upload v{} build/fluxe-static.zip --clobber'.format(version))
