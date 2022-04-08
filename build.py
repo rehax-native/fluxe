@@ -3,6 +3,7 @@ import os
 import sys
 import pathlib
 from distutils.dir_util import copy_tree
+import shutil
 
 # is_win = sys.platform
 # is_mac = sys.platform == 'darwin'
@@ -39,7 +40,11 @@ for lib in copy_libs:
   os.system('cp third_party/skia/out/Static/lib{}.a build/lib{}.a'.format(lib, lib))
 
 header_source_paths = [
-  ('third_party/skia/include', 'build/out/include/third_party/skia/include')
+  ('third_party/skia/include', 'build/out/include/third_party/skia/include'),
+  ('third_party/skia/modules/skparagraph/include', 'build/out/include/third_party/skia/modules/skparagraph/include'),
+]
+header_files = [
+  ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'build/out/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'),
 ]
 
 # print('Building fluxe core')
@@ -47,5 +52,8 @@ header_source_paths = [
 
 for source, target in header_source_paths:
   copy_tree(source, target)
+for source, target in header_files:
+  pathlib.Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
+  shutil.copyfile(source, target)
 
 os.system('libtool -static -o build/out/libfluxe.a build/libfluxe.a {}'.format(' '.join(['build/lib{}.a'.format(lib) for lib in copy_libs])))
