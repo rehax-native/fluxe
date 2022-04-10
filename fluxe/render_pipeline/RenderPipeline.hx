@@ -14,13 +14,14 @@ class RenderPipeline {
     var width:Int = 0;
     var height:Int = 0;
 
-    public function render(width:Int, height:Int):RenderSurface {
+    public function render(width:Int, height:Int, scale:Float):RenderSurface {
         this.width = width;
         this.height = height;
+        viewBuilder.scale = scale;
         if (viewBuilder.rootNode.surface != null) {
             viewBuilder.rootNode.surface.destroy();
         }
-        viewBuilder.rootNode.surface = new RenderSurface(width, height);
+        viewBuilder.rootNode.surface = new RenderSurface(width, height, scale);
 
         layout();
         build();

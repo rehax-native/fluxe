@@ -65,8 +65,8 @@ class ViewManager {
         return _focusManager;
     }
 
-    public function renderCallback(width:Int, height:Int):NativeSurface {
-        var surface = pipeline.render(width, height);
+    public function renderCallback(width:Int, height:Int, scale:Float):NativeSurface {
+        var surface = pipeline.render(width, height, scale);
         return surface._surface;
     }
 

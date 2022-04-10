@@ -42,7 +42,7 @@ class EngineUtility {
         viewManager.onNeedsRerender = () -> {
             engine.ptr.setNeedsRerender();
         };
-        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h) { return viewManager->renderCallback(w, h); })");
+        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); })");
         untyped __cpp__ ("this->engine->ptr->setMouseDownCallback([this] (float l, float t, int n) { return viewManager->mouseDownCallback(l, t, n); })");
         untyped __cpp__ ("this->engine->ptr->setMouseMoveCallback([this] (float l, float t) { return viewManager->mouseMoveCallback(l, t); })");
         untyped __cpp__ ("this->engine->ptr->setMouseUpCallback([this] (float l, float t, int n) { return viewManager->mouseUpCallback(l, t, n); })");

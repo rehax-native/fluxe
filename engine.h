@@ -43,7 +43,7 @@ class Engine {
    * Render the canvas to screen
    */
   // void renderCanvas(Canvas * canvas);
-  void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int)> callback);
+  void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback);
   void setMouseDownCallback(std::function<void(float left, float top, int button)> callback);
   void setMouseMoveCallback(std::function<void(float left, float top)> callback);
   void setMouseUpCallback(std::function<void(float left, float top, int button)> callback);

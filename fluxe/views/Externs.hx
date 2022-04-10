@@ -151,8 +151,7 @@ extern class NativeSurface {
 
 class RenderSurface {
     public var _surface:Null<NativeSurface>;
-    public function new(width:Int, height:Int) {
-        var scale = 2.0; // TODO this scale should come from the shell
+    public function new(width:Int, height:Int, scale:Float) {
         _surface = NativeSurface.Create(Std.int(width * scale), Std.int(height * scale));
         var canvas = _surface.getCanvas();
         canvas.ptr.scale(scale, scale);

@@ -9,7 +9,7 @@
 #include "include/utils/mac/SkCGUtils.h"
 
 fluxe::Canvas * globalCanvas = nullptr;
-std::function<sk_sp<fluxe::Surface>(int, int)> globalCallback;
+std::function<sk_sp<fluxe::Surface>(int, int, float)> globalCallback;
 std::function<void(float left, float top, int button)> mouseDownCallback;
 std::function<void(float left, float top, int button)> mouseUpCallback;
 std::function<void(float left, float top)> mouseMoveCallback;
@@ -39,7 +39,8 @@ std::function<void(void)> selectAllCallback;
   //   return;
   // }
   
-  sk_sp<fluxe::Surface> rasterSurface = globalCallback(bounds.size.width, bounds.size.height);
+  float screenScale = self.window.screen.backingScaleFactor;
+  sk_sp<fluxe::Surface> rasterSurface = globalCallback(bounds.size.width, bounds.size.height, screenScale);
 
 //  auto width = self.bounds.size.width;
 //  auto height = self.bounds.size.height;
@@ -57,7 +58,6 @@ std::function<void(void)> selectAllCallback;
   CGContext *pCGContext = [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
 
   CGContextSaveGState(pCGContext);
-  float screenScale = 2.0;
   //  float screenScale = 1.0;
   //    CGContextScaleCTM(pCGContext, 1.0 / GetScreenScale(), 1.0 / GetScreenScale());
   CGContextScaleCTM(pCGContext, 1.0 / screenScale, 1.0 / screenScale);
@@ -273,7 +273,7 @@ void fluxe::Engine::detachFromPlatformWindow()
 //   globalCanvas = canvas;
 //   globalView.needsDisplay = YES;
 // }
-void fluxe::Engine::setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int)> callback)
+void fluxe::Engine::setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback)
 {
   globalCallback = callback;
 }

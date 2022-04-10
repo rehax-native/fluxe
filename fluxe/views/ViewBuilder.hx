@@ -24,6 +24,7 @@ class ViewBuilder {
     public var currentRenderStrategy:RenderStrategy = View.defaultRenderStrategy;
     public var rootNode = new LayerTreeNode();
     private var currentNode:LayerTreeNode;
+    public var scale = 1.0;
 
     public var canvas(get, null):Canvas;
 
@@ -34,7 +35,7 @@ class ViewBuilder {
     public function pushLayer(width:Int, height:Int, ?tag:Int):Void {
         if (currentRenderStrategy.shouldCreateNewRasterizeLayer(tag)) {
             var newNode = new LayerTreeNode();
-            newNode.surface = new RenderSurface(width, height);
+            newNode.surface = new RenderSurface(width, height, scale);
             newNode.parent = currentNode;
             currentNode.children.push(newNode);
             currentNode = newNode;
