@@ -17,6 +17,21 @@ class RenderPipeline {
     public function render(width:Int, height:Int, scale:Float):RenderSurface {
         this.width = width;
         this.height = height;
+        if (this.rootView != null) {
+            if (this.rootView.layoutConstraints == null) {
+                this.rootView.layoutConstraints = {
+                    explicitWidth: null,
+                    explicitHeight: null,
+                    minWidth: null,
+                    minHeight: null,
+                    maxWidth: null,
+                    maxHeight: null,
+                };
+            }
+            this.rootView.layoutConstraints.maxWidth = width;
+            this.rootView.layoutConstraints.maxHeight = height;
+        }
+
         viewBuilder.scale = scale;
         if (viewBuilder.rootNode.surface != null) {
             viewBuilder.rootNode.surface.destroy();

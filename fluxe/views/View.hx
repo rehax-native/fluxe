@@ -75,6 +75,7 @@ class View implements ILayoutObject {
         }
         // var subLayoutObjects = cast(this.subViews, Array<Dynamic>);
         // this.layoutSize = layout.layout(subLayoutObjects);
+        LayoutConstraintSetter.forwardLayoutConstraints(this);
         this.layoutSize = layout.layout(cast this.subViews);
     }
 

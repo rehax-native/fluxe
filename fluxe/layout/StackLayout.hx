@@ -1,5 +1,7 @@
 package fluxe.layout;
 
+using fluxe.layout.LayoutConstraint;
+
 class StackLayout implements ILayout {
   public function new() {}
   public var spacing(default, set) = 0.0;
@@ -16,6 +18,7 @@ class StackLayout implements ILayout {
     var item:ILayoutObject;
     for (item in items) {
       item.measureLayout();
+      LayoutConstraintSetter.applyLayoutConstraints(item);
       item.layoutPosition = {
         left: spacing,
         top: y,

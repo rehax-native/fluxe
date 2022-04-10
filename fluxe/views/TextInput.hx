@@ -39,7 +39,7 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         left: 10,
         right: 10,
         top: 7,
-        bottom: 5,
+        bottom: 7,
     };
 
     public var isHiddenCharacters(default, set) = false;
