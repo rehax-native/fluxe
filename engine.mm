@@ -76,6 +76,12 @@ std::function<void(void)> selectAllCallback;
   NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
   mouseMoveCallback(curPoint.x, curPoint.y);
 }
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+  NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+  mouseMoveCallback(curPoint.x, curPoint.y);
+}
  
 - (void)mouseUp:(NSEvent *)theEvent
 {
@@ -243,6 +249,13 @@ void fluxe::Engine::attachToPlatformWindow(void * platformWindow)
   CanvasView * view = [CanvasView new];
   [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
   view.translatesAutoresizingMaskIntoConstraints = YES;
+  
+  NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
+  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:view.bounds
+                                                      options:options
+                                                        owner:view
+                                                     userInfo:nil];
+  [view addTrackingArea:area];
 
   globalView = view;
   

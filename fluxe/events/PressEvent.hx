@@ -15,7 +15,7 @@ interface IPressEventListener {
     public function onPressCanceled(event:PressCanceledEvent):Void;
 }
 
-class PressDetector implements IMouseDownEventListener implements IMouseUpEventListener implements IMouseExitEventListener {
+class PressDetector implements IMouseDownEventListener implements IMouseUpEventListener implements IMouseEnterExitEventListener {
 
     private var eventListener:IPressEventListener;
     private var isPressing = false;
@@ -34,6 +34,9 @@ class PressDetector implements IMouseDownEventListener implements IMouseUpEventL
             isPressing = false;
             this.eventListener.onPressFinished({});
         }
+    }
+
+    public function onMouseEnter(event:MouseEnterEvent):Void {
     }
 
     public function onMouseExit(event:MouseExitEvent):Void {

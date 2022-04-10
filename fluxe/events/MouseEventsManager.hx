@@ -46,10 +46,8 @@ interface IMouseUpEventListener extends IMouseEventListener {
 interface IMouseMoveEventListener extends IMouseEventListener {
     public function onMouseMove(event:MouseMoveEvent):Void;
 }
-interface IMouseEnterEventListener extends IMouseEventListener {
+interface IMouseEnterExitEventListener extends IMouseEventListener {
     public function onMouseEnter(event:MouseEnterEvent):Void;
-}
-interface IMouseExitEventListener extends IMouseEventListener {
     public function onMouseExit(event:MouseExitEvent):Void;
 }
 
@@ -96,21 +94,52 @@ class MouseEventsManager {
         }
     }
 
+    private var previousMouseMoveListeners:Map<IMouseEnterExitEventListener, Bool> = [];
+
     public function handleMouseMove(event:MouseMoveEvent) {
         var hitView = findViewAtPosition(event.left, event.top, rootView);
+        var newListeners:Map<IMouseEnterExitEventListener, Bool> = [];
         while (hitView != null) {
             if (Std.isOfType(hitView, IMouseEventListenerContainer)) {
                 var eventView = cast(hitView, IMouseEventListenerContainer);
                 for (listener in eventView.mouseEventListeners) {
+                    if (Std.isOfType(listener, IMouseEnterExitEventListener)) {
+                        var enterListener = cast(listener, IMouseEnterExitEventListener);
+                        if (!previousMouseMoveListeners.exists(enterListener)) {
+                            previousMouseMoveListeners[enterListener] = true;
+                            enterListener.onMouseEnter(event);
+                        }
+                        newListeners[enterListener] = true;
+                    }
                     if (Std.isOfType(listener, IMouseMoveEventListener)) {
-                        cast(listener, IMouseMoveEventListener).onMouseMove(event);
+                        var moveListener = cast(listener, IMouseMoveEventListener);
+                        moveListener.onMouseMove(event);
                     }
                 }
             }
+            if (Std.isOfType(hitView, IMouseEnterExitEventListener)) {
+                var enterListener = cast(hitView, IMouseEnterExitEventListener);
+                if (!previousMouseMoveListeners.exists(enterListener)) {
+                    previousMouseMoveListeners[enterListener] = true;
+                    enterListener.onMouseEnter(event);
+                }
+                newListeners[enterListener] = true;
+            }
             if (Std.isOfType(hitView, IMouseMoveEventListener)) {
-                cast(hitView, IMouseMoveEventListener).onMouseMove(event);
+                var moveListener = cast(hitView, IMouseMoveEventListener);
+                moveListener.onMouseMove(event);
             }
             hitView = hitView.parent;
+        }
+
+        for (listener in previousMouseMoveListeners.keys()) {
+            if (Std.isOfType(listener, IMouseEnterExitEventListener)) {
+                var exitListener = cast(listener, IMouseEnterExitEventListener);
+                if (!newListeners.exists(exitListener)) {
+                    exitListener.onMouseExit(event);
+                    previousMouseMoveListeners.remove(exitListener);
+                }
+            }
         }
     }
 
