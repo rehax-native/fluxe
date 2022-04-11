@@ -49,7 +49,7 @@ class Layout {
                 {}, // text
                 { flexGrow: 1.0 }, // button
                 {}, // button
-                {}, // text input
+                { flexGrow: 1.0 }, // text input
             ];
             container.layout = layout;
         };

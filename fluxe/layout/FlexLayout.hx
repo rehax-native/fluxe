@@ -49,7 +49,7 @@ class FlexLayout implements ILayout {
         availableSize = parent.layoutConstraints.maxHeight;
       }
     }
-
+    var fullSize = availableSize;
     var maxCross = 0.0;
 
     for (i in 0...items.length) {
@@ -60,12 +60,15 @@ class FlexLayout implements ILayout {
       if (info.order == null) {
         info.order = 0;
       }
-      if (info.flexGrow != null) {
-        flexSum += info.flexGrow;
-      }
 
       item.measureLayout();
       LayoutConstraintSetter.applyLayoutConstraints(item);
+
+      if (info.flexGrow != null) {
+        flexSum += info.flexGrow;
+      } else {
+        availableSize -= direction == Row || direction == RowReverse ? item.layoutSize.width : item.layoutSize.height;
+      }
 
       fullWidth += item.layoutSize.width;
       fullHeight += item.layoutSize.height;
@@ -79,8 +82,6 @@ class FlexLayout implements ILayout {
     zipped.sort((a, b) -> {
       return a.info.order - b.info.order;
     });
-
-    trace(flexSum, fullWidth, fullHeight);
 
     if (flexSum == 0.0) {
       flexSum = 1.0;
@@ -130,12 +131,11 @@ class FlexLayout implements ILayout {
         }
       }
     }
-    trace(fullWidth, maxCross);
 
     if (direction == Row || direction == RowReverse) {
-      return { width: fullWidth, height: maxCross };
+      return { width: fullSize, height: maxCross };
     } else {
-      return { width: maxCross, height: fullHeight };
+      return { width: maxCross, height: fullSize };
     }
   }
 }
