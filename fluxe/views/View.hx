@@ -63,10 +63,16 @@ class View implements ILayoutObject {
     // public function onMounted() {}
     // public function onUnMounted() {}
 
-    public var layout:Null<ILayout> = null;
+    public var layout(default, set):Null<ILayout> = null;
     public var layoutConstraints:Null<LayoutConstraint>;
     public var layoutSize:Null<LayoutSize>;
     public var layoutPosition:Null<LayoutPosition>;
+
+    public function set_layout(layout:Null<ILayout>):Null<ILayout> {
+        this.layout = layout;
+        this.needsRerender = true; // TODO this should be `needsLayout`, but that's currently not implemented yet
+        return layout;
+    }
 
     public function measureLayout():Void {
         var layout = this.layout;
@@ -76,7 +82,7 @@ class View implements ILayoutObject {
         // var subLayoutObjects = cast(this.subViews, Array<Dynamic>);
         // this.layoutSize = layout.layout(subLayoutObjects);
         LayoutConstraintSetter.forwardLayoutConstraints(this);
-        this.layoutSize = layout.layout(cast this.subViews);
+        this.layoutSize = layout.layout(cast this, cast this.subViews);
     }
 
     public function build(builder:ViewBuilder) {

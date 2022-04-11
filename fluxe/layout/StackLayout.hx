@@ -2,6 +2,11 @@ package fluxe.layout;
 
 using fluxe.layout.LayoutConstraint;
 
+enum StackLayoutDirection {
+  Vertical;
+  Horizontal;
+}
+
 class StackLayout implements ILayout {
   public function new() {}
   public var spacing(default, set) = 0.0;
@@ -12,21 +17,41 @@ class StackLayout implements ILayout {
     return spacing;
   }
 
-  public function layout(items:Array<ILayoutObject>):LayoutSize {
-    var y:Float = spacing;
-    var maxWidth:Float = 0;
-    var item:ILayoutObject;
+  public var layoutDirection(default, set):StackLayoutDirection = Vertical;
+
+  public function set_layoutDirection(layoutDirection:StackLayoutDirection):StackLayoutDirection {
+    this.layoutDirection = layoutDirection;
+    // needsRerender = true;
+    return layoutDirection;
+  }
+
+  public function layout(parent: ILayoutObject, items:Array<ILayoutObject>):LayoutSize {
+    var pos:Float = spacing;
+    var maxCross:Float = 0;
     for (item in items) {
       item.measureLayout();
       LayoutConstraintSetter.applyLayoutConstraints(item);
-      item.layoutPosition = {
-        left: spacing,
-        top: y,
-      };
-      y += item.layoutSize.height + spacing;
-      maxWidth = Math.max(maxWidth, item.layoutSize.width);
+      if (layoutDirection == Vertical) {
+        item.layoutPosition = {
+          left: spacing,
+          top: pos,
+        };
+        pos += item.layoutSize.height + spacing;
+        maxCross = Math.max(maxCross, item.layoutSize.width);
+      } else {
+        item.layoutPosition = {
+          left: pos,
+          top: spacing,
+        };
+        pos += item.layoutSize.width + spacing;
+        maxCross = Math.max(maxCross, item.layoutSize.width);
+      }
     }
 
-    return { width: maxWidth, height: y };
+    if (layoutDirection == Vertical) {
+      return { width: maxCross, height: pos };
+    } else {
+      return { width: pos, height: maxCross };
+    }
   }
 }
