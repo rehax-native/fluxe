@@ -37,14 +37,14 @@ class StackLayout implements ILayout {
           top: pos,
         };
         pos += item.layoutSize.height + spacing;
-        maxCross = Math.max(maxCross, item.layoutSize.width);
+        maxCross = Math.max(maxCross, item.layoutSize.width + spacing * 2.0);
       } else {
         item.layoutPosition = {
           left: pos,
           top: spacing,
         };
         pos += item.layoutSize.width + spacing;
-        maxCross = Math.max(maxCross, item.layoutSize.width);
+        maxCross = Math.max(maxCross, item.layoutSize.width + spacing * 2.0);
       }
     }
 

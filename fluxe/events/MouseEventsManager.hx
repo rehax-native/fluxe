@@ -148,7 +148,7 @@ class MouseEventsManager {
 		    if (y >= view.layoutPosition.top && y <= view.layoutPosition.top + view.layoutSize.height) {
                 var subViews = view.subViews;
                 for (item in subViews) {
-                    var hitView = findViewAtPosition(x, y, item);
+                    var hitView = findViewAtPosition(x - view.layoutPosition.left, y - view.layoutPosition.top, item);
                     if (hitView != null) {
                         return hitView;
                     }

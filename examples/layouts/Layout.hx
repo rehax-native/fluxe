@@ -28,6 +28,8 @@ class Layout {
         text.text = "Hello World";
         container.addSubView(text);
 
+        var buttonsContainer = new View();
+
         var button = new Button();
         button.title.text = "Horizontal/Vertical Stack Layout";
         button.onClick = (btn:Button) -> {
@@ -38,13 +40,15 @@ class Layout {
             layout.layoutDirection = isHorizontal ? Horizontal : Vertical;
             container.layout = layout;
         };
-        container.addSubView(button);
+        buttonsContainer.addSubView(button);
 
         var button = new Button();
         button.title.text = "Flex";
         button.onClick = (btn:Button) -> {
             trace("Flex Clicked!");
+            isHorizontal = !isHorizontal;
             var layout = new FlexLayout();
+            layout.direction = isHorizontal ? Row : Column;
             layout.itemInfos = [
                 {}, // text
                 { flexGrow: 1.0 }, // button
@@ -53,7 +57,9 @@ class Layout {
             ];
             container.layout = layout;
         };
-        container.addSubView(button);
+        buttonsContainer.addSubView(button);
+
+        container.addSubView(buttonsContainer);
 
         var textInput = new TextInput();
         container.addSubView(textInput);
