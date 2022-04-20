@@ -75,6 +75,21 @@ extern class RRect {
 }
 
 @:include("render_backend/skia/canvas.h")
+@:native("sk_sp<fluxe::ImageFilter>")
+@:structAccess
+extern class ImageFilter {
+    @:native("sk_sp<fluxe::ImageFilter>")
+    extern public static function Create():ImageFilter;
+}
+
+@:include("render_backend/skia/canvas.h")
+@:native("fluxe::ImageFilters")
+@:structAccess
+extern class ImageFilters {
+    extern public static function Blur(sigmaX:cpp.Float64, sigmaY:cpp.Float64, input:ImageFilter):ImageFilter;
+}
+
+@:include("render_backend/skia/canvas.h")
 @:native("fluxe::Paint")
 @:unreflective
 @:structAccess
@@ -85,6 +100,36 @@ extern class Paint {
     extern public function setDither(dither:Bool):Void;
     extern public function setStrokeWidth(width:Float):Void;
     extern public function setColor(color:Color):Void;
+    extern public function setImageFilter(imageFilter:ImageFilter):Void;
+}
+
+@:native("fluxe::PathDirection")
+@:enum extern abstract PathDirection(String) to String {
+    var kCW;
+    var kCCW;
+}
+
+@:native("fluxe::ArcSize")
+@:enum extern abstract ArcSize(String) to String {
+    var kSmall_ArcSize;
+    var kLarge_ArcSize;
+}
+
+@:include("render_backend/skia/canvas.h")
+@:native("fluxe::Path")
+@:unreflective
+@:structAccess
+extern class Path {
+    extern public function new();
+    extern public function moveTo(x:cpp.Float64, y:cpp.Float64):Void;
+    extern public function rMoveTo(dx:cpp.Float64, dy:cpp.Float64):Void;
+    extern public function lineTo(x:cpp.Float64, y:cpp.Float64):Void;
+    extern public function rLineTo(dx:cpp.Float64, dy:cpp.Float64):Void;
+    extern public function cubicTo(x1:cpp.Float64, y1:cpp.Float64, x2:cpp.Float64, y2:cpp.Float64, x3:cpp.Float64, y3:cpp.Float64):Void;
+    extern public function arcTo1(oval:Rect, startAngle:cpp.Float64, sweepAngle:cpp.Float64, forceMoveTo:Bool):Void;
+    extern public function arcTo2(x1:cpp.Float64, y1:cpp.Float64, x2:cpp.Float64, y2:cpp.Float64, radius:cpp.Float64):Void;
+    extern public function arcTo(rx:cpp.Float64, ry:cpp.Float64, xAxisRotate:cpp.Float64, largeArc:ArcSize, sweep:PathDirection, x:cpp.Float64, y:cpp.Float64):Void;
+    extern public function rArcTo(rx:cpp.Float64, ry:cpp.Float64, xAxisRotate:cpp.Float64, largeArc:ArcSize, sweep:PathDirection, dx:cpp.Float64, dy:cpp.Float64):Void;
 }
 
 @:build(fluxe.views.Build.config())
@@ -100,6 +145,13 @@ extern class NativeCanvas {
     extern public function drawCircle(cx:cpp.Float64, cy:cpp.Float64, radius:cpp.Float64, paint:Paint):Void;
     extern public function drawRoundRect(rect:Rect, rx:cpp.Float64, ry:cpp.Float64, paint:Paint):Void;
     extern public function drawTextBlob(blob:TextBlob, x:cpp.Float64, y:cpp.Float64, paint:Paint):Void;
+
+    extern public function drawLine(x0:cpp.Float64, y0:cpp.Float64, x1:cpp.Float64, y1:cpp.Float64, paint:Paint):Void;
+    extern public function drawOval(oval:Rect, paint:Paint):Void;
+    extern public function drawArc(oval:Rect, startAngle:cpp.Float64, sweepAngle:cpp.Float64, useCenter:Bool, paint:Paint):Void;
+    extern public function drawPath(path:Path, paint:Paint):Void;
+    // extern public function drawImage(const SkImage* image, left:cpp.Float64, top:cpp.Float64):Void;
+    // extern public function drawImageNine(const SkImage* image, const SkIRect& center, const SkRect& dst, SkFilterMode filter, paint:cpp.Pointer<Paint>):Void;
 
     extern public function translate(dx:cpp.Float32, dy:cpp.Float32):Void;
     extern public function scale(sx:cpp.Float32, sy:cpp.Float32):Void;
@@ -131,6 +183,18 @@ class Canvas {
     }
     public function drawTextBlob(blob:TextBlob, x:Float, y:Float, paint:Paint):Void {
         _canvas.ptr.drawTextBlob(blob, x, y, paint);
+    }
+    public function drawLine(x0:Float, y0:Float, x1:Float, y1:Float, paint:Paint):Void {
+        _canvas.ptr.drawLine(x0, y0, x1, y1, paint);
+    }
+    public function drawOval(oval:Rect, paint:Paint):Void {
+        _canvas.ptr.drawOval(oval, paint);
+    }
+    public function drawArc(oval:Rect, startAngle:Float, sweepAngle:Float, useCenter:Bool, paint:Paint):Void {
+        _canvas.ptr.drawArc(oval, startAngle, sweepAngle, useCenter, paint);
+    }
+    public function drawPath(path:Path, paint:Paint):Void {
+        _canvas.ptr.drawPath(path, paint);
     }
     public function translate(dx:Float, dy:Float):Void {
         _canvas.ptr.translate(dx, dy);

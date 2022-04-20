@@ -1,0 +1,8 @@
+-p ../..
+-lib hxcpp
+--cpp out
+examples.paths.Paths
+-D HXCPP_NO_CPP11
+-D HXCPP_GCC
+-D static_link
+--macro "fluxe.views.Build.config()"

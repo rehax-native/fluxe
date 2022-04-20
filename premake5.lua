@@ -234,3 +234,55 @@ project "fluxe-example-layout"
       "skshaper",
       "skunicode",
     }
+
+project "fluxe-example-paths"
+  kind "WindowedApp"
+  language "C++"
+  cppdialect "C++20"
+  location "dev/example-paths"
+
+  includedirs {
+    ".",
+    "./third_party/skia",
+  }
+
+  sysincludedirs {
+    "/usr/local/lib/haxe/lib/hxcpp/4,2,1/include",
+  }
+
+  links {
+    "fluxe-cpp-core",
+  }
+  linkoptions {
+    "../../examples/paths/out/liboutput.a",
+  }
+
+  files {
+    "examples/paths/**.hx",
+    "examples/paths/main.cpp",
+  }
+
+  filter 'files:**.hx'
+    buildcommands {
+      "cd ../../examples/paths && MACOSX_DEPLOYMENT_TARGET=\"10.15\" haxe layout.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
+    }
+    buildoutputs {
+      "examples/paths/out/liboutput.a"
+    }
+
+  filter "system:macosx"
+    systemversion "10.9"
+    
+    libdirs {
+      "third_party/skia/out/Static"
+    }
+
+    links { 
+      "Foundation.framework",
+      "Cocoa.framework",
+      "QuartzCore.framework",
+      "skia",
+      "skparagraph",
+      "skshaper",
+      "skunicode",
+    }

@@ -3,6 +3,8 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRRect.h"
+#include "include/effects/SkImageFilters.h"
+#include "include/core/SkPath.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypeface.h"
 #include "include/core/SkFont.h"
@@ -39,6 +41,13 @@ typedef SkPaint Paint;
 
 typedef SkCanvas Canvas;
 typedef SkSurface Surface;
+
+typedef SkImageFilter ImageFilter;
+typedef SkImageFilters ImageFilters;
+
+typedef SkPathDirection PathDirection;
+typedef SkPath::ArcSize ArcSize;
+typedef SkPath Path;
 
 typedef skia::textlayout::Paragraph Paragraph;
 typedef skia::textlayout::ParagraphBuilder ParagraphBuilder;
