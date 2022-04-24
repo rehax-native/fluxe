@@ -126,10 +126,12 @@ extern class Path {
     extern public function lineTo(x:cpp.Float64, y:cpp.Float64):Void;
     extern public function rLineTo(dx:cpp.Float64, dy:cpp.Float64):Void;
     extern public function cubicTo(x1:cpp.Float64, y1:cpp.Float64, x2:cpp.Float64, y2:cpp.Float64, x3:cpp.Float64, y3:cpp.Float64):Void;
+    extern public function quadTo(x1:cpp.Float64, y1:cpp.Float64, x:cpp.Float64, y:cpp.Float64):Void;
     extern public function arcTo1(oval:Rect, startAngle:cpp.Float64, sweepAngle:cpp.Float64, forceMoveTo:Bool):Void;
     extern public function arcTo2(x1:cpp.Float64, y1:cpp.Float64, x2:cpp.Float64, y2:cpp.Float64, radius:cpp.Float64):Void;
     extern public function arcTo(rx:cpp.Float64, ry:cpp.Float64, xAxisRotate:cpp.Float64, largeArc:ArcSize, sweep:PathDirection, x:cpp.Float64, y:cpp.Float64):Void;
     extern public function rArcTo(rx:cpp.Float64, ry:cpp.Float64, xAxisRotate:cpp.Float64, largeArc:ArcSize, sweep:PathDirection, dx:cpp.Float64, dy:cpp.Float64):Void;
+    extern public function close():Void;
 }
 
 @:build(fluxe.views.Build.config())
