@@ -67,8 +67,8 @@ class TextInput extends View implements IFocusable implements IMouseEventListene
         return value;
     }
 
-    public override function measureLayout() {
-        this.text.measureLayout();
+    public override function measureLayout(constraints:fluxe.layout.LayoutConstraint, parentSize:fluxe.layout.LayoutTypes.PossibleLayoutSize) {
+        this.text.measureLayout(constraints, parentSize);
         var minWidth = 100.0;
         var width = this.text.layoutSize.width + this.padding.left + this.padding.right;
         if (width < minWidth) {

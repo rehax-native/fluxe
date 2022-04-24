@@ -37,8 +37,8 @@ class Button extends View implements IMouseEventListenerContainer implements IPr
 
     public var onClick:(button:Button) -> Void = (btn:Button) -> {};
 
-    public override function measureLayout() {
-        this.title.measureLayout();
+    public override function measureLayout(constraints:fluxe.layout.LayoutConstraint, parentSize:fluxe.layout.LayoutTypes.PossibleLayoutSize) {
+        this.title.measureLayout(constraints, parentSize);
         this.layoutSize = {
             width: this.title.layoutSize.width + this.padding.left + this.padding.right,
             height: this.title.layoutSize.height + this.padding.top + this.padding.bottom,

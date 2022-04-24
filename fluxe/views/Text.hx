@@ -256,8 +256,8 @@ class Text extends View {
         };
     }
 
-    public override function measureLayout() {
-        if (needsLayout) {
+    public override function measureLayout(constraints:fluxe.layout.LayoutConstraint, parentSize:fluxe.layout.LayoutTypes.PossibleLayoutSize) {
+        if (needsLayout || layoutSize == null) {
             buildAndMeasureText();
             needsLayout = false;
         }

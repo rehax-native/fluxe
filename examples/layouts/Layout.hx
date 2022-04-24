@@ -51,8 +51,8 @@ class Layout {
             layout.direction = isHorizontal ? Row : Column;
             layout.itemInfos = [
                 {}, // text
-                { flexGrow: 1.0 }, // button
-                {}, // button
+                { flexGrow: 1.0 }, // button container
+                {}, // text
                 { flexGrow: 1.0 }, // text input
             ];
             container.layout = layout;
@@ -61,7 +61,16 @@ class Layout {
 
         container.addSubView(buttonsContainer);
 
+        text = new Text();
+        text.text = "Fixed Size";
+        text.size = {
+            width: Fixed(50),
+            height: Fixed(50),
+        }
+        container.addSubView(text);
+
         var textInput = new TextInput();
         container.addSubView(textInput);
+
     }
 }

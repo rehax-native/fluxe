@@ -3,8 +3,7 @@ package fluxe.views;
 using fluxe.layout.ILayout;
 using fluxe.layout.ILayoutObject;
 using fluxe.layout.LayoutConstraint;
-using fluxe.layout.LayoutSize;
-using fluxe.layout.LayoutPosition;
+using fluxe.layout.LayoutTypes;
 using fluxe.layout.StackLayout;
 
 using fluxe.render_pipeline.RenderStrategy;
@@ -64,9 +63,31 @@ class View implements ILayoutObject {
     // public function onUnMounted() {}
 
     public var layout(default, set):Null<ILayout> = null;
-    public var layoutConstraints:Null<LayoutConstraint>;
     public var layoutSize:Null<LayoutSize>;
     public var layoutPosition:Null<LayoutPosition>;
+    public var layoutSizeOverride:Null<LayoutSizeOverride>;
+    public var layoutPositionOverride:Null<LayoutPositionOverride>;
+
+    public var size(get, set):Null<LayoutSizeOverride>;
+    public var position(get, set):Null<LayoutPositionOverride>;
+
+    public function set_size(size:Null<LayoutSizeOverride>):Null<LayoutSizeOverride> {
+        this.layoutSizeOverride = size;
+        return size;
+    }
+
+    public function set_position(position:Null<LayoutPositionOverride>):Null<LayoutPositionOverride> {
+        this.layoutPositionOverride = position;
+        return position;
+    }
+
+    public function get_size():Null<LayoutSizeOverride> {
+        return this.layoutSizeOverride;
+    }
+
+    public function get_position():Null<LayoutPositionOverride> {
+        return this.layoutPositionOverride;
+    }
 
     public function set_layout(layout:Null<ILayout>):Null<ILayout> {
         this.layout = layout;
@@ -74,15 +95,15 @@ class View implements ILayoutObject {
         return layout;
     }
 
-    public function measureLayout():Void {
+    public function measureLayout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize):Void {
         var layout = this.layout;
         if (layout == null) {
             layout = new StackLayout();
         }
         // var subLayoutObjects = cast(this.subViews, Array<Dynamic>);
         // this.layoutSize = layout.layout(subLayoutObjects);
-        LayoutConstraintSetter.forwardLayoutConstraints(this);
-        this.layoutSize = layout.layout(cast this, cast this.subViews);
+        // LayoutConstraintSetter.forwardLayoutConstraints(this);
+        this.layoutSize = layout.layout(constraints, parentSize, cast this, cast this.subViews);
     }
 
     public function build(builder:ViewBuilder) {

@@ -17,20 +17,18 @@ class RenderPipeline {
     public function render(width:Int, height:Int, scale:Float):RenderSurface {
         this.width = width;
         this.height = height;
-        if (this.rootView != null) {
-            if (this.rootView.layoutConstraints == null) {
-                this.rootView.layoutConstraints = {
-                    explicitWidth: null,
-                    explicitHeight: null,
-                    minWidth: null,
-                    minHeight: null,
-                    maxWidth: null,
-                    maxHeight: null,
-                };
-            }
-            this.rootView.layoutConstraints.maxWidth = width;
-            this.rootView.layoutConstraints.maxHeight = height;
-        }
+        // if (this.rootView != null) {
+        //     if (this.rootView.layoutConstraints == null) {
+        //         this.rootView.layoutConstraints = {
+        //             minWidth: null,
+        //             minHeight: null,
+        //             maxWidth: null,
+        //             maxHeight: null,
+        //         };
+        //     }
+        //     this.rootView.layoutConstraints.maxWidth = width;
+        //     this.rootView.layoutConstraints.maxHeight = height;
+        // }
 
         viewBuilder.scale = scale;
         if (viewBuilder.rootNode.surface != null) {
@@ -46,7 +44,29 @@ class RenderPipeline {
     }
 
     public function layout() {
-        rootView.measureLayout();
+        layoutResetTraverse(rootView);
+        rootView.layoutPosition = {
+            left: 0,
+            top: 0,
+        };
+        rootView.measureLayout({
+            minWidth: null,
+            minHeight: null,
+            maxWidth: width,
+            maxHeight: height,
+        }, {
+            width: width,
+            height: height,
+        });
+    }
+
+    function layoutResetTraverse(view:View) {
+        view.layoutPosition = null;
+        view.layoutSize = null;
+        var subViews = view.subViews;
+        for (subView in subViews) {
+            layoutResetTraverse(subView);
+        }
     }
 
     public function build() {

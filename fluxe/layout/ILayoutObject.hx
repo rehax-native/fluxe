@@ -1,9 +1,13 @@
 package fluxe.layout;
 
+using fluxe.layout.LayoutTypes;
+
 interface ILayoutObject {
-  var layoutConstraints:Null<LayoutConstraint>;
   var layoutSize:Null<LayoutSize>;
   var layoutPosition:Null<LayoutPosition>;
 
-  function measureLayout():Void;
+  var layoutSizeOverride:Null<LayoutSizeOverride>;
+  var layoutPositionOverride:Null<LayoutPositionOverride>;
+
+  function measureLayout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize):Void;
 }

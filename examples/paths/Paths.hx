@@ -17,7 +17,7 @@ class SimpleLine extends View {
         super();
     }
 
-    public override function measureLayout() {
+    public override function measureLayout(constraints:fluxe.layout.LayoutConstraint, parentSize:fluxe.layout.LayoutTypes.PossibleLayoutSize) {
         this.layoutSize = {
             width: 50,
             height: 30,
@@ -44,7 +44,7 @@ class PathWithArcs extends View {
         super();
     }
 
-    public override function measureLayout() {
+    public override function measureLayout(constraints:fluxe.layout.LayoutConstraint, parentSize:fluxe.layout.LayoutTypes.PossibleLayoutSize) {
         this.layoutSize = {
             width: 100,
             height: 100,
@@ -74,7 +74,7 @@ class PathWithArcsAndBlur extends View {
         super();
     }
 
-    public override function measureLayout() {
+    public override function measureLayout(constraints:fluxe.layout.LayoutConstraint, parentSize:fluxe.layout.LayoutTypes.PossibleLayoutSize) {
         this.layoutSize = {
             width: 100,
             height: 100,

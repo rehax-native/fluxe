@@ -144,6 +144,9 @@ class MouseEventsManager {
     }
 
     private function findViewAtPosition(x:Float, y:Float, view:View):Null<View> {
+        if (view.layoutPosition == null || view.layoutSize == null) {
+            return null;
+        }
 		if (x >= view.layoutPosition.left && x <= view.layoutPosition.left + view.layoutSize.width) {
 		    if (y >= view.layoutPosition.top && y <= view.layoutPosition.top + view.layoutSize.height) {
                 var subViews = view.subViews;

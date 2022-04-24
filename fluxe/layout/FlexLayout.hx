@@ -1,5 +1,6 @@
 package fluxe.layout;
 
+using fluxe.layout.LayoutTypes;
 using fluxe.layout.LayoutConstraint;
 
 enum FlexDirection {
@@ -26,7 +27,8 @@ class FlexLayout implements ILayout {
     return direction;
   }
 
-  public function layout(parent: ILayoutObject, items:Array<ILayoutObject>):LayoutSize {
+  public function layout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize, parent: ILayoutObject, items:Array<ILayoutObject>):LayoutSize {
+    /*
     var zipped:Array<{
       item: ILayoutObject,
       info: FlexItem,
@@ -37,15 +39,11 @@ class FlexLayout implements ILayout {
     var fullHeight = 0.0;
     var availableSize = 0.0;
     if (direction == Row || direction == RowReverse) {
-      if (parent.layoutConstraints != null && parent.layoutConstraints.explicitWidth != null) {
-        availableSize = parent.layoutConstraints.explicitWidth;
-      } else if (parent.layoutConstraints != null && parent.layoutConstraints.maxWidth != null) {
+      if (parent.layoutConstraints != null && parent.layoutConstraints.maxWidth != null) {
         availableSize = parent.layoutConstraints.maxWidth;
       }
     } else {
-      if (parent.layoutConstraints != null && parent.layoutConstraints.explicitHeight != null) {
-        availableSize = parent.layoutConstraints.explicitHeight;
-      } else if (parent.layoutConstraints != null && parent.layoutConstraints.maxHeight != null) {
+      if (parent.layoutConstraints != null && parent.layoutConstraints.maxHeight != null) {
         availableSize = parent.layoutConstraints.maxHeight;
       }
     }
@@ -137,5 +135,7 @@ class FlexLayout implements ILayout {
     } else {
       return { width: maxCross, height: fullSize };
     }
+    */
+    return { width: 0, height: 0 };
   }
 }
