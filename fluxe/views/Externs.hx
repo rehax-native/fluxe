@@ -15,9 +15,92 @@ abstract Color(cpp.UInt32) {
     }
 }
 
+@:native("SkTileMode")
+@:unreflective
+@:enum extern abstract ShaderTileMode(String) to String {
+    var kClamp;
+    var kRepeat;
+    var kMirror;
+    var kDecal;
+}
+
+@:include("render_backend/skia/canvas.h")
+@:structAccess
+@:native("SkPoint")
+@:unreflective
+extern class NativePoint {
+    public static function Make(x:cpp.Float64, y:cpp.Float64):NativePoint;
+}
+
+@:include("render_backend/skia/canvas.h")
+@:structAccess
+@:native("sk_sp<SkShader>")
+@:unreflective
+extern class Shader {
+}
+
+typedef LinearGradientShaderDefinition = {
+    var point0:NativePoint;
+    var point1:NativePoint;
+    var colors:Array<Color>;
+    var positions:Array<cpp.Float32>;
+    // var mode:ShaderTileMode;
+}
+
+typedef RadialGradientShaderDefinition = {
+    var center:NativePoint;
+    var radius:cpp.Float64;
+    var colors:Array<Color>;
+    var positions:Array<cpp.Float32>;
+    // var mode:ShaderTileMode;
+}
+
+class GradientShader {
+    static public function MakeLinear(def:LinearGradientShaderDefinition):Shader {
+        untyped __cpp__('SkPoint pts[2]');
+        var pt0 = def.point0;
+        var pt1 = def.point1;
+        untyped __cpp__('pts[0] = pt0');
+        untyped __cpp__('pts[1] = pt1');
+        var count = def.colors.length;
+        untyped __cpp__('SkColor colors[count]');
+        untyped __cpp__('SkScalar positions[count]');
+        for (i in 0...count) {
+            var col = def.colors[i];
+            var pos = def.positions[i];
+            untyped __cpp__('colors[i] = col');
+            untyped __cpp__('positions[i] = pos');
+        }
+        // var gradient = GradientShader.MakeLinear(untyped __cpp__('pts'), colors, pos, 3, ShaderTileMode.kClamp);
+        // var gradient = GradientShader.MakeLinear(untyped __cpp__('pts'), colors, pos, 3, ShaderTileMode.kClamp);
+        // var cols = cpp.Pointer.ofArray(def.colors).constRaw;
+        // var pos = cpp.Pointer.ofArray(def.positions).constRaw;
+        // var mode = def.mode;
+        var gradient = untyped __cpp__('SkGradientShader::MakeLinear(pts, colors, positions, count, SkTileMode::kClamp)');
+        return gradient;
+    }
+
+    static public function MakeRadial(def:RadialGradientShaderDefinition):Shader {
+        var center = def.center;
+        var count = def.colors.length;
+        var radius = def.radius;
+        untyped __cpp__('SkColor colors[count]');
+        untyped __cpp__('SkScalar positions[count]');
+        for (i in 0...count) {
+            var col = def.colors[i];
+            var pos = def.positions[i];
+            untyped __cpp__('colors[i] = col');
+            untyped __cpp__('positions[i] = pos');
+        }
+        var gradient = untyped __cpp__('SkGradientShader::MakeRadial(center, radius, colors, positions, count, SkTileMode::kClamp)');
+        return gradient;
+    }
+}
+
 @:include("render_backend/skia/canvas.h")
 @:structAccess
 @:native("fluxe::Paint::Style")
+@:unreflective
 extern class NativePaintStyle {
 }
 
@@ -101,6 +184,7 @@ extern class Paint {
     extern public function setStrokeWidth(width:Float):Void;
     extern public function setColor(color:Color):Void;
     extern public function setImageFilter(imageFilter:ImageFilter):Void;
+    extern public function setShader(shader:Shader):Void;
 }
 
 @:native("fluxe::PathDirection")

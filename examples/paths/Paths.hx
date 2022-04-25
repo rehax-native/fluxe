@@ -64,6 +64,23 @@ class PathWithArcs extends View {
         path.cubicTo(50, 40, 20, 20, 40, 40);
         path.arcTo(20, 20, 30, kLarge_ArcSize, kCW, 50, 50);
 
+        var gradient = GradientShader.MakeLinear({
+            point0: NativePoint.Make(0, 0),
+            point1: NativePoint.Make(70, 70),
+            colors: [
+                Color.RGBA(1.0, 0.0, 0.0, 0.8),
+                Color.RGBA(0.0, 0.6, 0.6, 0.8),
+                Color.RGBA(1.0, 1.0, 0.6, 0.8),
+            ],
+            positions: [
+                0.0,
+                0.6,
+                1.0,
+            ],
+            // mode: ShaderTileMode.kClamp,
+        });
+        paint.setShader(gradient);
+
         builder.canvas.drawPath(path, paint);
     }
 }
