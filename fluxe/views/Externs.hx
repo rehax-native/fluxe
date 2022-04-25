@@ -59,12 +59,12 @@ class GradientShader {
     static public function MakeLinear(def:LinearGradientShaderDefinition):Shader {
         var count = def.colors.length;
 
-        untyped __cpp__('SkPoint * pts = new SkPoint[2];');
-        // untyped __cpp__('SkPoint pts[2]');
-        untyped __cpp__('SkColor * colors = new SkColor[count]');
-        // untyped __cpp__('SkColor colors[count]');
-        untyped __cpp__('SkScalar * positions = new SkScalar[count]');
-        // untyped __cpp__('SkScalar positions[count]');
+        // untyped __cpp__('SkPoint * pts = new SkPoint[2];');
+        // untyped __cpp__('SkColor * colors = new SkColor[count]');
+        // untyped __cpp__('SkScalar * positions = new SkScalar[count]');
+        untyped __cpp__('SkPoint pts[2]');
+        untyped __cpp__('SkColor colors[count]');
+        untyped __cpp__('SkScalar positions[count]');
 
         var pt0 = def.point0;
         var pt1 = def.point1;
@@ -88,10 +88,10 @@ class GradientShader {
     static public function MakeRadial(def:RadialGradientShaderDefinition):Shader {
         var count = def.colors.length;
 
-        untyped __cpp__('SkColor * colors = new SkColor[count]');
-        // untyped __cpp__('SkColor colors[count]');
-        untyped __cpp__('SkScalar * positions = new SkScalar[count]');
-        // untyped __cpp__('SkScalar positions[count]');
+        untyped __cpp__('SkColor colors[count]');
+        untyped __cpp__('SkScalar positions[count]');
+        // untyped __cpp__('SkColor * colors = new SkColor[count]');
+        // untyped __cpp__('SkScalar * positions = new SkScalar[count]');
 
         var center = def.center;
         var radius = def.radius;
