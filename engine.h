@@ -4,6 +4,12 @@
 #include <string>
 #include "render_backend/skia/canvas.h"
 
+#ifdef _WIN32
+#include "shell/win/platformWindow.h"
+#include "shell/win/platformView.h"
+#else
+#endif
+
 namespace fluxe {
 
 /**
@@ -31,37 +37,14 @@ class Engine {
 
   /**
    * Attach the engine to a native platform window.
+   * Returns a pointer to the native platform view.
    */
-  void attachToPlatformWindow(void * platformWindow);
+  FluxePlatformView * attachToPlatformWindow(void * platformWindow);
 
   /**
-   * Detach the engine from the native platform window it is currently attached to.
+   * Detach the platform view from the native platform window that has been attached to with attachToPlatformWindow.
    */
-  void detachFromPlatformWindow();
-
-  /**
-   * Render the canvas to screen
-   */
-  // void renderCanvas(Canvas * canvas);
-  void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback);
-  void setMouseDownCallback(std::function<void(float left, float top, int button)> callback);
-  void setMouseMoveCallback(std::function<void(float left, float top)> callback);
-  void setMouseUpCallback(std::function<void(float left, float top, int button)> callback);
-  void setTextCallback(std::function<void(const char* str)> callback);
-  void setKeyDownCallback(std::function<void(int code)> callback);
-  void setKeyUpCallback(std::function<void(int code)> callback);
-  
-  void setMoveLeftCallback(std::function<void(bool select)> callback);
-  void setMoveRightCallback(std::function<void(bool select)> callback);
-  void setMoveWordLeftCallback(std::function<void(bool select)> callback);
-  void setMoveWordRightCallback(std::function<void(bool select)> callback);
-  void setMoveBackwardCallback(std::function<void(bool select)> callback);
-  void setMoveForwardCallback(std::function<void(bool select)> callback);
-  void setDeleteBackwardCallback(std::function<void(void)> callback);
-  void setDeleteForwardCallback(std::function<void(void)> callback);
-  void setSelectAllCallback(std::function<void(void)> callback);
-
-  void setNeedsRerender();
+  void detachFromPlatformWindow(FluxePlatformView * platformView);
 
   /**
    * Start the main run loop. Call this if you don't have an existing run loop and want fluxe to create one for you.

@@ -44,10 +44,32 @@ class TextBox {
 }
 
 @:include("render_backend/skia/canvas.h")
+@:native("SkString")
+@:unreflective
+@:structAccess
+extern class SkString {
+    @:native("SkString")
+    public static function FromString(str:cpp.ConstCharStar):SkString;
+}
+
+@:include("vector")
+@:native("std::vector<SkString>")
+@:unreflective
+@:structAccess
+extern class FontFamiliesVector {
+    @:native("std::vector<SkString>")
+    public static function Create():FontFamiliesVector;
+    public function push_back(str:SkString):Void;
+}
+
+@:include("render_backend/skia/canvas.h")
 @:native("fluxe::TextStyle")
 @:unreflective
 @:structAccess
 extern class TextStyle {
+    @:native("fluxe::TextStyle")
+    public static function Create():TextStyle;
+    
     public function setColor(color:Color):Void;
     public function setForegroundColor(color:Color):Void;
     public function clearForegroundColor():Void;
@@ -64,7 +86,7 @@ extern class TextStyle {
     public function addShadow(shadow:TextShadow):Void;
     // void addFontFeature(const SkString& fontFeature, int value)
     public function setFontSize(size:cpp.Float64):Void;
-    // void setFontFamilies(std::vector<SkString> families) {
+    public function setFontFamilies(families:FontFamiliesVector):Void;
     // SkScalar getBaselineShift() const { return fBaselineShift; }
     // void setBaselineShift(SkScalar baselineShift) { fBaselineShift = baselineShift; }
     // void setHeight(SkScalar height) { fHeight = height; }
@@ -198,6 +220,9 @@ extern class ParagraphBuilder {
 
     public function addText(text:String):Void;
 
+    @:native("addText")
+    public function addText2(text:cpp.ConstCharStar, len:Int):Void;
+
     // void addPlaceholder(const PlaceholderStyle& placeholderStyle) override;
 
     // void setParagraphStyle(const ParagraphStyle& style) override;
@@ -241,12 +266,37 @@ class Text extends View {
 
     private function buildAndMeasureText() {
         var paragraphStyle = ParagraphStyle.Create();
+        var textStyle = TextStyle.Create();
+        textStyle.setColor(Color.RGBA(1.0, 0.0, 0.0, 1.0));
+        textStyle.setFontSize(12);
         var fontCollection = FontCollection.Create();
+
+        // var families = FontFamiliesVector.Create();
+        // families.push_back(SkString.FromString(cpp.ConstCharStar.fromString("Arial")));
+        // families.push_back(SkString.FromString(cpp.ConstCharStar.fromString("Courier")));
+        // textStyle.setFontFamilies(families);
+        paragraphStyle.setTextStyle(textStyle);
+
         var builder = ParagraphBuilder.Create(paragraphStyle, fontCollection);
-        builder.addText(this.text);
+        builder.pushStyle(textStyle);
+        // builder.addText(this.text);
+        // builder.addText2(cpp.ConstCharStar.fromString("Test"), 5);
+        // untyped __cpp__("builder.addText(\"Hello\")");
+        untyped __cpp__("std::string textx = \"Hello\"");
+        untyped __cpp__("builder.addText(textx.c_str(), textx.length())");
+        builder.pop();
 
         paragraph = builder.Build();
-        paragraph.layout(300);
+        var maxWidth = 99999.0;
+        /*
+        if (this.layoutConstraints != null && this.layoutConstraints.maxWidth != null) {
+            maxWidth = this.layoutConstraints.maxWidth;
+        }
+        if (this.layoutConstraints != null && this.layoutConstraints.explicitWidth != null) {
+            maxWidth = this.layoutConstraints.explicitWidth;
+        }
+        */
+        paragraph.layout(maxWidth);
         var height = paragraph.getHeight();
         var width = paragraph.getLongestLine();
 

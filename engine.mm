@@ -9,22 +9,6 @@
 #include "include/utils/mac/SkCGUtils.h"
 
 fluxe::Canvas * globalCanvas = nullptr;
-std::function<sk_sp<fluxe::Surface>(int, int, float)> globalCallback;
-std::function<void(float left, float top, int button)> mouseDownCallback;
-std::function<void(float left, float top, int button)> mouseUpCallback;
-std::function<void(float left, float top)> mouseMoveCallback;
-std::function<void(const char * str)> textCallback;
-std::function<void(int code)> keyDownCallback;
-std::function<void(int code)> keyUpCallback;
-std::function<void(bool select)> moveLeftCallback;
-std::function<void(bool select)> moveRightCallback;
-std::function<void(bool select)> moveWordLeftCallback;
-std::function<void(bool select)> moveWordRightCallback;
-std::function<void(bool select)> moveBackwardCallback;
-std::function<void(bool select)> moveForwardCallback;
-std::function<void(void)> deleteBackwardCallback;
-std::function<void(void)> deleteForwardCallback;
-std::function<void(void)> selectAllCallback;
 
 // TODO need to clean this up
 // this isn't supposed to be here
@@ -268,58 +252,10 @@ void fluxe::Engine::attachToPlatformWindow(void * platformWindow)
 void fluxe::Engine::detachFromPlatformWindow()
 {}
 
-// void fluxe::Engine::renderCanvas(Canvas * canvas)
-// {
-//   globalCanvas = canvas;
-//   globalView.needsDisplay = YES;
-// }
-void fluxe::Engine::setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback)
-{
-  globalCallback = callback;
-}
-
 void fluxe::Engine::setNeedsRerender()
 {
   globalView.needsDisplay = YES;
 }
-
-void fluxe::Engine::setMouseDownCallback(std::function<void(float left, float top, int button)> callback)
-{
-  mouseDownCallback = callback;
-}
-void fluxe::Engine::setMouseUpCallback(std::function<void(float left, float top, int button)> callback)
-{
-  mouseUpCallback = callback;
-}
-void fluxe::Engine::setMouseMoveCallback(std::function<void(float left, float top)> callback)
-{
-  mouseMoveCallback = callback;
-}
-
-void fluxe::Engine::setKeyDownCallback(std::function<void(int code)> callback)
-{
-  keyDownCallback = callback;
-}
-
-void fluxe::Engine::setKeyUpCallback(std::function<void(int code)> callback)
-{
-  keyUpCallback = callback;
-}
-
-void fluxe::Engine::setTextCallback(std::function<void(const char *)> callback)
-{
-  textCallback = callback;
-}
-
-void fluxe::Engine::setMoveLeftCallback(std::function<void(bool select)> callback) { moveLeftCallback = callback; }
-void fluxe::Engine::setMoveRightCallback(std::function<void(bool select)> callback) { moveRightCallback = callback; }
-void fluxe::Engine::setMoveWordLeftCallback(std::function<void(bool select)> callback) { moveWordLeftCallback = callback; }
-void fluxe::Engine::setMoveWordRightCallback(std::function<void(bool select)> callback) { moveWordRightCallback = callback; }
-void fluxe::Engine::setMoveBackwardCallback(std::function<void(bool select)> callback) { moveBackwardCallback = callback; }
-void fluxe::Engine::setMoveForwardCallback(std::function<void(bool select)> callback) { moveForwardCallback = callback; }
-void fluxe::Engine::setDeleteBackwardCallback(std::function<void(void)> callback) { deleteBackwardCallback = callback; }
-void fluxe::Engine::setDeleteForwardCallback(std::function<void(void)> callback) { deleteForwardCallback = callback; }
-void fluxe::Engine::setSelectAllCallback(std::function<void(void)> callback) { selectAllCallback = callback; }
 
 void fluxe::Engine::startMainLoop()
 {

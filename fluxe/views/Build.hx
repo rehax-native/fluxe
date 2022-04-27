@@ -38,23 +38,26 @@ class Build {
 
 		var xml = '
         <files id="haxe">
-            <compilerflag value="-std=c++20" />
-            <compilerflag value="-stdlib=libc++" />
-            <compilerflag value="-mmacosx-version-min=10.9" />
+            <compilerflag value="-std=c++20" unless="windows" />
+            <compilerflag value="/std:c++20" if="windows" />
+            <compilerflag value="-stdlib=libc++" unless="windows" />
+            <compilerflag value="-mmacosx-version-min=10.9" if="macos" />
             <compilerflag value="-I$basePath" />
             <compilerflag value="-I$skiaPath" />
             <compilerflag value="-I$skiaIncludePath" />
             $injectedSkiaInclude
         </files>
         <files id="__lib__">
-            <compilerflag value="-std=c++20" />
-            <compilerflag value="-stdlib=libc++" />
-            <compilerflag value="-mmacosx-version-min=10.9" />
+            <compilerflag value="-std=c++20" unless="windows" />
+            <compilerflag value="/std:c++20" if="windows" />
+            <compilerflag value="-stdlib=libc++" unless="windows" />
+            <compilerflag value="-mmacosx-version-min=10.9" if="macos" />
         </files>
         <files id="runtime">
-            <compilerflag value="-std=c++14" />
-            <compilerflag value="-stdlib=libc++" />
-            <compilerflag value="-mmacosx-version-min=10.9" />
+            <compilerflag value="-std=c++14" unless="windows" />
+            <compilerflag value="/std:c++14" if="windows" />
+            <compilerflag value="-stdlib=libc++" unless="windows" />
+            <compilerflag value="-mmacosx-version-min=10.9" if="macos" />
         </files>
 		';
         // <target id="haxe" tool="linker" toolid="exe">

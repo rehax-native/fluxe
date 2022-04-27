@@ -1,9 +1,15 @@
 import os
 import shutil
 import json
+import sys
+
+platform = 'darwin'
+is_win = sys.platform == 'cygwin'
+if is_win:
+  platform = 'win'
 
 print('Creating zip')
-shutil.make_archive('build/fluxe-static', 'zip', 'build/out')
+shutil.make_archive('build/fluxe-static-' + platform, 'zip', 'build/out')
 
 with open('haxelib.json') as file:
   lib_info = json.load(file)
@@ -19,4 +25,4 @@ if res == 256:
 
 val = input('Upload release files now?')
 if val.lower() == 'y':
-  os.system('gh release upload v{} build/fluxe-static.zip --clobber'.format(version))
+  os.system('gh release upload v{} build/fluxe-static-{}.zip --clobber'.format(version, platform))

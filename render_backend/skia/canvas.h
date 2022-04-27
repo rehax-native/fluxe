@@ -43,6 +43,7 @@ typedef SkSurface Surface;
 typedef skia::textlayout::Paragraph Paragraph;
 typedef skia::textlayout::ParagraphBuilder ParagraphBuilder;
 typedef skia::textlayout::ParagraphBuilderImpl ParagraphBuilderImpl;
+typedef skia::textlayout::TextStyle TextStyle;
 typedef skia::textlayout::ParagraphStyle ParagraphStyle;
 typedef skia::textlayout::FontCollection FontCollection;
 typedef skia::textlayout::TextBox TextBox;
