@@ -12,9 +12,7 @@ typedef TextSelectionRange = {
     var end:Int;
 }
 
-class TextInput extends View implements IFocusable implements IMouseEventListenerContainer implements IPressEventListener implements IActionListener {
-
-    public var mouseEventListeners:Array<IMouseEventListener>;
+class TextInput extends View implements IFocusable implements IPressEventListener implements IActionListener {
 
     public function new() {
         super();

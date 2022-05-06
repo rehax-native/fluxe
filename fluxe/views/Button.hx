@@ -13,7 +13,7 @@ enum ButtonState {
     Disabled;
 }
 
-class Button extends View implements IMouseEventListenerContainer implements IPressEventListener implements IFocusable {
+class Button extends View implements IPressEventListener implements IFocusable {
     public var title:Text;
     public var padding:Padding = {
         left: 10,
@@ -23,8 +23,6 @@ class Button extends View implements IMouseEventListenerContainer implements IPr
     };
     
     private var state:ButtonState = ButtonState.Up;
-
-    public var mouseEventListeners:Array<IMouseEventListener>;
 
     public function new() {
         super();

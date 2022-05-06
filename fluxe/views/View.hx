@@ -8,7 +8,7 @@ using fluxe.layout.StackLayout;
 
 using fluxe.render_pipeline.RenderStrategy;
 
-class View implements ILayoutObject {
+class View implements ILayoutObject implements fluxe.events.MouseEventsManager.IMouseEventListenerContainer {
     public static var defaultRenderStrategy:RenderStrategy = new PaintAlwaysRenderStrategy();
     public function renderStrategy():RenderStrategy {
         return defaultRenderStrategy;
@@ -94,6 +94,8 @@ class View implements ILayoutObject {
         this.needsRerender = true; // TODO this should be `needsLayout`, but that's currently not implemented yet
         return layout;
     }
+
+    public var mouseEventListeners:Array<fluxe.events.MouseEventsManager.IMouseEventListener>;
 
     public function measureLayout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize):Void {
         var layout = this.layout;
