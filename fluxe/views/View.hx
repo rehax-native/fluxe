@@ -95,7 +95,7 @@ class View implements ILayoutObject implements fluxe.events.MouseEventsManager.I
         return layout;
     }
 
-    public var mouseEventListeners:Array<fluxe.events.MouseEventsManager.IMouseEventListener>;
+    public var mouseEventListeners:Array<fluxe.events.MouseEventsManager.IMouseEventListener> = [];
 
     public function measureLayout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize):Void {
         var layout = this.layout;
