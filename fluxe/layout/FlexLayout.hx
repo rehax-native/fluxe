@@ -10,9 +10,49 @@ enum FlexDirection {
   ColumnReverse;
 }
 
+enum FlexJustifyContent {
+  /** items are packed toward the start line
+      |AABBCCC    |
+  **/
+  FlexStart;
+
+  /** items are packed toward to end line
+      |    AABBCCC|
+  **/
+  FlexEnd;
+
+  /** items are centered along the line
+      |  AABBCCC  |
+  **/
+  Center;
+
+  /** items are evenly distributed in the line; first item is on the start line, last item on the end line  
+      |AA  BB  CCC|
+  **/
+  SpaceBetween;
+
+  /** items are evenly distributed in the line with equal space around them
+      | AA BB CCC |
+  **/
+  SpaceAround;
+
+  /** items are distributed so that the spacing between any two adjacent alignment subjects, before the first alignment subject, and after the last alignment subject is the same
+  **/
+  SpaceEvenly;
+}
+
+enum FlexAlignItems {
+  FlexStart; // cross-start margin edge of the items is placed on the cross-start line
+  FlexEnd; // cross-end margin edge of the items is placed on the cross-end line
+  Center; // items are centered in the cross-axis
+  // var Baseline; // items are aligned such as their baselines align
+  Stretch; // stretch to fill the container (still respect min-width/max-width)
+}
+
 typedef FlexItem = {
   ?order:Int,
   ?flexGrow:Float,
+  ?alignSelf:FlexAlignItems,
 }
 
 class FlexLayout implements ILayout {
@@ -27,8 +67,10 @@ class FlexLayout implements ILayout {
     return direction;
   }
 
+  public var justifyContent(default, default):FlexJustifyContent = FlexStart;
+  public var alignItems(default, default):FlexAlignItems = FlexStart;
+
   public function layout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize, parent: ILayoutObject, items:Array<ILayoutObject>):LayoutSize {
-    /*
     var zipped:Array<{
       item: ILayoutObject,
       info: FlexItem,
@@ -38,13 +80,21 @@ class FlexLayout implements ILayout {
     var fullWidth = 0.0;
     var fullHeight = 0.0;
     var availableSize = 0.0;
+
+    var nextConstraints = {
+      maxWidth: constraints.maxWidth,
+      maxHeight: constraints.maxHeight,
+      minWidth: constraints.minWidth,
+      minHeight: constraints.minHeight,
+    };
+
     if (direction == Row || direction == RowReverse) {
-      if (parent.layoutConstraints != null && parent.layoutConstraints.maxWidth != null) {
-        availableSize = parent.layoutConstraints.maxWidth;
+      if (parentSize.width != null) {
+        availableSize = parentSize.width;
       }
     } else {
-      if (parent.layoutConstraints != null && parent.layoutConstraints.maxHeight != null) {
-        availableSize = parent.layoutConstraints.maxHeight;
+      if (parentSize.height != null) {
+        availableSize = parentSize.height;
       }
     }
     var fullSize = availableSize;
@@ -59,8 +109,10 @@ class FlexLayout implements ILayout {
         info.order = 0;
       }
 
-      item.measureLayout();
-      LayoutConstraintSetter.applyLayoutConstraints(item);
+      item.measureLayout(constraints, parentSize);
+
+      var overrideResult = LayoutConstraintSetter.handleLayoutOverride(nextConstraints, parentSize, item);
+      LayoutConstraintSetter.applyLayoutConstraints(item, constraints);
 
       if (info.flexGrow != null) {
         flexSum += info.flexGrow;
@@ -75,6 +127,16 @@ class FlexLayout implements ILayout {
         item: item,
         info: info
       });
+
+      if (direction == Row || direction == RowReverse) {
+        if (item.layoutSize.height > maxCross) {
+          maxCross = item.layoutSize.height;
+        }
+      } else {
+        if (item.layoutSize.width > maxCross) {
+          maxCross = item.layoutSize.width;
+        }
+      }
     }
 
     zipped.sort((a, b) -> {
@@ -86,6 +148,7 @@ class FlexLayout implements ILayout {
     }
 
     var pos = 0.0;
+
     var sign = 1.0;
     if (direction == RowReverse) {
       pos = fullWidth;
@@ -102,31 +165,43 @@ class FlexLayout implements ILayout {
       }
 
       if (direction == Row || direction == RowReverse) {
+        var crossPos = 0.0;
+        if (alignItems == Center) {
+          crossPos = (maxCross - item.item.layoutSize.height) / 2.0;
+        } else if (alignItems == Stretch) {
+          // todo this should layout the item with the full available size
+          crossPos = 0.0;
+          item.item.layoutSize.height = maxCross;
+        } else if (alignItems == FlexEnd) {
+          crossPos = maxCross - item.item.layoutSize.height;
+        }
         item.item.layoutPosition = {
           left: pos,
-          top: 0,
+          top: crossPos,
         };
         if (size != null) {
           item.item.layoutSize.width = size;
         }
         pos += sign * item.item.layoutSize.width;
-
-        if (item.item.layoutSize.height > maxCross) {
-          maxCross = item.item.layoutSize.height;
-        }
       } else {
+        var crossPos = 0.0;
+        if (alignItems == Center) {
+          crossPos = (maxCross - item.item.layoutSize.width) / 2.0;
+        } else if (alignItems == Stretch) {
+          // todo this should layout the item with the full available size
+          crossPos = 0.0;
+          item.item.layoutSize.width = maxCross;
+        } else if (alignItems == FlexEnd) {
+          crossPos = maxCross - item.item.layoutSize.width;
+        }
         item.item.layoutPosition = {
-          left: 0,
+          left: crossPos,
           top: pos,
         };
         if (size != null) {
           item.item.layoutSize.height = size;
         }
         pos += sign * item.item.layoutSize.height;
-
-        if (item.item.layoutSize.width > maxCross) {
-          maxCross = item.item.layoutSize.width;
-        }
       }
     }
 
@@ -135,7 +210,5 @@ class FlexLayout implements ILayout {
     } else {
       return { width: maxCross, height: fullSize };
     }
-    */
-    return { width: 0, height: 0 };
   }
 }
