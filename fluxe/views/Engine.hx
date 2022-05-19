@@ -27,16 +27,23 @@ extern class Engine {
 @:unreflective
 class EngineUtility {
     public static function startWithView(view:View):Void {
-        var util = new EngineUtility(view);
+        var util = new EngineUtility();
+        var window = util.engine.ptr.createPlatformWindow();
+        util.init(view, window);
         trace(util);
     }
 
+    public static function startWithViewAndPlatformWindow(view:View, window:cpp.RawPointer<Void>):Void {
+        var util = new EngineUtility();
+        util.init(view, window);
+        trace(util);
+    }
 
     var engine = Engine.Create();
     var viewManager:ViewManager;
+    private function new() {}
 
-    private function new(view:View) {
-        var window = engine.ptr.createPlatformWindow();
+    private function init(view:View, window:cpp.RawPointer<Void>) {
         engine.ptr.attachToPlatformWindow(window);
         viewManager = new ViewManager(view);
         viewManager.onNeedsRerender = () -> {
