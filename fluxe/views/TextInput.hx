@@ -25,6 +25,7 @@ class TextInput extends View implements IFocusable implements IPressEventListene
 
     private var text = new Text();
     public var value(default, set): String;
+    public var onValueChange: (value:String) -> Void = (value:String) -> {};
     private var caretTimer:Null<fluxe.animation.Timer> = null;
     private var isShowingCaret = false;
     private var selectionRange = {
@@ -62,6 +63,7 @@ class TextInput extends View implements IFocusable implements IPressEventListene
         } else {
             text.text = value;
         }
+        onValueChange(value);
         return value;
     }
 
