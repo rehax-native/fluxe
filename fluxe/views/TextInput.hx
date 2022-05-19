@@ -24,7 +24,7 @@ class TextInput extends View implements IFocusable implements IPressEventListene
     }
 
     private var text = new Text();
-    public var value(default, set): String;
+    public var value(default, set):String;
     public var onValueChange: (value:String) -> Void = (value:String) -> {};
     private var caretTimer:Null<fluxe.animation.Timer> = null;
     private var isShowingCaret = false;
@@ -54,16 +54,18 @@ class TextInput extends View implements IFocusable implements IPressEventListene
     }
 
     public function set_value(value:String):String {
-        this.value = value;
-        if (isHiddenCharacters) {
-            text.text = '';
-            for (i in 0...value.length) {
-                text.text += '•';
+        if (this.value != value) {
+            this.value = value;
+            if (isHiddenCharacters) {
+                text.text = '';
+                for (i in 0...value.length) {
+                    text.text += '•';
+                }
+            } else {
+                text.text = value;
             }
-        } else {
-            text.text = value;
+            onValueChange(value);
         }
-        onValueChange(value);
         return value;
     }
 
