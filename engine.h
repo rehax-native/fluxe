@@ -40,6 +40,16 @@ class Engine {
   void detachFromPlatformWindow();
 
   /**
+   * Attach the engine to a native platform view.
+   */
+  void attachToPlatformView(void * platformView);
+
+  /**
+   * Detach the engine from the native platform view it is currently attached to.
+   */
+  void detachFromPlatformView();
+
+  /**
    * Render the canvas to screen
    */
   // void renderCanvas(Canvas * canvas);

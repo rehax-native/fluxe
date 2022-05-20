@@ -268,6 +268,29 @@ void fluxe::Engine::attachToPlatformWindow(void * platformWindow)
 void fluxe::Engine::detachFromPlatformWindow()
 {}
 
+void fluxe::Engine::attachToPlatformView(void * platformView)
+{
+  CanvasView * view = [CanvasView new];
+  [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+  view.translatesAutoresizingMaskIntoConstraints = YES;
+  
+  NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
+  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:view.bounds
+                                                      options:options
+                                                        owner:view
+                                                     userInfo:nil];
+  [view addTrackingArea:area];
+
+  globalView = view;
+  
+  NSView * providedView = (__bridge NSView *) platformView;
+  [providedView addSubview:view];
+  [view becomeFirstResponder];
+}
+
+void fluxe::Engine::detachFromPlatformView()
+{}
+
 // void fluxe::Engine::renderCanvas(Canvas * canvas)
 // {
 //   globalCanvas = canvas;
