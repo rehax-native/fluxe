@@ -194,6 +194,42 @@ extern class Paint {
     extern public function setColor(color:Color):Void;
     extern public function setImageFilter(imageFilter:ImageFilter):Void;
     extern public function setShader(shader:Shader):Void;
+    extern public function setStrokeMiter(miter:cpp.Float64):Void;
+}
+
+enum PaintStrokeJoin {
+    Miter;
+    Round;
+    Bevel;
+}
+
+enum PaintStrokeCap {
+    Butt;
+    Round;
+    Square;
+}
+
+class PaintUtil {
+    static public inline function setStrokeJoin(paint:Paint, strokeJoin:PaintStrokeJoin) {
+        switch (strokeJoin) {
+            case Miter:
+                untyped __cpp__('paint.setStrokeJoin(SkPaint::kMiter_Join)');
+            case Round:
+                untyped __cpp__('paint.setStrokeJoin(SkPaint::kRound_Join)');
+            case Bevel:
+                untyped __cpp__('paint.setStrokeJoin(SkPaint::kBevel_Join)');
+        }
+    }
+    static public inline function setStrokeCap(paint:Paint, strokeCap:PaintStrokeCap) {
+        switch (strokeCap) {
+            case Butt:
+                untyped __cpp__('paint.setStrokeCap(SkPaint::kButt_Cap)');
+            case Round:
+                untyped __cpp__('paint.setStrokeCap(SkPaint::kRound_Cap)');
+            case Square:
+                untyped __cpp__('paint.setStrokeCap(SkPaint::kSquare_Cap)');
+        }
+    }
 }
 
 @:native("fluxe::PathDirection")

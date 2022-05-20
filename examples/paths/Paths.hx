@@ -57,6 +57,8 @@ class PathWithArcs extends View {
         paint.setColor(Color.RGBA(1.0, 1.0, 0.6, 0.8));
         paint.setStyle(PaintStyle.Stroke);
         paint.setStrokeWidth(2.0);
+        PaintUtil.setStrokeCap(paint, Round);
+        PaintUtil.setStrokeJoin(paint, Round);
 
         var path = new Path();
         path.moveTo(20, 10);
