@@ -181,6 +181,20 @@ extern class ImageFilters {
     extern public static function Blur(sigmaX:cpp.Float64, sigmaY:cpp.Float64, input:ImageFilter):ImageFilter;
 }
 
+@:native("SkPaint::Join")
+@:enum extern abstract PaintStrokeJoin(String) to String {
+    var kMiter_Join;
+    var kRound_Join;
+    var kBevel_Join;
+}
+
+@:native("SkPaint::Cap")
+@:enum extern abstract PaintStrokeCap(String) to String {
+    var kButt_Cap;
+    var kRound_Cap;
+    var kSquare_Cap;
+}
+
 @:include("render_backend/skia/canvas.h")
 @:native("fluxe::Paint")
 @:unreflective
@@ -195,41 +209,8 @@ extern class Paint {
     extern public function setImageFilter(imageFilter:ImageFilter):Void;
     extern public function setShader(shader:Shader):Void;
     extern public function setStrokeMiter(miter:cpp.Float64):Void;
-}
-
-enum PaintStrokeJoin {
-    Miter;
-    Round;
-    Bevel;
-}
-
-enum PaintStrokeCap {
-    Butt;
-    Round;
-    Square;
-}
-
-class PaintUtil {
-    static public inline function setStrokeJoin(paint:Paint, strokeJoin:PaintStrokeJoin) {
-        switch (strokeJoin) {
-            case Miter:
-                untyped __cpp__('paint.setStrokeJoin(SkPaint::kMiter_Join)');
-            case Round:
-                untyped __cpp__('paint.setStrokeJoin(SkPaint::kRound_Join)');
-            case Bevel:
-                untyped __cpp__('paint.setStrokeJoin(SkPaint::kBevel_Join)');
-        }
-    }
-    static public inline function setStrokeCap(paint:Paint, strokeCap:PaintStrokeCap) {
-        switch (strokeCap) {
-            case Butt:
-                untyped __cpp__('paint.setStrokeCap(SkPaint::kButt_Cap)');
-            case Round:
-                untyped __cpp__('paint.setStrokeCap(SkPaint::kRound_Cap)');
-            case Square:
-                untyped __cpp__('paint.setStrokeCap(SkPaint::kSquare_Cap)');
-        }
-    }
+    extern public function setStrokeJoin(join:PaintStrokeJoin):Void;
+    extern public function setStrokeCap(join:PaintStrokeCap):Void;
 }
 
 @:native("fluxe::PathDirection")
