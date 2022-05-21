@@ -15,11 +15,31 @@ class Layout {
         EngineUtility.startWithView(layout.container);
     }
 
+    private static var justifyOptions:Array<FlexJustifyContent> = [
+        FlexStart,
+        FlexEnd,
+        Center,
+        SpaceBetween,
+        SpaceAround,
+        SpaceEvenly,
+    ];
+
+    private static var alignOptions:Array<FlexAlignItems> = [
+        FlexStart,
+        FlexEnd,
+        Center,
+        // var Baseline; // items are aligned such as their baselines align
+        Stretch,
+    ];
+
     public var container:View;
     private var isHorizontal = false;
     private var enableFlexGrow = true;
     private var flexJustify:FlexJustifyContent = FlexStart;
     private var alignItems:FlexAlignItems = FlexStart;
+
+    private var justifyOptionIndex = 0;
+    private var alignOptionIndex = 0;
 
     public function new() {
         container = new View();
@@ -55,17 +75,21 @@ class Layout {
         buttonsContainer.addSubView(button);
 
         button = new Button();
-        button.title.text = "Justify content start";
+        button.title.text = "Justify next option";
         button.onClick = (btn:Button) -> {
-            flexJustify = FlexStart;
+            justifyOptionIndex = (justifyOptionIndex + 1) % justifyOptions.length;
+            flexJustify = justifyOptions[justifyOptionIndex];
+            trace('Justify content: ${flexJustify}');
             layoutFlex();
         };
         buttonsContainer.addSubView(button);
 
         button = new Button();
-        button.title.text = "Justify content end";
+        button.title.text = "Align next option";
         button.onClick = (btn:Button) -> {
-            flexJustify = FlexEnd;
+            alignOptionIndex = (alignOptionIndex + 1) % alignOptions.length;
+            alignItems = alignOptions[alignOptionIndex];
+            trace('Align items: ${alignItems}');
             layoutFlex();
         };
         buttonsContainer.addSubView(button);
@@ -74,30 +98,6 @@ class Layout {
         button.title.text = "Toggle flex grow";
         button.onClick = (btn:Button) -> {
             enableFlexGrow = !enableFlexGrow;
-            layoutFlex();
-        };
-        buttonsContainer.addSubView(button);
-
-        button = new Button();
-        button.title.text = "Flex align items start";
-        button.onClick = (btn:Button) -> {
-            alignItems = FlexStart;
-            layoutFlex();
-        };
-        buttonsContainer.addSubView(button);
-
-        button = new Button();
-        button.title.text = "Flex align items end";
-        button.onClick = (btn:Button) -> {
-            alignItems = FlexEnd;
-            layoutFlex();
-        };
-        buttonsContainer.addSubView(button);
-
-        button = new Button();
-        button.title.text = "Flex align items center";
-        button.onClick = (btn:Button) -> {
-            alignItems = Center;
             layoutFlex();
         };
         buttonsContainer.addSubView(button);
@@ -114,6 +114,7 @@ class Layout {
         container.addSubView(text);
 
         var textInput = new TextInput();
+        textInput.backgroundColor = Color.RGBA(0.0, 1.0, 0.0, 1.0);
         container.addSubView(textInput);
 
     }

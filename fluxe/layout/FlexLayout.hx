@@ -70,16 +70,92 @@ class FlexLayout implements ILayout {
   public var justifyContent(default, default):FlexJustifyContent = FlexStart;
   public var alignItems(default, default):FlexAlignItems = FlexStart;
 
-  public function layout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize, parent: ILayoutObject, items:Array<ILayoutObject>):LayoutSize {
-    var zipped:Array<{
-      item: ILayoutObject,
-      info: FlexItem,
-    }> = [];
+  private var availableSize:PossibleLayoutSize = {
+    width: null,
+    height: null,
+  };
+  private var availableMainAxis:Null<Float> = null;
+  private var availableCrossAxis:Null<Float> = null;
 
-    var flexSum = 0.0;
-    var fullWidth = 0.0;
-    var fullHeight = 0.0;
-    var availableSize = 0.0;
+  private var children:Array<{
+    item: ILayoutObject,
+    info: FlexItem,
+  }> = [];
+  private var totalFlex = 0.0;
+  private var childrenMainSizeFixed = 0.0;
+  private var childrenMaxCross = 0.0;
+
+  public function layout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize, parent: ILayoutObject, items:Array<ILayoutObject>):LayoutSize {
+    getAvailableSize(constraints, parentSize, parent);
+    // trace('Flex');
+    // trace('Direction ${direction}');
+    // trace('Available size main: ${availableMainAxis} cross ${availableCrossAxis}');
+
+    collectAndMeasureChildren(items, constraints);
+    setSizeOfFlexChildren(constraints);
+    positionChildren();
+
+    var ownSizeMain = totalFlex > 0.0 || justifyContent != FlexStart ? availableMainAxis : childrenMainSizeFixed;
+    var ownSizeCross = alignItems != FlexStart ? availableCrossAxis : childrenMaxCross;
+
+    // trace('Own size main: ${ownSizeMain} ${ownSizeCross}');
+    // trace('\n\n');
+
+    if (direction == Row || direction == RowReverse) {
+      return {
+        width: ownSizeMain,
+        height: ownSizeCross,
+      };
+    } else {
+      return {
+        width: ownSizeCross,
+        height: ownSizeMain,
+      };
+    }
+  }
+
+  private function getAvailableSize(constraints:LayoutConstraint, parentSize:PossibleLayoutSize, parent:ILayoutObject) {
+    availableSize.width = null;
+    availableSize.height = null;
+
+    if (parentSize.width != null) {
+      availableSize.width = parentSize.width;
+    } else if (parent.layoutSizeOverride != null && parent.layoutSizeOverride.width.match(Fixed(_))) {
+      switch (parent.layoutSizeOverride.width) {
+        case Fixed(w):
+          availableSize.width = w;
+        default:
+      }
+    } else if (constraints.maxWidth != null) {
+      availableSize.width = constraints.maxWidth;
+    }
+
+    if (parentSize.height != null) {
+      availableSize.height = parentSize.height;
+    } else if (parent.layoutSizeOverride != null && parent.layoutSizeOverride.height.match(Fixed(_))) {
+      switch (parent.layoutSizeOverride.height) {
+        case Fixed(w):
+          availableSize.height = w;
+        default:
+      }
+    } else if (constraints.maxHeight != null) {
+      availableSize.height = constraints.maxHeight;
+    }
+
+    if (direction == Row || direction == RowReverse) {
+      availableMainAxis = availableSize.width;
+      availableCrossAxis = availableSize.height;
+    } else {
+      availableMainAxis = availableSize.height;
+      availableCrossAxis = availableSize.width;
+    }
+  }
+
+  private function collectAndMeasureChildren(items:Array<ILayoutObject>, constraints:LayoutConstraint) {
+    children = [];
+    totalFlex = 0.0;
+    childrenMainSizeFixed = 0.0;
+    childrenMaxCross = 0.0;
 
     var nextConstraints = {
       maxWidth: constraints.maxWidth,
@@ -87,18 +163,6 @@ class FlexLayout implements ILayout {
       minWidth: constraints.minWidth,
       minHeight: constraints.minHeight,
     };
-
-    if (direction == Row || direction == RowReverse) {
-      if (parentSize.width != null) {
-        availableSize = parentSize.width;
-      }
-    } else {
-      if (parentSize.height != null) {
-        availableSize = parentSize.height;
-      }
-    }
-    var fullSize = availableSize;
-    var maxCross = 0.0;
 
     for (i in 0...items.length) {
       var item = items[i];
@@ -109,106 +173,137 @@ class FlexLayout implements ILayout {
         info.order = 0;
       }
 
-      item.measureLayout(constraints, parentSize);
+      if (info.flexGrow == null) {
+        item.measureLayout(constraints, availableSize);
+        var overrideResult = LayoutConstraintSetter.handleLayoutOverride(nextConstraints, availableSize, item);
+        LayoutConstraintSetter.applyLayoutConstraints(item, constraints);
 
-      var overrideResult = LayoutConstraintSetter.handleLayoutOverride(nextConstraints, parentSize, item);
-      LayoutConstraintSetter.applyLayoutConstraints(item, constraints);
+        var childSizeMain = direction == Row || direction == RowReverse ? item.layoutSize.width : item.layoutSize.height;
+        var childSizeCross = direction == Row || direction == RowReverse ? item.layoutSize.height : item.layoutSize.width;
 
-      if (info.flexGrow != null) {
-        flexSum += info.flexGrow;
+        childrenMainSizeFixed += childSizeMain;
+        childrenMaxCross = Math.max(childrenMaxCross, childSizeCross);
       } else {
-        availableSize -= direction == Row || direction == RowReverse ? item.layoutSize.width : item.layoutSize.height;
+        totalFlex += info.flexGrow;
       }
 
-      fullWidth += item.layoutSize.width;
-      fullHeight += item.layoutSize.height;
-
-      zipped.push({
+      children.push({
         item: item,
         info: info
       });
-
-      if (direction == Row || direction == RowReverse) {
-        if (item.layoutSize.height > maxCross) {
-          maxCross = item.layoutSize.height;
-        }
-      } else {
-        if (item.layoutSize.width > maxCross) {
-          maxCross = item.layoutSize.width;
-        }
-      }
     }
+  }
 
-    zipped.sort((a, b) -> {
-      return a.info.order - b.info.order;
-    });
-
+  private function setSizeOfFlexChildren(constraints:LayoutConstraint) {
+    var flexSum = totalFlex;
     if (flexSum == 0.0) {
       flexSum = 1.0;
     }
 
-    var pos = 0.0;
+    var remainingSizeMain = availableMainAxis - childrenMainSizeFixed;
 
-    var sign = 1.0;
-    if (direction == RowReverse) {
-      pos = fullWidth;
-      sign = -1.0;
-    } else if (direction == ColumnReverse) {
-      pos = fullHeight;
-      sign = -1.0;
-    }
-
-    for (item in zipped) {
-      var size:Null<Float> = null;
+    for (item in children) {
       if (item.info.flexGrow != null) {
-        size = availableSize / flexSum * item.info.flexGrow;
-      }
+        var size = remainingSizeMain / flexSum * item.info.flexGrow;
 
-      if (direction == Row || direction == RowReverse) {
-        var crossPos = 0.0;
-        if (alignItems == Center) {
-          crossPos = (maxCross - item.item.layoutSize.height) / 2.0;
-        } else if (alignItems == Stretch) {
-          // todo this should layout the item with the full available size
-          crossPos = 0.0;
-          item.item.layoutSize.height = maxCross;
-        } else if (alignItems == FlexEnd) {
-          crossPos = maxCross - item.item.layoutSize.height;
-        }
-        item.item.layoutPosition = {
-          left: pos,
-          top: crossPos,
+        var maxWidth = direction == Row || direction == RowReverse ? size : constraints.maxWidth;
+        var maxHeight = direction == Column || direction == ColumnReverse ? size : constraints.maxHeight;
+        var itemConstraints = {
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          minWidth: constraints.minWidth,
+          minHeight: constraints.minHeight,
         };
-        if (size != null) {
-          item.item.layoutSize.width = size;
-        }
-        pos += sign * item.item.layoutSize.width;
-      } else {
-        var crossPos = 0.0;
-        if (alignItems == Center) {
-          crossPos = (maxCross - item.item.layoutSize.width) / 2.0;
-        } else if (alignItems == Stretch) {
-          // todo this should layout the item with the full available size
-          crossPos = 0.0;
-          item.item.layoutSize.width = maxCross;
-        } else if (alignItems == FlexEnd) {
-          crossPos = maxCross - item.item.layoutSize.width;
-        }
-        item.item.layoutPosition = {
-          left: crossPos,
-          top: pos,
-        };
-        if (size != null) {
-          item.item.layoutSize.height = size;
-        }
-        pos += sign * item.item.layoutSize.height;
+
+        item.item.measureLayout(itemConstraints, availableSize);
+        var overrideResult = LayoutConstraintSetter.handleLayoutOverride(itemConstraints, availableSize, item.item);
+        LayoutConstraintSetter.applyLayoutConstraints(item.item, itemConstraints);
+
+        var childSizeMain = direction == Row || direction == RowReverse ? item.item.layoutSize.width : item.item.layoutSize.height;
+        var childSizeCross = direction == Row || direction == RowReverse ? item.item.layoutSize.height : item.item.layoutSize.width;
+
+        childrenMaxCross = Math.max(childrenMaxCross, childSizeCross);
+
+        setChildMainSize(item.item, size);
       }
     }
+  }
 
+  private function positionChildren() {
+    var mainPos = 0.0;
+    var spacing = 0.0;
+    switch (justifyContent) {
+      case FlexStart:
+        mainPos = 0.0;
+      case FlexEnd:
+        mainPos = totalFlex > 0.0 ? 0.0 : availableMainAxis - childrenMainSizeFixed;
+      case Center:
+        mainPos = totalFlex > 0.0 ? 0.0 : (availableMainAxis - childrenMainSizeFixed) / 2.0;
+      case SpaceBetween:
+        mainPos = 0.0;
+        spacing = totalFlex > 0.0 || children.length <= 1 ? 0.0 : (availableMainAxis - childrenMainSizeFixed) / (children.length - 1);
+      case SpaceAround:
+        spacing = totalFlex > 0.0 ? 0.0 : (availableMainAxis - childrenMainSizeFixed) / (children.length + 1);
+        mainPos = spacing;
+      case SpaceEvenly:
+        // Not sure what this is?
+    }
+    var crossPos = 0.0;
+
+    for (item in children) {
+      item.item.layoutPosition = {
+        left: 0.0,
+        top: 0.0,
+      };
+
+      setChildMainPos(item.item, mainPos);
+
+      var childSizeMain = direction == Row || direction == RowReverse ? item.item.layoutSize.width : item.item.layoutSize.height;
+      var childSizeCross = direction == Row || direction == RowReverse ? item.item.layoutSize.height : item.item.layoutSize.width;
+
+      mainPos += childSizeMain + spacing;
+
+      if (alignItems == Center) {
+        setChildCrossPos(item.item, (availableCrossAxis - childSizeCross) / 2.0);
+      } else if (alignItems == Stretch) {
+        setChildCrossSize(item.item, availableCrossAxis);
+        setChildCrossPos(item.item, 0);
+      } else if (alignItems == FlexEnd) {
+        setChildCrossPos(item.item, availableCrossAxis - childSizeCross);
+      }
+    }
+  }
+
+
+  private function setChildMainSize(child:ILayoutObject, size:Float) {
     if (direction == Row || direction == RowReverse) {
-      return { width: fullSize, height: maxCross };
+      child.layoutSize.width = size;
     } else {
-      return { width: maxCross, height: fullSize };
+      child.layoutSize.height = size;
+    }
+  }
+
+  private function setChildCrossSize(child:ILayoutObject, size:Float) {
+    if (direction == Row || direction == RowReverse) {
+      child.layoutSize.height = size;
+    } else {
+      child.layoutSize.width = size;
+    }
+  }
+
+  private function setChildMainPos(child:ILayoutObject, pos:Float) {
+    if (direction == Row || direction == RowReverse) {
+      child.layoutPosition.left = pos;
+    } else {
+      child.layoutPosition.top = pos;
+    }
+  }
+
+  private function setChildCrossPos(child:ILayoutObject, pos:Float) {
+    if (direction == Row || direction == RowReverse) {
+      child.layoutPosition.top = pos;
+    } else {
+      child.layoutPosition.left = pos;
     }
   }
 }

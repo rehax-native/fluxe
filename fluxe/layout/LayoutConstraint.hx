@@ -59,7 +59,6 @@ class LayoutConstraintSetter {
       if (constraints.maxWidth != null && item.layoutSize.width > constraints.maxWidth) {
         item.layoutSize.width = constraints.maxWidth;
       }
-      setSizeIfNeeded(item);
       if (constraints.minHeight != null && item.layoutSize.height < constraints.minHeight) {
         item.layoutSize.height = constraints.minHeight;
       }
