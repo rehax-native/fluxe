@@ -39,54 +39,58 @@ std::function<void(void)> selectAllCallback;
   //   return;
   // }
   
-  float screenScale = self.window.screen.backingScaleFactor;
-  sk_sp<fluxe::Surface> rasterSurface = globalCallback(bounds.size.width, bounds.size.height, screenScale);
+  @autoreleasepool {
+    float screenScale = self.window.screen.backingScaleFactor;
+    sk_sp<fluxe::Surface> rasterSurface = globalCallback(bounds.size.width, bounds.size.height, screenScale);
 
-//  auto width = self.bounds.size.width;
-//  auto height = self.bounds.size.height;
-//
-////  sk_sp<SkSurface> rasterSurface = SkSurface::MakeRasterN32Premul(width, height);
-////  SkCanvas* rasterCanvas = rasterSurface->getCanvas();
-//
-  SkPixmap pixmap;
-  rasterSurface->peekPixels(&pixmap);
-  SkBitmap bmp;
-  bmp.installPixels(pixmap);
+    SkPixmap pixmap;
+    rasterSurface->peekPixels(&pixmap);
+    SkBitmap bmp;
+    bmp.installPixels(pixmap);
 
-  //    CGContext* pCGContext = (CGContextRef) GetPlatformContext();
-  CGContextRef pCGC = [NSGraphicsContext currentContext].CGContext;
-  CGContext *pCGContext = [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
+    //    CGContext* pCGContext = (CGContextRef) GetPlatformContext();
+    CGContextRef pCGC = [NSGraphicsContext currentContext].CGContext;
+    CGContext *pCGContext = [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
 
-  CGContextSaveGState(pCGContext);
-  //  float screenScale = 1.0;
-  //    CGContextScaleCTM(pCGContext, 1.0 / GetScreenScale(), 1.0 / GetScreenScale());
-  CGContextScaleCTM(pCGContext, 1.0 / screenScale, 1.0 / screenScale);
-  SkCGDrawBitmap(pCGContext, bmp, 0, 0);
-  CGContextRestoreGState(pCGContext);
+    CGContextSaveGState(pCGContext);
+    //  float screenScale = 1.0;
+    //    CGContextScaleCTM(pCGContext, 1.0 / GetScreenScale(), 1.0 / GetScreenScale());
+    CGContextScaleCTM(pCGContext, 1.0 / screenScale, 1.0 / screenScale);
+    SkCGDrawBitmap(pCGContext, bmp, 0, 0);
+    CGContextRestoreGState(pCGContext);
+  }
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-  NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-  mouseDownCallback(curPoint.x, curPoint.y, 0);
+  @autoreleasepool {
+    NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    mouseDownCallback(curPoint.x, curPoint.y, 0);
+  }
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
 {
-  NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-  mouseMoveCallback(curPoint.x, curPoint.y);
+  @autoreleasepool {
+    NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    mouseMoveCallback(curPoint.x, curPoint.y);
+  }
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
-  NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-  mouseMoveCallback(curPoint.x, curPoint.y);
+  @autoreleasepool {
+    NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    mouseMoveCallback(curPoint.x, curPoint.y);
+  }
 }
  
 - (void)mouseUp:(NSEvent *)theEvent
 {
-  NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-  mouseUpCallback(curPoint.x, curPoint.y, 0);
+  @autoreleasepool {
+    NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    mouseUpCallback(curPoint.x, curPoint.y, 0);
+  }
 }
 
 - (BOOL)acceptsFirstResponder {
@@ -237,8 +241,10 @@ fluxe::Engine::~Engine()
 
 void * fluxe::Engine::createPlatformWindow()
 {
-  void * window = OpenPlatformWindow();
-  return window;
+  @autoreleasepool {
+    void * window = OpenPlatformWindow();
+    return window;
+  }
 }
 
 void fluxe::Engine::closePlatformWindow(void * window)
@@ -246,23 +252,25 @@ void fluxe::Engine::closePlatformWindow(void * window)
 
 void fluxe::Engine::attachToPlatformWindow(void * platformWindow)
 {
-  CanvasView * view = [CanvasView new];
-  [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-  view.translatesAutoresizingMaskIntoConstraints = YES;
-  
-  NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
-  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:view.bounds
-                                                      options:options
-                                                        owner:view
-                                                     userInfo:nil];
-  [view addTrackingArea:area];
+  @autoreleasepool {
+    CanvasView * view = [CanvasView new];
+    [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    view.translatesAutoresizingMaskIntoConstraints = YES;
+    
+    NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
+    NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:view.bounds
+                                                        options:options
+                                                          owner:view
+                                                       userInfo:nil];
+    [view addTrackingArea:area];
 
-  globalView = view;
-  
-  NSWindow * win = (__bridge NSWindow *) platformWindow;
-  [win setContentView:view];
-  [win makeKeyAndOrderFront:NSApp];
-  [view becomeFirstResponder];
+    globalView = view;
+    
+    NSWindow * win = (__bridge NSWindow *) platformWindow;
+    [win setContentView:view];
+    [win makeKeyAndOrderFront:NSApp];
+    [view becomeFirstResponder];
+  }
 }
 
 void fluxe::Engine::detachFromPlatformWindow()
@@ -270,22 +278,24 @@ void fluxe::Engine::detachFromPlatformWindow()
 
 void fluxe::Engine::attachToPlatformView(void * platformView)
 {
-  CanvasView * view = [CanvasView new];
-  [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-  view.translatesAutoresizingMaskIntoConstraints = YES;
-  
-  NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
-  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:view.bounds
-                                                      options:options
-                                                        owner:view
-                                                     userInfo:nil];
-  [view addTrackingArea:area];
+  @autoreleasepool {
+    CanvasView * view = [CanvasView new];
+    [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    view.translatesAutoresizingMaskIntoConstraints = YES;
+    
+    NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
+    NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:view.bounds
+                                                        options:options
+                                                          owner:view
+                                                       userInfo:nil];
+    [view addTrackingArea:area];
 
-  globalView = view;
-  
-  NSView * providedView = (__bridge NSView *) platformView;
-  [providedView addSubview:view];
-  [view becomeFirstResponder];
+    globalView = view;
+    
+    NSView * providedView = (__bridge NSView *) platformView;
+    [providedView addSubview:view];
+    [view becomeFirstResponder];
+  }
 }
 
 void fluxe::Engine::detachFromPlatformView()
@@ -346,8 +356,10 @@ void fluxe::Engine::setSelectAllCallback(std::function<void(void)> callback) { s
 
 void fluxe::Engine::startMainLoop()
 {
-  [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-  [NSApp run];
+  @autoreleasepool {
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    [NSApp run];
+  }
 }
 
 void fluxe::Engine::stopMainLoop()
