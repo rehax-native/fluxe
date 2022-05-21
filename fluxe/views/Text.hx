@@ -264,6 +264,7 @@ class Text extends View {
     }
 
     public override function build(builder:ViewBuilder) {
+        super.build(builder);
         // var paint = new Paint();
         // paint.setColor(new Color(0xFFFFFFFF));
         // var typeface = Typeface.MakeDefault();

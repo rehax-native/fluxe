@@ -48,6 +48,8 @@ class Button extends View implements IPressEventListener implements IFocusable {
     }
 
     public override function build(builder:ViewBuilder) {
+        super.build(builder);
+
         var rrect = RRect.MakeRectXY(Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height), 3, 3);
 
         var paint = new Paint();

@@ -97,6 +97,14 @@ class View implements ILayoutObject implements fluxe.events.MouseEventsManager.I
 
     public var mouseEventListeners:Array<fluxe.events.MouseEventsManager.IMouseEventListener> = [];
 
+    public var backgroundColor(default, set):Null<fluxe.views.Externs.Color> = null;
+
+    public function set_backgroundColor(color:Null<fluxe.views.Externs.Color>):Null<fluxe.views.Externs.Color> {
+        this.backgroundColor = color;
+        this.needsRerender = true;
+        return color;
+    }
+
     public function measureLayout(constraints:LayoutConstraint, parentSize:PossibleLayoutSize):Void {
         var layout = this.layout;
         if (layout == null) {
@@ -109,5 +117,13 @@ class View implements ILayoutObject implements fluxe.events.MouseEventsManager.I
     }
 
     public function build(builder:ViewBuilder) {
+        if (backgroundColor != null) {
+            var rect = fluxe.views.Externs.Rect.MakeXYWH(0, 0, this.layoutSize.width, this.layoutSize.height);
+            var paint = new fluxe.views.Externs.Paint();
+            paint.setAntiAlias(true);
+            paint.setColor(backgroundColor);
+            paint.setStyle(fluxe.views.Externs.PaintStyle.Fill);
+            builder.canvas.drawRect(rect, paint);
+        }
     }
 }

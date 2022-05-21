@@ -110,6 +110,7 @@ class Layout {
             width: Fixed(50),
             height: Fixed(50),
         }
+        text.backgroundColor = Color.RGBA(1.0, 0.0, 0.0, 1.0);
         container.addSubView(text);
 
         var textInput = new TextInput();
