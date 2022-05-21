@@ -200,7 +200,7 @@ project "fluxe-example-text-and-button"
   }
 
   prebuildcommands {
-    "cd ../../examples/text_and_button && MACOSX_DEPLOYMENT_TARGET=\"10.15\" haxe textAndButton.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
+    "cd ../../examples/text_and_button && MACOSX_DEPLOYMENT_TARGET=\"10.9\" haxe textAndButton.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
   }
 
   filter "system:macosx"
@@ -248,7 +248,7 @@ project "fluxe-example-layout"
   }
 
   prebuildcommands {
-    "cd ../../examples/layouts && MACOSX_DEPLOYMENT_TARGET=\"10.15\" haxe layout.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
+    "cd ../../examples/layouts && MACOSX_DEPLOYMENT_TARGET=\"10.9\" haxe layout.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
   }
 
   filter "system:macosx"
@@ -296,7 +296,7 @@ project "fluxe-example-paths"
   }
 
   prebuildcommands {
-    "cd ../../examples/paths && MACOSX_DEPLOYMENT_TARGET=\"10.15\" haxe layout.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
+    "cd ../../examples/paths && MACOSX_DEPLOYMENT_TARGET=\"10.9\" haxe layout.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
   }
 
   filter "system:macosx"
