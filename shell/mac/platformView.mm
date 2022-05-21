@@ -87,8 +87,6 @@
     return;
   }
   
-  CGFloat newScale = [pWindow backingScaleFactor];
-  
   // mGraphics->SetPlatformContext(nullptr);
   
   // if (newScale != mGraphics->GetScreenScale())

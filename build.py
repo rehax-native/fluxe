@@ -28,7 +28,7 @@ if not os.path.exists('third_party/skia/out/Static/libskia.a'):
     'skia_use_system_libwebp=false',
     'skia_use_system_zlib=false',
   ]
-  os.system('cd third_party/skia && PATH=$PATH:{} gn gen out/Static --args=\'{}\' && PATH=$PATH:{} ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools))
+  os.system('cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/Static --args=\'{}\' && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools))
   # os.system('cd third_party/skia && PATH=$PATH:{} gn args out/Static --list'.format(depot_tools))
 
 copy_libs = [

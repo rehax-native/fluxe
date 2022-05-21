@@ -14,6 +14,8 @@ typedef TextSelectionRange = {
 
 class TextInput extends View implements IFocusable implements IPressEventListener implements IActionListener {
 
+    public static final NEW_LINE_REGEX = ~/win/i.match(Sys.systemName()) ? ~/\r\n/i : ~/\n/i;
+
     public function new() {
         super();
         this.addSubView(text);
@@ -215,120 +217,175 @@ class TextInput extends View implements IFocusable implements IPressEventListene
     public function onPressCanceled(event:PressCanceledEvent) {
     }
 
-    public function onAction(action:Action):Void {
-        // trace(action);
-        switch (action) {
-            case INSERT_STRING(str):
-                var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
-                var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
-                var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
+    public function onTextInsert(text:String):Void {
+        var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
+        var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
+        var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
 
-                this.value = this.value.substring(0, rangeStart) + str + this.value.substring(rangeEnd);
-                this.needsRerender = true;
-                this.needsCaretUpdate = true;
-                this.selectionRange.end = rangeStart + str.length;
-                this.selectionRange.start = this.selectionRange.end;
-                startCaretBlink();
-            case LEFT, BACKWARD, LEFT_AND_SELECT:
-                var select = action == LEFT_AND_SELECT;
-                this.selectionRange.end = this.selectionRange.end - 1;
-                if (this.selectionRange.end < 0) {
-                    this.selectionRange.end = 0;
+        this.value = this.value.substring(0, rangeStart) + text + this.value.substring(rangeEnd);
+        this.needsRerender = true;
+        this.needsCaretUpdate = true;
+        this.selectionRange.end = rangeStart + text.length;
+        this.selectionRange.start = this.selectionRange.end;
+        startCaretBlink();
+    }
+
+    public function onKeyboardMoveAction(action:KeyboardMoveInstruction):Void {
+        // trace('\n\n');
+        // trace('isAll ${action.isAll}');
+        // trace('isDoc ${action.isDocument}');
+        // trace('isPage ${action.isPage}');
+        // trace('isParagraph ${action.isParagraph}');
+        // trace('isLine ${action.isLine}');
+        // trace('isWord ${action.isWord}');
+        // trace('-');
+        // trace('isLeft ${action.isLeft}');
+        // trace('isRight ${action.isRight}');
+        // trace('isForwards ${action.isForwards}');
+        // trace('isBackwards ${action.isBackwards}');
+        // trace('-');
+        // trace('isSelect ${action.isSelect}');
+        // trace('isDelete ${action.isDelete}');
+
+        // trace(this.selectionRange);
+
+        var newRangeStart = this.selectionRange.start;
+        var newRangeEnd = this.selectionRange.end;
+        var hadSelectionBefore = this.selectionRange.start != this.selectionRange.end;
+
+        if (!(hadSelectionBefore && action.isDelete)) {
+            if (action.isAll || action.isDocument) {
+                if (action.isSelect) {
+                    newRangeStart = 0;
+                    newRangeEnd = this.value.length;
+                } else if (action.isBackwards || action.isLeft || action.isUp) {
+                    newRangeStart = 0;
+                    newRangeEnd = 0;
+                } else if (action.isForwards || action.isRight || action.isDown) {
+                    newRangeStart = this.value.length;
+                    newRangeEnd = this.value.length;
                 }
-                if (!select) {
-                    this.selectionRange.start = this.selectionRange.end;
-                }
-                this.needsRerender = true;
-                this.needsCaretUpdate = true;
-                startCaretBlink();
-            case RIGHT, FORWARD, RIGHT_AND_SELECT:
-                var select = action == RIGHT_AND_SELECT;
-                this.selectionRange.end = this.selectionRange.end + 1;
-                if (this.selectionRange.end > this.value.length) {
-                    this.selectionRange.end = this.value.length;
-                }
-                if (!select) {
-                    this.selectionRange.start = this.selectionRange.end;
-                }
-                this.needsRerender = true;
-                this.needsCaretUpdate = true;
-                startCaretBlink();
-            case WORD_LEFT:
-                var i = this.selectionRange.end - 1;
-                var foundWhitespace = false;
-                while (i > 0) {
-                    if (StringTools.isSpace(this.value, i)) {
-                        foundWhitespace = true;
-                    } else if (foundWhitespace) {
-                        i++;
-                        break;
-                    }
-                    i--;
-                }
-                if (i < 0) {
-                    i = 0;
-                }
-                this.selectionRange.end = i;
-                this.selectionRange.start = this.selectionRange.end;
-                this.needsCaretUpdate = true;
-                startCaretBlink();
-            case WORD_RIGHT:
+            } else if (action.isPage) {
+            } else if (action.isParagraph) {
+            } else if (action.isLine) {
                 var i = this.selectionRange.end;
-                var foundWhitespace = false;
-                while (i < this.value.length) {
-                    if (StringTools.isSpace(this.value, i)) {
-                        foundWhitespace = true;
-                    } else if (foundWhitespace) {
-                        break;
+                var r = NEW_LINE_REGEX;
+                if (action.isLeft || action.isBackwards) {
+                    i = this.selectionRange.end - 1;
+                    while (i > 0) {
+                        if (r.match(this.value.substr(i, 1))) {
+                            break;
+                        }
+                        i--;
                     }
-                    i++;
+                    if (i < 0) {
+                        i = 0;
+                    }
+                } else if (action.isRight || action.isForwards) {
+                    i = this.selectionRange.end + 1;
+                    while (i < this.value.length) {
+                        if (r.match(this.value.substr(i, 1))) {
+                            break;
+                        }
+                        i++;
+                    }
+                    if (i > this.value.length) {
+                        i = this.value.length;
+                    }
                 }
-                this.selectionRange.end = i;
-                this.selectionRange.start = this.selectionRange.end;
-                this.needsCaretUpdate = true;
-                startCaretBlink();
-
-            case DELETE_FORWARD:
-                var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
-                var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
-                var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
-                if (rangeEnd < this.value.length) {
-                    this.value = this.value.substring(0, rangeStart) + this.value.substring(rangeEnd + 1);
-                    this.needsRerender = true;
-                    this.needsCaretUpdate = true;
-                    this.selectionRange.end = rangeEnd + 1;
-                    this.selectionRange.start = this.selectionRange.end;
-                    startCaretBlink();
+                newRangeEnd = i;
+            } else if (action.isWord) {
+                var i = this.selectionRange.end;
+                var foundChar = false;
+                var r = ~/\w/i;
+                if (action.isLeft || action.isBackwards) {
+                    i = this.selectionRange.end - 1;
+                    while (i > 0) {
+                        if (r.match(this.value.substr(i, 1))) {
+                            foundChar = true;
+                        } else if (foundChar) {
+                            i += 1;
+                            break;
+                        }
+                        i--;
+                    }
+                    if (i < 0) {
+                        i = 0;
+                    }
+                } else if (action.isRight || action.isForwards) {
+                    i = this.selectionRange.end + 1;
+                    while (i < this.value.length) {
+                        if (r.match(this.value.substr(i, 1))) {
+                            foundChar = true;
+                        } else if (foundChar) {
+                            break;
+                        }
+                        i++;
+                    }
+                    if (i > this.value.length) {
+                        i = this.value.length;
+                    }
                 }
-            case DELETE_BACKWARD:
-                var isSelectionReverse = this.selectionRange.start > this.selectionRange.end;
-                var rangeStart = isSelectionReverse ? this.selectionRange.end : this.selectionRange.start;
-                var rangeEnd = isSelectionReverse ? this.selectionRange.start : this.selectionRange.end;
-                if (rangeStart == rangeEnd) {
-                    rangeStart = rangeEnd - 1;
+                newRangeEnd = i;
+            } else {
+                if (action.isLeft || action.isBackwards) {
+                    newRangeEnd = this.selectionRange.end - 1;
+                    if (newRangeEnd < 0) {
+                        newRangeEnd = 0;
+                    }
+                } else if (action.isRight || action.isForwards) {
+                    newRangeEnd = this.selectionRange.end + 1;
+                    if (newRangeEnd > this.value.length) {
+                        newRangeEnd = this.value.length;
+                    }
                 }
-                if (rangeEnd > 0) {
-                    this.value = this.value.substring(0, rangeStart) + this.value.substring(rangeEnd);
-                    this.needsRerender = true;
-                    this.needsCaretUpdate = true;
-                    this.selectionRange.end = rangeStart;
-                    this.selectionRange.start = this.selectionRange.end;
-                    startCaretBlink();
-                }
-            case SELECT_ALL:
-                this.selectionRange.start = 0;
-                this.selectionRange.end = this.value.length;
-                this.needsRerender = true;
-                this.needsCaretUpdate = true;
-
-    // WORD_LEFT_AND_SELECT;
-    // WORD_RIGHT_AND_SELECT;
-    // COPY;
-    // PASTE;
-    // CUT;
-            default:
+            }
         }
 
-        // trace('pos', this.selectionRange.start, this.selectionRange.end);
+        // trace(this.selectionRange);
+        if (action.isDelete) {
+            var strDeleteStart = newRangeStart;
+            var strDeleteEnd = newRangeEnd;
+            if (strDeleteStart > strDeleteEnd) {
+                var tmp = strDeleteStart;
+                strDeleteStart = strDeleteEnd;
+                strDeleteEnd = tmp;
+            }
+
+            var isForward = newRangeStart < newRangeEnd;
+
+            this.value = this.value.substring(0, strDeleteStart) + this.value.substring(strDeleteEnd);
+
+            if (isForward) {
+                newRangeEnd = newRangeStart;
+            } else {
+                newRangeStart = newRangeEnd;
+            }
+        } else if (!action.isSelect) {
+            newRangeStart = newRangeEnd;
+        }
+
+
+        this.selectionRange.start = newRangeStart;
+        this.selectionRange.end = newRangeEnd;
+
+        if (this.selectionRange.start < 0) {
+            this.selectionRange.start = 0;
+        }
+        if (this.selectionRange.start > this.value.length) {
+            this.selectionRange.start = this.value.length;
+        }
+        if (this.selectionRange.end < 0) {
+            this.selectionRange.end = 0;
+        }
+        if (this.selectionRange.end > this.value.length) {
+            this.selectionRange.end = this.value.length;
+        }
+
+        // trace(this.selectionRange);
+
+        this.needsRerender = true;
+        this.needsCaretUpdate = true;
+        startCaretBlink();
     }
 }

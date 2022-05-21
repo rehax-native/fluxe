@@ -3,6 +3,7 @@
 #include <functional>
 #include <string>
 #include "render_backend/skia/canvas.h"
+#include "shell/callbacks.h"
 
 namespace fluxe {
 
@@ -50,26 +51,13 @@ class Engine {
   void detachFromPlatformView();
 
   /**
-   * Render the canvas to screen
+   * Callbacks
    */
-  // void renderCanvas(Canvas * canvas);
   void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback);
-  void setMouseDownCallback(std::function<void(float left, float top, int button)> callback);
-  void setMouseMoveCallback(std::function<void(float left, float top)> callback);
-  void setMouseUpCallback(std::function<void(float left, float top, int button)> callback);
+  void setMouseCallback(std::function<void(ShellMouseInstruction instruction)> callback);
   void setTextCallback(std::function<void(const char* str)> callback);
-  void setKeyDownCallback(std::function<void(int code)> callback);
-  void setKeyUpCallback(std::function<void(int code)> callback);
-  
-  void setMoveLeftCallback(std::function<void(bool select)> callback);
-  void setMoveRightCallback(std::function<void(bool select)> callback);
-  void setMoveWordLeftCallback(std::function<void(bool select)> callback);
-  void setMoveWordRightCallback(std::function<void(bool select)> callback);
-  void setMoveBackwardCallback(std::function<void(bool select)> callback);
-  void setMoveForwardCallback(std::function<void(bool select)> callback);
-  void setDeleteBackwardCallback(std::function<void(void)> callback);
-  void setDeleteForwardCallback(std::function<void(void)> callback);
-  void setSelectAllCallback(std::function<void(void)> callback);
+  void setKeyCallback(std::function<void(ShellKeyboardKeyInstruction)> callback);
+  void setMoveCallback(std::function<void(ShellKeyboardMoveInstruction)> callback);
 
   void setNeedsRerender();
 
@@ -108,6 +96,8 @@ class Engine {
   // window events
   // onWindowReize
   // onWindowMove
+private:
+  void * view;
 
 };
 

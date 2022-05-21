@@ -58,6 +58,27 @@ class MouseEventsManager {
         this.rootView = rootView;
     }
 
+    public function handleInstruction(instruction:fluxe.views.Externs.MouseInstruction) {
+        if (instruction.isDown && !instruction.isMove) {
+            handleMouseDown({
+                left: instruction.left,
+                top: instruction.top,
+                button: instruction.button,
+            });
+        } else if (instruction.isUp && !instruction.isMove) {
+            handleMouseUp({
+                left: instruction.left,
+                top: instruction.top,
+                button: instruction.button,
+            });
+        } else if (instruction.isMove) {
+            handleMouseMove({
+                left: instruction.left,
+                top: instruction.top,
+            });
+        }
+    }
+
     public function handleMouseDown(event:MouseDownEvent) {
         var hitView = findViewAtPosition(event.left, event.top, rootView);
         while (hitView != null) {

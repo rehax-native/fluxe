@@ -70,84 +70,21 @@ class ViewManager {
         return surface._surface;
     }
 
-    public function mouseDownCallback(left:Float, top:Float, buttonIndex:Int):Void {
-        mouseManager.handleMouseDown({
-            left: left,
-            top: top,
-            button: buttonIndex,
-        });
+    public function mouseCallback(instruction:MouseInstruction):Void {
+        mouseManager.handleInstruction(instruction);
     }
 
-    public function mouseUpCallback(left:Float, top:Float, buttonIndex:Int):Void {
-        mouseManager.handleMouseUp({
-            left: left,
-            top: top,
-            button: buttonIndex,
-        });
-    }
-
-    public function mouseMoveCallback(left:Float, top:Float):Void {
-        mouseManager.handleMouseMove({
-            left: left,
-            top: top,
-        });
-    }
-
-    public function keyDownCallback(code:Int):Void {
-        // _keyManager.onKeyDown(CHAR("A"));
-    }
-
-    public function keyUpCallback(code:Int):Void {
-        // _keyManager.onKeyUp(ley);
+    public function keyCallback(instruction:KeyboardKeyInstruction):Void {
+        // if (instruction.isDown) {
+        //     _keyManager.onKeyDown(CHAR(str));
+        // }
     }
 
     public function textCallback(str:String):Void {
-        _keyManager.onKeyDown(CHAR(str));
-        _actionManager.onAction(INSERT_STRING(str));
+        _actionManager.onTextInsert(str);
     }
 
-    public function moveLeftCallback(select:Bool):Void {
-        _actionManager.onAction(select ? LEFT_AND_SELECT : LEFT);
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function moveRightCallback(select:Bool):Void {
-        _actionManager.onAction(select ? RIGHT_AND_SELECT : RIGHT);
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function moveWordLeftCallback(select:Bool):Void {
-        _actionManager.onAction(select ? WORD_LEFT_AND_SELECT : WORD_LEFT);
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function moveWordRightCallback(select:Bool):Void {
-        _actionManager.onAction(select ? WORD_RIGHT_AND_SELECT : WORD_RIGHT);
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function moveBackwardCallback(select:Bool):Void {
-        _actionManager.onAction(BACKWARD); // todo handle select
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function moveForwardCallback(select:Bool):Void {
-        _actionManager.onAction(FORWARD); // todo handle select
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function deleteBackwardCallback():Void {
-        _actionManager.onAction(DELETE_BACKWARD);
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function deleteForwardCallback():Void {
-        _actionManager.onAction(DELETE_FORWARD);
-        // _keyManager.onKeyDown(CHAR(str));
-    }
-
-    public function selectAllCallback():Void {
-        _actionManager.onAction(SELECT_ALL);
-        // _keyManager.onKeyDown(CHAR(str));
+    public function moveCallback(instruction:KeyboardMoveInstruction):Void {
+        _actionManager.onKeyboardMoveAction(instruction);
     }
 }

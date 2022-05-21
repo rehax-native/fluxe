@@ -341,3 +341,126 @@ class RenderSurface {
         this._surface = untyped __cpp__ ("nullptr");
     }
 }
+
+@:include("shell/callbacks.h")
+@:native("ShellMouseInstruction")
+@:structAccess
+@:unreflective
+extern class NativeMouseInstruction {
+  var button:Int;
+  var left:Float;
+  var top:Float;
+  var isDown:Bool;
+  var isUp:Bool;
+  var isMove:Bool;
+}
+
+@:include("shell/callbacks.h")
+@:native("ShellKeyboardKeyInstruction")
+@:structAccess
+@:unreflective
+extern class NativeKeyboardKeyInstruction {
+  var code:Int;
+  var isDown:Bool;
+  var isUp:Bool;
+}
+
+@:include("shell/callbacks.h")
+@:native("ShellKeyboardMoveInstruction")
+@:structAccess
+@:unreflective
+extern class NativeKeyboardMoveInstruction {
+  // Don't change the order of these, they have to match what's in callbacks.h
+  var isRight:Bool;
+  var isLeft:Bool;
+  var isForwards:Bool;
+  var isBackwards:Bool;
+  var isUp:Bool;
+  var isDown:Bool;
+
+  var isAll:Bool;
+  var isDocument:Bool;
+  var isPage:Bool;
+  var isParagraph:Bool;
+  var isLine:Bool;
+  var isWord:Bool;
+
+  var isDelete:Bool;
+  var isSelect:Bool;
+  var isScroll:Bool;
+}
+
+class MouseInstruction {
+    public static function FromNative(native:NativeMouseInstruction) {
+        var hx = new MouseInstruction();
+        hx.button = native.button;
+        hx.left = native.left;
+        hx.top = native.top;
+        hx.isDown = native.isDown;
+        hx.isUp = native.isUp;
+        hx.isMove = native.isMove;
+        return hx;
+    }
+    public function new() {}
+
+    public var button:Int;
+    public var left:Float;
+    public var top:Float;
+    public var isDown:Bool;
+    public var isUp:Bool;
+    public var isMove:Bool;
+}
+
+class KeyboardKeyInstruction {
+    public static function FromNative(native:NativeKeyboardKeyInstruction) {
+        var hx = new KeyboardKeyInstruction();
+        hx.code = native.code;
+        hx.isDown = native.isDown;
+        hx.isUp = native.isUp;
+        return hx;
+    }
+    public function new() {}
+
+    public var code:Int;
+    public var isDown:Bool;
+    public var isUp:Bool;
+}
+
+class KeyboardMoveInstruction {
+    public static function FromNative(native:NativeKeyboardMoveInstruction) {
+        var hx = new KeyboardMoveInstruction();
+        hx.isRight = native.isRight;
+        hx.isLeft = native.isLeft;
+        hx.isForwards = native.isForwards;
+        hx.isBackwards = native.isBackwards;
+        hx.isUp = native.isUp;
+        hx.isDown = native.isDown;
+        hx.isWord = native.isWord;
+        hx.isDelete = native.isDelete;
+        hx.isSelect = native.isSelect;
+        hx.isAll = native.isAll;
+        hx.isLine = native.isLine;
+        hx.isParagraph = native.isParagraph;
+        hx.isDocument = native.isDocument;
+        hx.isPage = native.isPage;
+        hx.isScroll = native.isScroll;
+        return hx;
+    }
+    public function new() {}
+
+    public var isRight:Bool;
+    public var isLeft:Bool;
+    public var isForwards:Bool;
+    public var isBackwards:Bool;
+    public var isUp:Bool;
+    public var isDown:Bool;
+    public var isWord:Bool;
+    public var isDelete:Bool;
+    public var isSelect:Bool;
+    public var isAll:Bool;
+    public var isLine:Bool;
+    public var isParagraph:Bool;
+    public var isDocument:Bool;
+    public var isPage:Bool;
+    public var isScroll:Bool;
+}

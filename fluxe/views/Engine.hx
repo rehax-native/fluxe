@@ -27,6 +27,7 @@ extern class Engine {
 }
 
 @:unreflective
+@:header("shell/")
 class EngineUtility {
     public static function startWithView(view:View):Void {
         var util = new EngineUtility();
@@ -52,21 +53,10 @@ class EngineUtility {
             engine.ptr.setNeedsRerender();
         };
         untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseDownCallback([this] (float l, float t, int n) { return viewManager->mouseDownCallback(l, t, n); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseMoveCallback([this] (float l, float t) { return viewManager->mouseMoveCallback(l, t); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseUpCallback([this] (float l, float t, int n) { return viewManager->mouseUpCallback(l, t, n); })");
-        untyped __cpp__ ("this->engine->ptr->setKeyDownCallback([this] (int code) { return viewManager->keyDownCallback(code); })");
-        untyped __cpp__ ("this->engine->ptr->setKeyUpCallback([this] (int code) { return viewManager->keyUpCallback(code); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseCallback([this] (ShellMouseInstruction instruction) { return handleMouseCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); })");
         untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { return viewManager->textCallback(String(str)); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveLeftCallback([this] (bool select) { return viewManager->moveLeftCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveRightCallback([this] (bool select) { return viewManager->moveRightCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveWordLeftCallback([this] (bool select) { return viewManager->moveWordLeftCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveWordRightCallback([this] (bool select) { return viewManager->moveWordRightCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveBackwardCallback([this] (bool select) { return viewManager->moveBackwardCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveForwardCallback([this] (bool select) { return viewManager->moveForwardCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setDeleteBackwardCallback([this] () { return viewManager->deleteBackwardCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setDeleteForwardCallback([this] () { return viewManager->deleteForwardCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setSelectAllCallback([this] () { return viewManager->selectAllCallback(); })");
         engine.ptr.startMainLoop();
         engine.ptr.detachFromPlatformWindow();
         engine.ptr.closePlatformWindow(window);
@@ -80,22 +70,23 @@ class EngineUtility {
             engine.ptr.setNeedsRerender();
         };
         untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseDownCallback([this] (float l, float t, int n) { return viewManager->mouseDownCallback(l, t, n); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseMoveCallback([this] (float l, float t) { return viewManager->mouseMoveCallback(l, t); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseUpCallback([this] (float l, float t, int n) { return viewManager->mouseUpCallback(l, t, n); })");
-        untyped __cpp__ ("this->engine->ptr->setKeyDownCallback([this] (int code) { return viewManager->keyDownCallback(code); })");
-        untyped __cpp__ ("this->engine->ptr->setKeyUpCallback([this] (int code) { return viewManager->keyUpCallback(code); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseCallback([this] (ShellMouseInstruction instruction) { return handleMouseCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); })");
         untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { return viewManager->textCallback(String(str)); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveLeftCallback([this] (bool select) { return viewManager->moveLeftCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveRightCallback([this] (bool select) { return viewManager->moveRightCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveWordLeftCallback([this] (bool select) { return viewManager->moveWordLeftCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveWordRightCallback([this] (bool select) { return viewManager->moveWordRightCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveBackwardCallback([this] (bool select) { return viewManager->moveBackwardCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveForwardCallback([this] (bool select) { return viewManager->moveForwardCallback(select); })");
-        untyped __cpp__ ("this->engine->ptr->setDeleteBackwardCallback([this] () { return viewManager->deleteBackwardCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setDeleteForwardCallback([this] () { return viewManager->deleteForwardCallback(); })");
-        untyped __cpp__ ("this->engine->ptr->setSelectAllCallback([this] () { return viewManager->selectAllCallback(); })");
         engine.ptr.detachFromPlatformView();
         engine.destroy();
+    }
+
+    public function handleMouseCallback(instruction:fluxe.views.Externs.NativeMouseInstruction) {
+        viewManager.mouseCallback(MouseInstruction.FromNative(instruction));
+    }
+
+    public function handleKeyCallback(instruction:fluxe.views.Externs.NativeKeyboardKeyInstruction) {
+        viewManager.keyCallback(KeyboardKeyInstruction.FromNative(instruction));
+    }
+
+    public function handleMoveCallback(instruction:fluxe.views.Externs.NativeKeyboardMoveInstruction) {
+        viewManager.moveCallback(KeyboardMoveInstruction.FromNative(instruction));
     }
 }
