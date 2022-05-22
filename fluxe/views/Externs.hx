@@ -59,12 +59,9 @@ class GradientShader {
     static public function MakeLinear(def:LinearGradientShaderDefinition):Shader {
         var count = def.colors.length;
 
-        // untyped __cpp__('SkPoint * pts = new SkPoint[2];');
-        // untyped __cpp__('SkColor * colors = new SkColor[count]');
-        // untyped __cpp__('SkScalar * positions = new SkScalar[count]');
-        untyped __cpp__('SkPoint pts[2]');
-        untyped __cpp__('SkColor colors[count]');
-        untyped __cpp__('SkScalar positions[count]');
+        untyped __cpp__('SkPoint * pts = new SkPoint[2];');
+        untyped __cpp__('SkColor * colors = new SkColor[count]');
+        untyped __cpp__('SkScalar * positions = new SkScalar[count]');
 
         var pt0 = def.point0;
         var pt1 = def.point1;
@@ -81,17 +78,21 @@ class GradientShader {
         // var cols = cpp.Pointer.ofArray(def.colors).constRaw;
         // var pos = cpp.Pointer.ofArray(def.positions).constRaw;
         // var mode = def.mode;
+
         var gradient = untyped __cpp__('SkGradientShader::MakeLinear(pts, colors, positions, count, SkTileMode::kClamp)');
+
+        untyped __cpp__('delete[] pts');
+        untyped __cpp__('delete[] colors');
+        untyped __cpp__('delete[] positions');
+
         return gradient;
     }
 
     static public function MakeRadial(def:RadialGradientShaderDefinition):Shader {
         var count = def.colors.length;
 
-        untyped __cpp__('SkColor colors[count]');
-        untyped __cpp__('SkScalar positions[count]');
-        // untyped __cpp__('SkColor * colors = new SkColor[count]');
-        // untyped __cpp__('SkScalar * positions = new SkScalar[count]');
+        untyped __cpp__('SkColor * colors = new SkColor[count]');
+        untyped __cpp__('SkScalar * positions = new SkScalar[count]');
 
         var center = def.center;
         var radius = def.radius;
@@ -102,6 +103,10 @@ class GradientShader {
             untyped __cpp__('positions[i] = pos');
         }
         var gradient = untyped __cpp__('SkGradientShader::MakeRadial(center, radius, colors, positions, count, SkTileMode::kClamp)');
+
+        untyped __cpp__('delete[] colors');
+        untyped __cpp__('delete[] positions');
+
         return gradient;
     }
 }

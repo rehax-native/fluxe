@@ -48,14 +48,9 @@ void draw(SkCanvas *canvas)
   canvas->drawRoundRect(rect, 10, 10, paint);
 }
 
-SkBitmap drawExample(int width, int height)
+sk_sp<SkSurface> drawExample(int width, int height)
 {
   sk_sp<SkSurface> mSurface = raster(width, height, draw, nullptr);
-  
-  SkPixmap pixmap;
-  mSurface->peekPixels(&pixmap);
-  SkBitmap bmp;
-  bmp.installPixels(pixmap);
 
-  return bmp;
+  return mSurface;
 }

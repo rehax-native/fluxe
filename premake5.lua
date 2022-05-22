@@ -70,6 +70,19 @@ project "fluxe-example-window"
     files {
       "shell/mac/*"
     }
+  
+  filter "system:windows"
+
+    files {
+      "examples/window/win.cc"
+    }
+
+    links { 
+    }
+
+    files {
+      "shell/win/*"
+    }
 
 
 project "fluxe-example-canvas"
@@ -103,6 +116,37 @@ project "fluxe-example-canvas"
     files {
       "shell/mac/*"
     }
+  
+  filter "system:windows"
+
+    architecture "x64"
+    -- runtime "Debug"
+    staticruntime "on"
+
+    files {
+      "examples/canvas/win.cc"
+    }
+
+    libdirs {
+      "third_party/skia/out/Static"
+    }
+
+    links { 
+      -- "gdi32",
+      "opengl32",
+
+      "skia",
+      "skparagraph",
+      "skshaper",
+      "sktext",
+      "icu",
+      "skunicode",
+    }
+
+    files {
+      "shell/win/*"
+    }
+
 
 project "fluxe-example-render-backend"
   kind "WindowedApp"
@@ -135,6 +179,34 @@ project "fluxe-example-render-backend"
     files {
       "shell/mac/*"
     }
+  
+  filter "system:windows"
+
+    architecture "x64"
+    -- runtime "Debug"
+    staticruntime "on"
+
+    files {
+      "examples/render_backend/win.cc"
+    }
+
+    libdirs {
+      "third_party/skia/out/Static"
+    }
+
+    links { 
+      "opengl32",
+      "skia",
+      "skparagraph",
+      "skshaper",
+      "sktext",
+      "icu",
+      "skunicode",
+    }
+
+    files {
+      "shell/win/*"
+    }
 
 project "fluxe-cpp-core"
   kind "StaticLib"
@@ -152,8 +224,6 @@ project "fluxe-cpp-core"
     files {
       "engine.h",
       "engine.mm",
-      "shell/timer.h",
-      "shell/timer.mm",
     }
     files {
       "shell/mac/*"
@@ -171,6 +241,41 @@ project "fluxe-cpp-core"
       "skia",
       "skparagraph",
     }
+  
+  filter "system:windows"
+    architecture "x64"
+    staticruntime "off"
+    runtime "Release"
+    files {
+      "engine.h",
+      "engine.win.cc",
+    }
+    files {
+      "shell/win/*"
+    }
+
+    libdirs {
+      "third_party/skia/out/Static"
+    }
+
+    -- links { 
+    --   "skia",
+    --   "skparagraph",
+    --   "skshaper",
+    --   "sktext",
+    --   -- "icu",
+    --   "skunicode",
+    -- }
+    links { 
+      "skia.lib",
+      -- "skia.dll.lib",
+      -- "skparagraph.dll.lib",
+      -- "skshaper.dll.lib",
+      -- "sktext.dll.lib",
+      -- "skunicode.dll.lib",
+      -- "icu.lib",
+    }
+
 
 project "fluxe-example-text-and-button"
   kind "WindowedApp"
@@ -183,31 +288,33 @@ project "fluxe-example-text-and-button"
     "./third_party/skia",
   }
 
-  sysincludedirs {
-    "/usr/local/lib/haxe/lib/hxcpp/4,2,1/include",
+  libdirs {
+    "third_party/skia/out/Static"
   }
 
-  links {
-    "fluxe-cpp-core",
-  }
-  linkoptions {
-    "../../examples/text_and_button/out/liboutput.a",
-  }
 
   files {
     "examples/text_and_button/**.hx",
     "examples/text_and_button/main.cpp",
   }
 
-  prebuildcommands {
-    "cd ../../examples/text_and_button && MACOSX_DEPLOYMENT_TARGET=\"10.9\" haxe textAndButton.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
+  links { 
+    "fluxe-cpp-core",
   }
 
   filter "system:macosx"
     systemversion "10.9"
     
-    libdirs {
-      "third_party/skia/out/Static"
+    sysincludedirs {
+      "/usr/local/lib/haxe/lib/hxcpp/4,2,1/include",
+    }
+
+    linkoptions {
+      "../../examples/text_and_button/out/liboutput.a",
+    }
+
+    prebuildcommands {
+      "cd ../../examples/text_and_button && MACOSX_DEPLOYMENT_TARGET=\"10.9\" haxe textAndButton.hxml -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a\""
     }
 
     links { 
@@ -218,6 +325,44 @@ project "fluxe-example-text-and-button"
       "skparagraph",
       "skshaper",
       "skunicode",
+    }
+
+  filter "system:windows"
+    architecture "x64"
+    staticruntime "off"
+    runtime "Release"
+    defines {
+      "HX_WINDOWS",
+      "HXCPP_M64",
+    }
+    links { 
+      "opengl32",
+    }
+    links { 
+      "skia.lib",
+      "skparagraph.lib",
+      "skshaper.lib",
+      "skunicode.lib",
+      "sktext.lib",
+      "icu.lib",
+      -- "skia.dll.lib",
+      -- "skparagraph.dll.lib",
+      -- "skshaper.dll.lib",
+      -- "skunicode.dll.lib",
+      -- "sktext.dll.lib",
+      -- "icu.lib",
+    }
+    linkoptions {
+      "../../examples/text_and_button/out/liboutput.lib",
+    }
+    sysincludedirs {
+      "C:/tools/msys64/usr/local/haxe/haxe/lib/hxcpp/4,2,1/include",
+    }
+    prebuildcommands {
+      "cd ../../examples/text_and_button && haxe textAndButton.hxml -D HXCPP_M64 -D FLUXE_CORE_LIB=\"../../../dev/fluxe-cpp-core/bin/Release/fluxe-cpp-core.lib\" -D ABI=-MD"
+    }
+    postbuildcommands {
+      "copy ..\\..\\build\\icudtl.dat ..\\..\\dev\\example-text-and-button\\bin\\Release\\icudtl.dat"
     }
 
 project "fluxe-example-layout"

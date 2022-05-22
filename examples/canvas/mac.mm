@@ -11,7 +11,13 @@
 @implementation CanvasExampleView
 - (void) drawRect: (NSRect) bounds
 {
-  SkBitmap bmp = drawExample(self.bounds.size.width, self.bounds.size.height);
+  auto mSurface = drawExample(self.bounds.size.width, self.bounds.size.height);
+  
+  SkPixmap pixmap;
+  mSurface->peekPixels(&pixmap);
+  SkBitmap bmp;
+  bmp.installPixels(pixmap);
+
   //    CGContext* pCGContext = (CGContextRef) GetPlatformContext();
   CGContextRef pCGC = [NSGraphicsContext currentContext].CGContext;
   CGContext *pCGContext = [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
