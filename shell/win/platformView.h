@@ -41,9 +41,10 @@ public:
 
   bool isShiftDown = false;
   bool isCtrlDown = false;
+  bool hasPainted = false;
+  HWND hWnd = nullptr;
 
 private:
-  HWND hWnd = nullptr;
 //   HINSTANCE mHInstance = nullptr;
 
 protected:

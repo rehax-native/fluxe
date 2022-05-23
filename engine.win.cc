@@ -55,32 +55,19 @@ void fluxe::Engine::detachFromPlatformView()
 void fluxe::Engine::startMainLoop()
 {
   MSG msg;
-  bool running = true;
-  while (running) {
-    while (PeekMessageA(&msg, 0, 0, 0, PM_REMOVE))
-    {
-      if (msg.message == WM_QUIT) {
-        running = false;
-      } else if (msg.message == WM_PAINT) {
-          /*
-        HWND window = msg.hwnd;
-    PAINTSTRUCT ps;
-    HDC hdc;
-    TCHAR greeting[] = _T("Hello");
-            hdc = BeginPaint(window, &ps);
-            TextOut(hdc, 5, 5, greeting, _tcslen(greeting));
-            EndPaint(window, &ps);
-            */
-          DefWindowProcA(msg.hwnd, msg.message, msg.wParam, msg.lParam);
-      } else {
-        TranslateMessage(&msg);
-        DispatchMessageA(&msg);
-        // if (TranslateAccelerator(msg.hwnd, haccl, &msg) == 0) 
-        // { 
-          // TranslateMessage(&msg); 
-          // DispatchMessage(&msg); 
-        // } 
-      }
+  while (GetMessageA(&msg, 0, 0, 0))
+  {
+    if (msg.message == WM_QUIT) {
+    } else if (msg.message == WM_PAINT) {
+        DefWindowProcA(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+    } else {
+      TranslateMessage(&msg);
+      DispatchMessageA(&msg);
+      // if (TranslateAccelerator(msg.hwnd, haccl, &msg) == 0) 
+      // { 
+        // TranslateMessage(&msg); 
+        // DispatchMessage(&msg); 
+      // } 
     }
   }
 }

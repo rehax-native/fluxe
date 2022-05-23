@@ -10,27 +10,39 @@
 
 #include <iostream>
 
+BOOL GiveFocusToChildren(HWND hwnd, LPARAM lParam)
+{
+    SetFocus(hwnd);
+    return true;
+}
+
+BOOL ResizeChildren(HWND hwnd, LPARAM lParam)
+{
+    HWND parent = reinterpret_cast<HWND>(lParam);
+    RECT rect;
+    GetWindowRect(parent, &rect);
+    SetWindowPos(hwnd, 0, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 0);
+    return true;
+}
+
 static LRESULT CALLBACK
 window_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     LRESULT result = 0;
-
-    // PAINTSTRUCT ps;
-    // HDC hdc;
-    // TCHAR greeting[] = _T("Hellxo");
 
     switch (msg) {
         case WM_CLOSE:
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
-       /*
-        case WM_PAINT:
-            hdc = BeginPaint(window, &ps);
-            TextOut(hdc, 5, 5, greeting, _tcslen(greeting));
-            EndPaint(window, &ps);
+        case WM_SIZE:
+            EnumChildWindows(window, ResizeChildren, reinterpret_cast<LPARAM>(window));
             break;
-         */   
+        case WM_SETFOCUS:
+        {
+            EnumChildWindows(window, GiveFocusToChildren, lparam);
+        }
+        break;
         default:
             result = DefWindowProcA(window, msg, wparam, lparam);
             break;
@@ -45,15 +57,6 @@ void* OpenPlatformWindow()
     STARTUPINFO si;
     GetStartupInfo(&si);
     int nCmdShow = si.wShowWindow;
-
-    // WNDCLASSA window_class = {
-    //     .style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
-    //     .lpfnWndProc = window_callback,
-    //     .hInstance = hInstance,
-    //     .hCursor = LoadCursor(0, IDC_ARROW),
-    //     .hbrBackground = 0,
-    //     .lpszClassName = "FLUXE_WIN",
-    // };
 
     WNDCLASSEX window_class;
     window_class.cbSize = sizeof(WNDCLASSEX);
@@ -70,26 +73,10 @@ void* OpenPlatformWindow()
     window_class.lpszClassName = L"FLUXE_WIN";
     window_class.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
 
-    // if (!RegisterClassA(&window_class)) {
     if (!RegisterClassEx(&window_class)) {
         exit(621);
     }
 
-    // DWORD window_style = WS_OVERLAPPEDWINDOW;
-    // HWND window = CreateWindowExA(
-    //     0,
-    //     window_class.lpszClassName,
-    //     "Window Title",
-    //     window_style,
-    //     CW_USEDEFAULT,
-    //     CW_USEDEFAULT,
-    //     600,
-    //     600,
-    //     0,
-    //     0,
-    //     hInstance,
-    //     0
-    // );
     HWND window = CreateWindow(
         window_class.lpszClassName,
         L"Window Title",

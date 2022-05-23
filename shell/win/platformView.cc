@@ -22,16 +22,16 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
     auto view = (fluxe::FluxePlatformView*)GetWindowLongPtrW(window, GWLP_USERDATA);
 
     switch (msg) {
+        case WM_SIZE:
+        case WM_WINDOWPOSCHANGED:
+        {
+          if (view != nullptr && view->hasPainted) {
+            view->setNeedsRerender();
+          }
+        }
+          break;
         case WM_PAINT:
         {
-            /*
-                PAINTSTRUCT ps;
-                HDC hdc;
-                TCHAR greeting[] = _T("Helloxxx");
-                hdc = BeginPaint(window, &ps);
-                TextOut(hdc, 5, 5, greeting, _tcslen(greeting));
-                EndPaint(window, &ps);
-                */
             result = 1;
 
             RECT rect;
@@ -45,28 +45,9 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
 
             auto renderCallback = view->getRenderCallback();
 
-            // static int count = -1;
-            // count++;
-            // if (count < 1) {
-            //   result = DefWindowProcA(window, msg, wparam, lparam);
-            //   break;
-            // }
             sk_sp<SkSurface> surface = renderCallback(width, height, scale);
-            //     PAINTSTRUCT ps;
-            //     HDC hdc;
-            //     TCHAR greeting[] = _T("Helloxxx");
-
-            //     hdc = BeginPaint(window, &ps);
-            //     TextOut(hdc, 5, 5, greeting, _tcslen(greeting));
-            //     EndPaint(window, &ps);
-            // break;
             SkPixmap pixmap;
             surface->peekPixels(&pixmap);
-            /*
-            SkBitmap bmp;
-            bmp.installPixels(pixmap);
-            return bmp;
-            */
 
             HDC dc = GetDC(window);
             BITMAPINFO bmi;
@@ -77,16 +58,15 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
             bmi.bmiHeader.biPlanes = 1;
             bmi.bmiHeader.biBitCount = 32;
             bmi.bmiHeader.biCompression = BI_RGB;
-            // bmi.bmiHeader.biSizeImage = 0;
-            // int ret = SetDIBitsToDevice(dc, 0, 0, width, height, 0, 0, 0, height, allocation, &bmi, DIB_RGB_COLORS);
 
             StretchDIBits(dc, 0, 0, width, height, 0, 0, width, height, pixmap.addr(), &bmi, DIB_RGB_COLORS, SRCCOPY);
             ReleaseDC(window, dc);
 
             result = DefWindowProcA(window, msg, wparam, lparam);
+
+            view->hasPainted = true;
         }
           break;
-
 
           // WM_CAPTURECHANGED	Sent to the window that is losing the mouse capture.
           // WM_LBUTTONDBLCLK	Posted when the user double-clicks the left mouse button while the cursor is in the client area of a window. If the mouse is not captured, the message is posted to the window beneath the cursor. Otherwise, the message is posted to the window that has captured the mouse.
@@ -181,17 +161,34 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
         
         case WM_CHAR:
           {
-            TCHAR tStr[2];
-            tStr[0] = (TCHAR) wparam;
-            tStr[1] = '\0';
-
-            std::wstring test(&tStr[0]); //convert to wstring
-            std::string str(test.begin(), test.end());
 
             switch (wparam) {
-              // Need to handle special chars such as backspace here
+              case 0x08: // Backspace
+              // already handled in WM_KEYDOWN
+                // view->getKeyboardMoveCallback()({
+                //   .isBackwards = true,
+                //   .isWord = view->isCtrlDown,
+                //   .isDelete = true,
+                // });
+                break;
+              // case 0x0A: // Linefeed
+              // case 0x1B: // Escape
+              // case 0x09: // Tab
+              // case 0x0D: // Carriage Return 
               default:
+              {
+
+                if (view->isCtrlDown) {
+                  break;
+                }
+                TCHAR tStr[2];
+                tStr[0] = (TCHAR) wparam;
+                tStr[1] = '\0';
+
+                std::wstring test(&tStr[0]); //convert to wstring
+                std::string str(test.begin(), test.end());
                 view->getTextCallback()(str.c_str());
+              }
             }
           }
           break;
@@ -264,6 +261,22 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
                 .isSelect = view->isShiftDown,
               });
               break;
+            case VK_BACK:
+              view->getKeyboardMoveCallback()({
+                .isBackwards = true,
+                .isWord = view->isCtrlDown,
+                .isDelete = true,
+              });
+              break;
+            case VK_CLEAR:
+            case VK_DELETE:
+              view->getKeyboardMoveCallback()({
+                .isForwards = true,
+                .isWord = view->isCtrlDown,
+                .isDelete = true,
+              });
+              break;
+            // case VK_ESCAPE:
           }
           break;
         default:
@@ -332,7 +345,6 @@ void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)
   SetWindowLongPtrW(window, GWLP_USERDATA, (LONG_PTR) this);
   EnableWindow(window, true);
   SetFocus(window);
-  // UpdateWindow(window);
 
   hWnd = window;
 }
