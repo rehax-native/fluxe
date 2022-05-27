@@ -11,32 +11,82 @@ class FocusManager {
     public function new() {}
 
     private var currentFocusable:Null<IFocusable> = null;
-    private var focusables:Array<IFocusable>;
+    private var focusables:Array<IFocusable> = [];
 
-    public function registerFocusable(focusable:IFocusable):Void {
-        focusables.push(focusable);
+    public function prepareForCollectingFocusables() {
     }
 
-    public function unregisterFocusable(focusable:IFocusable):Void {
-        focusables.remove(focusable);
+    public function collectFocusable(view:IFocusable) {
+        focusables.push(view);
     }
 
-    public function focusNext(view:View):Void {
-        // if (currentFocusable == null) {
-        //     currentFocusable = focusables[0];
-        // } else {
-        //     var index = focusables.indexOf(currentFocusable);
-        //     if (index == focusables.length - 1) {
-        //         currentFocusable = focusables[0];
-        //     } else {
-        //         currentFocusable = focusables[index + 1];
-        //     }
-        // }
-        // gainFocus(nextFocusable);
+    public function collectFocusables(containerView:View) {
+        focusables = [];
+        collectFocusablesTraverse(containerView);
     }
 
-    private function findNextFocusable(view:View) {
-        // view.
+    public function collectFocusablesTraverse(view:View) {
+        var subViews = view.subViews;
+        for (subView in subViews) {
+            if (Std.isOfType(subView, IFocusable)) {
+                focusables.push(cast subView);
+            }
+            collectFocusablesTraverse(subView);
+        }
+    }
+
+    public function focusNext():Void {
+        var prev = currentFocusable;
+        if (focusables.length > 0) {
+            if (currentFocusable == null) {
+                currentFocusable = focusables[0];
+            } else {
+                var index = focusables.indexOf(currentFocusable);
+                index = (index + 1) % focusables.length;
+                if (index < focusables.length) {
+                    currentFocusable = focusables[index];
+                } else {
+                    currentFocusable = null;
+                }
+            }
+        } else {
+            currentFocusable = null;
+        }
+
+        if (prev != null) {
+            prev.didLoseFocus();
+        }
+        if (currentFocusable != null) {
+            currentFocusable.didGainFocus();
+        }
+    }
+
+    public function focusPrevious():Void {
+        var prev = currentFocusable;
+        if (focusables.length > 0) {
+            if (currentFocusable == null) {
+                currentFocusable = focusables[0];
+            } else {
+                var index = focusables.indexOf(currentFocusable) - 1;
+                if (index < 0) {
+                    index = focusables.length - 1;
+                }
+                if (index < focusables.length) {
+                    currentFocusable = focusables[index];
+                } else {
+                    currentFocusable = null;
+                }
+            }
+        } else {
+            currentFocusable = null;
+        }
+
+        if (prev != null) {
+            prev.didLoseFocus();
+        }
+        if (currentFocusable != null) {
+            currentFocusable.didGainFocus();
+        }
     }
 
     public function loseFocus() {

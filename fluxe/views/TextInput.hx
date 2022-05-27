@@ -251,6 +251,14 @@ class TextInput extends View implements IFocusable implements IPressEventListene
 
         // trace(this.selectionRange);
 
+        if (action.isTab && action.isForwards) {
+            this.viewManager.focusManager.focusNext();
+            return;
+        } else if (action.isTab && action.isBackwards) {
+            this.viewManager.focusManager.focusPrevious();
+            return;
+        }
+
         var newRangeStart = this.selectionRange.start;
         var newRangeEnd = this.selectionRange.end;
         var hadSelectionBefore = this.selectionRange.start != this.selectionRange.end;

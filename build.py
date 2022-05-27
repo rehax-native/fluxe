@@ -146,7 +146,8 @@ header_files = [
 ] + [[path, 'build/out/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
 
 print('Building fluxe core')
-os.environ["PATH"] = orig_env
+if is_win:
+  os.environ["PATH"] = orig_env
 fluxe_lib = lib_prefix + 'fluxe-' + build_type + '.' + lib_extension
 if is_win:
   os.system('cd dev && make.exe fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/fluxe-cpp-core.lib ../build/fluxe.lib')

@@ -173,7 +173,19 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
                 break;
               // case 0x0A: // Linefeed
               // case 0x1B: // Escape
-              // case 0x09: // Tab
+              case 0x09: // Tab
+                if (view->isShiftDown) {
+                  view->getKeyboardMoveCallback()({
+                    .isBackwards = true,
+                    .isTab = true,
+                  });
+                } else {
+                  view->getKeyboardMoveCallback()({
+                    .isForwards = true,
+                    .isTab = true,
+                  });
+                }
+                break;
               // case 0x0D: // Carriage Return 
               default:
               {

@@ -19,6 +19,9 @@ class View implements ILayoutObject implements fluxe.events.MouseEventsManager.I
     var viewManager(get, null):ViewManager;
 
     public function get_viewManager():ViewManager {
+        if (_parent == null) {
+            return null;
+        }
         return _parent.get_viewManager();
     }
 
@@ -48,12 +51,21 @@ class View implements ILayoutObject implements fluxe.events.MouseEventsManager.I
     public function addSubView(view:View) {
         _subViews.push(view);
         view._parent = this;
+        var manager = viewManager;
+        if (manager != null) {
+            viewManager.onViewAdded(view);
+        }
         view.onAddedToParent(this);
     }
 
     public function removeSubView(view:View) {
         _subViews.remove(view);
+        var manager = viewManager;
         view._parent = null;
+        var manager = viewManager;
+        if (manager != null) {
+            viewManager.onViewRemoved(view);
+        }
         view.onRemovedFromParent(this);
     }
 

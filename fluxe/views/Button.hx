@@ -13,7 +13,7 @@ enum ButtonState {
     Disabled;
 }
 
-class Button extends View implements IPressEventListener implements IFocusable {
+class Button extends View implements IPressEventListener {
     public var title:Text;
     public var padding:Padding = {
         left: 10,
@@ -73,7 +73,7 @@ class Button extends View implements IPressEventListener implements IFocusable {
     }
 
     public function onPressStarted(event:PressStartedEvent) {
-        this.viewManager.focusManager.gainFocus(this);
+        this.viewManager.focusManager.loseFocus();
         this.state = ButtonState.Down;
         this.needsRerender = true;
     }
@@ -88,11 +88,5 @@ class Button extends View implements IPressEventListener implements IFocusable {
     public function onPressCanceled(event:PressCanceledEvent) {
         this.state = ButtonState.Up;
         this.needsRerender = true;
-    }
-
-    public function didGainFocus():Void {
-    }
-
-    public function didLoseFocus():Void {
     }
 }

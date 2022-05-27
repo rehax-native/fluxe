@@ -393,6 +393,9 @@ extern class NativeKeyboardMoveInstruction {
   var isDelete:Bool;
   var isSelect:Bool;
   var isScroll:Bool;
+
+  var isTab:Bool;
+  var isEnter:Bool;
 }
 
 class MouseInstruction {
@@ -449,6 +452,8 @@ class KeyboardMoveInstruction {
         hx.isDocument = native.isDocument;
         hx.isPage = native.isPage;
         hx.isScroll = native.isScroll;
+        hx.isTab = native.isTab;
+        hx.isEnter = native.isEnter;
         return hx;
     }
     public function new() {}
@@ -468,4 +473,6 @@ class KeyboardMoveInstruction {
     public var isDocument:Bool;
     public var isPage:Bool;
     public var isScroll:Bool;
+    public var isTab:Bool;
+    public var isEnter:Bool;
 }

@@ -567,9 +567,31 @@
 //    /* Insertions and Indentations */
 //
 //- (void)indent:(nullable id)sender;
-//- (void)insertTab:(nullable id)sender;
-//- (void)insertBacktab:(nullable id)sender;
-//- (void)insertNewline:(nullable id)sender;
+
+- (void)insertTab:(nullable id)sender
+{
+  moveCallback({
+    .isForwards = true,
+    .isTab = true,
+  });
+}
+
+- (void)insertBacktab:(nullable id)sender
+{
+  moveCallback({
+    .isBackwards = true,
+    .isTab = true,
+  });
+}
+
+- (void)insertNewline:(nullable id)sender
+{
+  moveCallback({
+    .isForwards = true,
+    .isEnter = true,
+  });
+}
+
 //- (void)insertParagraphSeparator:(nullable id)sender;
 //- (void)insertNewlineIgnoringFieldEditor:(nullable id)sender;
 //- (void)insertTabIgnoringFieldEditor:(nullable id)sender;

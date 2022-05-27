@@ -37,4 +37,7 @@ struct ShellKeyboardMoveInstruction
   bool isDelete = false;
   bool isSelect = false;
   bool isScroll = false;
+
+  bool isTab = false;
+  bool isEnter = false;
 };

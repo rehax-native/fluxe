@@ -65,6 +65,18 @@ class ViewManager {
         return _focusManager;
     }
 
+    public function onViewAdded(view:View) {
+        recollectFocusables();
+    }
+
+    public function onViewRemoved(view:View) {
+        recollectFocusables();
+    }
+
+    private function recollectFocusables() {
+        _focusManager.collectFocusables(container);
+    }
+
     public function renderCallback(width:Int, height:Int, scale:Float):NativeSurface {
         var surface = pipeline.render(width, height, scale);
         return surface._surface;
