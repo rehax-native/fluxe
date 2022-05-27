@@ -56,6 +56,7 @@ typedef skia::textlayout::ParagraphBuilderImpl ParagraphBuilderImpl;
 typedef skia::textlayout::ParagraphStyle ParagraphStyle;
 typedef skia::textlayout::FontCollection FontCollection;
 typedef skia::textlayout::TextBox TextBox;
+typedef skia::textlayout::TextStyle TextStyle;
 
 // class Canvas {
 

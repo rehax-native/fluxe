@@ -2,6 +2,24 @@ package fluxe.views;
 
 using fluxe.views.Externs;
 
+@:include("render_backend/skia/canvas.h")
+@:native("SkString")
+@:unreflective
+@:structAccess
+extern class SkString {
+    @:native("SkString")
+    public static function FromString(str:cpp.ConstCharStar):SkString;
+}
+
+@:include("vector")
+@:native("std::vector<SkString>")
+@:unreflective
+@:structAccess
+extern class FontFamiliesVector {
+    @:native("std::vector<SkString>")
+    public static function Create():FontFamiliesVector;
+    public function push_back(str:SkString):Void;
+}
 
 @:include("render_backend/skia/canvas.h")
 @:native("sk_sp<fluxe::FontCollection>")
@@ -48,6 +66,10 @@ class TextBox {
 @:unreflective
 @:structAccess
 extern class TextStyle {
+    @:native("fluxe::TextStyle")
+    public static function Create():TextStyle;
+
+    public function setFontFamilies(families:FontFamiliesVector):Void;
     public function setColor(color:Color):Void;
     public function setForegroundColor(color:Color):Void;
     public function clearForegroundColor():Void;
@@ -64,7 +86,6 @@ extern class TextStyle {
     public function addShadow(shadow:TextShadow):Void;
     // void addFontFeature(const SkString& fontFeature, int value)
     public function setFontSize(size:cpp.Float64):Void;
-    // void setFontFamilies(std::vector<SkString> families) {
     // SkScalar getBaselineShift() const { return fBaselineShift; }
     // void setBaselineShift(SkScalar baselineShift) { fBaselineShift = baselineShift; }
     // void setHeight(SkScalar height) { fHeight = height; }
@@ -225,7 +246,33 @@ class Text extends View {
 
     private var needsLayout = true;
     private var paragraph:Paragraph;
-    
+
+    public var textColor(default, set):Null<Color>;
+
+    public function set_textColor(color:Null<Color>):Null<Color> {
+        this.textColor = color;
+        needsRerender = true;
+        return color;
+    }
+
+    public var textSize(default, set):Null<Float>;
+
+    public function set_textSize(textSize:Null<Float>):Null<Float> {
+        this.textSize = textSize;
+        needsLayout = true;
+        needsRerender = true;
+        return textSize;
+    }
+
+    public var fontFamilies(default, set):Null<Array<String>>;
+
+    public function set_fontFamilies(fontFamilies:Null<Array<String>>):Null<Array<String>> {
+        this.fontFamilies = fontFamilies;
+        needsLayout = true;
+        needsRerender = true;
+        return fontFamilies;
+    }
+
     public function getRectsForRange(start:Int, end:Int):Array<TextBox> {
         if (needsLayout) {
             buildAndMeasureText();
@@ -240,8 +287,25 @@ class Text extends View {
     }
 
     private function buildAndMeasureText() {
-        var paragraphStyle = ParagraphStyle.Create();
+        var textStyle = TextStyle.Create();
         var fontCollection = FontCollection.Create();
+
+        if (textColor != null) {
+            textStyle.setColor(textColor);
+        }
+        if (textSize != null) {
+            textStyle.setFontSize(textSize);
+        }
+        if (fontFamilies != null) {
+            var vector = FontFamiliesVector.Create();
+            for (familiy in fontFamilies) {
+                vector.push_back(SkString.FromString(familiy));
+            }
+            textStyle.setFontFamilies(vector);
+        }
+
+        var paragraphStyle = ParagraphStyle.Create();
+        paragraphStyle.setTextStyle(textStyle);
         var builder = ParagraphBuilder.Create(paragraphStyle, fontCollection);
         builder.addText(this.text);
 
