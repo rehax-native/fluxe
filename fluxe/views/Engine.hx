@@ -52,11 +52,12 @@ class EngineUtility {
         viewManager.onNeedsRerender = () -> {
             engine.ptr.setNeedsRerender();
         };
-        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseCallback([this] (ShellMouseInstruction instruction) { return handleMouseCallback(instruction); })");
-        untyped __cpp__ ("this->engine->ptr->setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); })");
-        untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { return viewManager->textCallback(String(str)); })");
+        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { HX_TOP_OF_STACK return viewManager->renderCallback(w, h, scale); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseCallback([this] (ShellMouseInstruction instruction) { HX_TOP_OF_STACK return handleMouseCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { HX_TOP_OF_STACK return handleKeyCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { HX_TOP_OF_STACK return handleMoveCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { HX_TOP_OF_STACK return viewManager->textCallback(String(str)); })");
+        untyped __cpp__ ("::hx::SetTopOfStack((int *)0,true);");
         engine.ptr.startMainLoop();
         engine.ptr.detachFromPlatformWindow();
         engine.ptr.closePlatformWindow(window);
@@ -69,13 +70,14 @@ class EngineUtility {
         viewManager.onNeedsRerender = () -> {
             engine.ptr.setNeedsRerender();
         };
-        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); })");
-        untyped __cpp__ ("this->engine->ptr->setMouseCallback([this] (ShellMouseInstruction instruction) { return handleMouseCallback(instruction); })");
-        untyped __cpp__ ("this->engine->ptr->setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); })");
-        untyped __cpp__ ("this->engine->ptr->setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); })");
-        untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { return viewManager->textCallback(String(str)); })");
-        engine.ptr.detachFromPlatformView();
-        engine.destroy();
+        untyped __cpp__ ("this->engine->ptr->setRenderCallback([this] (int w, int h, float scale) { HX_TOP_OF_STACK return viewManager->renderCallback(w, h, scale); })");
+        untyped __cpp__ ("this->engine->ptr->setMouseCallback([this] (ShellMouseInstruction instruction) { HX_TOP_OF_STACK return handleMouseCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { HX_TOP_OF_STACK return handleKeyCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { HX_TOP_OF_STACK return handleMoveCallback(instruction); })");
+        untyped __cpp__ ("this->engine->ptr->setTextCallback([this] (const char * str) { HX_TOP_OF_STACK return viewManager->textCallback(String(str)); })");
+        // untyped __cpp__ ("::hx::SetTopOfStack((int *)0,true);");
+        // engine.ptr.detachFromPlatformView();
+        // engine.destroy();
     }
 
     public function handleMouseCallback(instruction:fluxe.views.Externs.NativeMouseInstruction) {

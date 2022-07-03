@@ -11,6 +11,8 @@
 - (void) drawRect: (NSRect) bounds
 {
   @autoreleasepool {
+    [super drawRect:bounds];
+
     float screenScale = self.window.screen.backingScaleFactor;
     sk_sp<fluxe::Surface> rasterSurface = renderCallback(bounds.size.width, bounds.size.height, screenScale);
 
@@ -90,16 +92,18 @@
 #pragma mark Key Events
 
 - (void)keyDown:(NSEvent *)theEvent {
-  keyCallback({
-    .code = theEvent.keyCode,
-    .isDown = true,
-  });
-  [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-  if ([@"a" isEqualToString:theEvent.characters] && theEvent.modifierFlags & NSEventModifierFlagCommand) {
-    moveCallback({
-      .isSelect = true,
-      .isAll = true,
+  @autoreleasepool {
+    keyCallback({
+      .code = theEvent.keyCode,
+      .isDown = true,
     });
+    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    if ([@"a" isEqualToString:theEvent.characters] && theEvent.modifierFlags & NSEventModifierFlagCommand) {
+      moveCallback({
+        .isSelect = true,
+        .isAll = true,
+      });
+    }
   }
 }
 

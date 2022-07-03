@@ -6,6 +6,10 @@ from distutils.dir_util import copy_tree
 import shutil
 import glob
 
+if len(sys.argv) < 2:
+  print('First argument must be "release" or "debug"')
+  exit(1)
+
 build_type = sys.argv[1]
 if build_type != 'release' and build_type != 'debug':
   print('First argument must be "release" or "debug"')
