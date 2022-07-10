@@ -191,6 +191,16 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
               {
 
                 if (view->isCtrlDown) {
+                  TCHAR character = (TCHAR) wparam;
+                  if (character == 'c' || character == 'C') {
+                    view->getKeyboardMoveCallback()({
+                      .isCopy = true,
+                    });
+                  } else if (character == 'v' || character == 'V') {
+                    view->getKeyboardMoveCallback()({
+                      .isPaste = true,
+                    });
+                  }
                   break;
                 }
                 TCHAR tStr[2];

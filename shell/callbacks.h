@@ -40,4 +40,6 @@ struct ShellKeyboardMoveInstruction
 
   bool isTab = false;
   bool isEnter = false;
+  bool isCopy = false;
+  bool isPaste = false;
 };
