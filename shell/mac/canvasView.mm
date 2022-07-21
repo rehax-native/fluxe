@@ -1,8 +1,8 @@
 #import "canvasView.h"
-#include "third_party/skia/include/core/SkData.h"
-#include "third_party/skia/include/core/SkImage.h"
-#include "third_party/skia/include/core/SkBitmap.h"
-#include "third_party/skia/include/core/SkSurface.h"
+#include "include/core/SkData.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkSurface.h"
 #include "include/utils/mac/SkCGUtils.h"
 
 @implementation CanvasView

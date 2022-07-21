@@ -1,0 +1,47 @@
+#pragma once
+
+#include "View.h"
+#include "../events/PressEvent.h"
+#include "../layout/Padding.h"
+#include "./Text.h"
+
+namespace fluxe {
+
+enum class ButtonState
+{
+  Up,
+  Down,
+  Hover,
+  Disabled,
+};
+
+class Button : public View, public IPressEventListener
+{
+protected:
+
+    ObjectPointer<Text> title;
+    Padding padding = {
+        .left = 10,
+        .right = 10,
+        .top = 5,
+        .bottom = 5,
+    };
+    
+    ButtonState state = ButtonState::Up;
+
+    std::function<void (ObjectPointer<Button>)> onClick = [] (ObjectPointer<Button> btn) {};
+
+public:
+
+    Button();
+    ObjectPointer<Text> getTitle();
+
+    void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;
+    void build(ObjectPointer<ViewBuilder> builder) override;
+
+    void onPressStarted(PressStartedEvent event) override;
+    void onPressFinished(PressFinishedEvent event) override;
+    void onPressCanceled(PressCanceledEvent event) override;
+};
+
+}

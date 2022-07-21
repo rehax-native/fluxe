@@ -71,7 +71,7 @@
 //  [mMoveCursor release];
 //  [mTrackingArea release];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-  [super dealloc];
+  // [super dealloc];
 }
 
 - (BOOL) isFlipped

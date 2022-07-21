@@ -35,8 +35,7 @@ void fluxe::Engine::attachToPlatformWindow(void * platformWindow)
                                                        userInfo:nil];
     [view addTrackingArea:area];
 
-//    this->view = (__bridge void *) view;
-    this->view = (void *) view;
+    this->view = (__bridge void *) view;
     
     NSWindow * win = (__bridge NSWindow *) platformWindow;
     [win setContentView:view];

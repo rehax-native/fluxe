@@ -62,6 +62,7 @@ This will give you a project file in the `dev` directory that you can use to run
 
 
 The following command will build Skia and the fluxe static library. You need these to run the examples and to create a release.
+Note that for building Skia you need both python3 and python2 intalled.
 
 ```
 python build.py

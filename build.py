@@ -41,7 +41,7 @@ lib_extension = 'lib' if is_win else 'a'
 if is_win and build_shared_skia_library:
   lib_extension = 'dll.lib'
 
-pathlib.Path('build/out').mkdir(parents=True, exist_ok=True)
+pathlib.Path('dist/out').mkdir(parents=True, exist_ok=True)
 
 if not os.path.exists('third_party/skia/third_party/externals/jinja2'):
   print('Setting up Skia build tools')
@@ -98,9 +98,9 @@ if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + li
     os.system('cd third_party/skia && gn gen out/Static --args="{}" --with-data-packaging=static'.format(' '.join(flags)))
     os.system('cd third_party/skia && ninja -C out/Static')
   else:
-    os.system('cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/Static --args=\'{}\' && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools))
+    cmd = 'cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/Static --args=\'{}\' && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools)
+    os.system(cmd)
   # os.system('cd third_party/skia && PATH=$PATH:{} gn args out/Static --list'.format(depot_tools))
-
 
 if is_win:
   copy_libs = [
@@ -125,7 +125,7 @@ if is_win:
     'icudtl.dat', # This file must be copied next to the binary
   ]
   for lib in copy_libs:
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib), 'build/{}'.format(lib))
+    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib), 'dist/{}'.format(lib))
 else:
   copy_libs = [
     'skia',
@@ -137,32 +137,39 @@ else:
   ]
   for lib in copy_libs:
     lib_full_name = lib_prefix + lib + '.' + lib_extension
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'build/{}'.format(lib_full_name))
+    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'dist/{}'.format(lib_full_name))
 
 header_source_paths = [
-  ('third_party/skia/include', 'build/out/include/third_party/skia/include'),
-  ('third_party/skia/modules/skparagraph/include', 'build/out/include/third_party/skia/modules/skparagraph/include'),
-  ('third_party/skia/modules/skshaper/include', 'build/out/include/third_party/skia/modules/skshaper/include'),
-  ('third_party/skia/modules/skunicode/include', 'build/out/include/third_party/skia/modules/skunicode/include'),
+  ('third_party/skia/include', 'dist/out/include/third_party/skia/include'),
+  ('third_party/skia/modules/skparagraph/include', 'dist/out/include/third_party/skia/modules/skparagraph/include'),
+  ('third_party/skia/modules/skshaper/include', 'dist/out/include/third_party/skia/modules/skshaper/include'),
+  ('third_party/skia/modules/skunicode/include', 'dist/out/include/third_party/skia/modules/skunicode/include'),
 ]
 header_files = [
-  ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'build/out/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'),
-] + [[path, 'build/out/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
+  ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'dist/out/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'),
+] + [[path, 'dist/out/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
 
 print('Building fluxe core')
 if is_win:
   os.environ["PATH"] = orig_env
 fluxe_lib = lib_prefix + 'fluxe-' + build_type + '.' + lib_extension
 if is_win:
-  os.system('cd dev && make.exe fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/fluxe-cpp-core.lib ../build/fluxe.lib')
+  os.system('cd dev && make.exe fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/fluxe-cpp-core.lib ../dist/fluxe.lib')
 else:
-  os.system('cd dev && make fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a ../build/libfluxe.a')
+  os.system('cd dev && make fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a ../dist/libfluxe.a')
 
+dist_headers = []
 for source, target in header_source_paths:
-  copy_tree(source, target)
+  hdrs = copy_tree(source, target)
+  dist_headers = dist_headers + hdrs
+for header in dist_headers:
+  if not header.endswith('.h'):
+    os.remove(header)
+
 for source, target in header_files:
-  pathlib.Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
-  shutil.copyfile(source, target)
+  if target.endswith('.h'):
+    pathlib.Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, target)
 
 if not is_win:
-  os.system('libtool -static -o build/out/libfluxe.a build/libfluxe.a {}'.format(' '.join(['build/lib{}.a'.format(lib) for lib in copy_libs])))
+  os.system('libtool -static -o dist/out/libfluxe.a dist/libfluxe.a {}'.format(' '.join(['dist/lib{}.a'.format(lib) for lib in copy_libs])))
