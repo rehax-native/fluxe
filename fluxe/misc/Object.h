@@ -413,7 +413,9 @@ int Object<T>::getReferenceCount()
 template <typename T>
 WeakObjectPointer<T>::WeakObjectPointer()
 :object(nullptr), weakReferenceCounter(Object<ReferenceCounter>::Create())
-{}
+{
+  weakReferenceCounter->increaseReferenceCount();
+}
 
 template <typename T>
 bool WeakObjectPointer<T>::isValid() const

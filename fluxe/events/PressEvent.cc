@@ -2,7 +2,7 @@
 
 using namespace fluxe;
 
-PressDetector::PressDetector(ObjectPointer<IPressEventListener> eventListener)
+PressDetector::PressDetector(IPressEventListener * eventListener)
 :eventListener(eventListener)
 {
 }

@@ -95,10 +95,11 @@ if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + li
       flags.append('extra_cflags=[\\"/MD\\"]')
 
   if is_win:
+    # --with-data-packaging=library is the only one supported on windows
     os.system('cd third_party/skia && gn gen out/Static --args="{}" --with-data-packaging=static'.format(' '.join(flags)))
     os.system('cd third_party/skia && ninja -C out/Static')
   else:
-    cmd = 'cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/Static --args=\'{}\' && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools)
+    cmd = 'cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/Static --args=\'{}\' --with-data-packaging=static && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools)
     os.system(cmd)
   # os.system('cd third_party/skia && PATH=$PATH:{} gn args out/Static --list'.format(depot_tools))
 

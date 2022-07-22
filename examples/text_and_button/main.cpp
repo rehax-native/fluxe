@@ -1,6 +1,7 @@
 #include "fluxe/views/View.h"
 #include "fluxe/views/Text.h"
 #include "fluxe/views/Button.h"
+#include "fluxe/views/TextInput.h"
 #include "fluxe/layout/StackLayout.h"
 #include "fluxe/views/EngineUtility.h"
 
@@ -22,20 +23,20 @@ int main() {
 
   auto button = Object<Button>::Create();
   button->getTitle()->setText("Click Me");
-//  button.onClick = (btn:Button) -> {
-//      trace("Clicked!");
-//  };
+  button->onClick = [] (ObjectPointer<Button> btn) {
+    std::cout << "Clicked" << std::endl;
+  };
 
-  // var textInput = new TextInput();
+  auto textInput = Object<TextInput>::Create();
 
   auto container = Object<View>::Create();
   auto layout = Object<StackLayout>::Create();
   layout->spacing = 10.0;
   container->setLayout(layout);
   container->addSubView(text);
-  container->setBackgroundColor(Color::RGBA(1.0, 0, 0, 0.5));
+  // container->setBackgroundColor(Color::RGBA(1.0, 0, 0, 0.5));
   container->addSubView(button);
-  // container.addSubView(textInput);
+  container->addSubView(textInput);
 
   EngineUtility::startWithView(container);
 

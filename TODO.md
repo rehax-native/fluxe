@@ -1,0 +1,19 @@
+- [x] Text doesn't show any text and measures to size 0, 0
+- [x] Events, mouse, keyboard interactions, focusing
+- [] Memory debugging, verify pointer works correctly
+    - [] In the button and text example, several weak pointers are self deleting, why?
+- [] Documentation
+- [x] Text Inputs in c++
+- [] Flex Layout in c++
+
+- [] Checkboxes
+- [] Radio boxes
+- [] Context menues
+- [] Dropdowns
+- [] Tests
+- [] Animations
+- [] Better rendering strategies
+- [] Scrollview
+- [] Clean up engine
+- [] Clean up build system
+    - [] Mix of CMake, premake5, python scripts. At least get rid of premake5

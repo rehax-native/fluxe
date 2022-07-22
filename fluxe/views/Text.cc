@@ -10,6 +10,7 @@ Text::Text()
 void Text::setText(std::string text)
 {
   this->text = text;
+  setNeedsRerender(true);
   needsLayout = true;
 }
 
@@ -47,6 +48,8 @@ void Text::buildAndMeasureText()
 {
   TextStyle textStyle;
   sk_sp<FontCollection> fontCollection = sk_make_sp<FontCollection>();
+
+  fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
 
   textStyle.setColor(textColor.color);
   textStyle.setFontSize(textSize);

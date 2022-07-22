@@ -1,6 +1,7 @@
 #pragma once
 
-#include "MouseEventsManager.h"
+#include "MouseEvents.h"
+#include "IEventListener.h"
 
 namespace fluxe {
 
@@ -8,7 +9,7 @@ struct PressStartedEvent {};
 struct PressFinishedEvent {};
 struct PressCanceledEvent {};
 
-class IPressEventListener : virtual public Object<View>
+class IPressEventListener
 {
 public:
   virtual void onPressStarted(PressStartedEvent event) = 0;
@@ -16,19 +17,18 @@ public:
   virtual void onPressCanceled(PressCanceledEvent event) = 0;
 };
 
-class PressDetector : public IMouseDownEventListener, public IMouseUpEventListener, public IMouseEnterExitEventListener
+class PressDetector : public IEventListener
 {
 public:
+  PressDetector(IPressEventListener * eventListener);
 
-  PressDetector(ObjectPointer<IPressEventListener> eventListener);
-
-  void onMouseDown(MouseDownEvent event);
-  void onMouseUp(MouseUpEvent event);
-  void onMouseEnter(MouseEnterEvent event);
-  void onMouseExit(MouseExitEvent event);
+  void onMouseDown(MouseDownEvent event) override;
+  void onMouseUp(MouseUpEvent event) override;
+  void onMouseEnter(MouseEnterEvent event) override;
+  void onMouseExit(MouseExitEvent event) override;
 
 private:
-  ObjectPointer<IPressEventListener> eventListener;
+  IPressEventListener * eventListener;
   bool isPressing = false;
 };
 

@@ -29,12 +29,11 @@ protected:
     
     ButtonState state = ButtonState::Up;
 
-    std::function<void (ObjectPointer<Button>)> onClick = [] (ObjectPointer<Button> btn) {};
-
 public:
 
     Button();
     ObjectPointer<Text> getTitle();
+    std::function<void (ObjectPointer<Button>)> onClick = [] (ObjectPointer<Button> btn) {};
 
     void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;
     void build(ObjectPointer<ViewBuilder> builder) override;

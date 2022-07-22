@@ -23,7 +23,7 @@ private:
   std::string text;
   bool needsLayout = true;
   std::unique_ptr<Paragraph> paragraph;
-  Color textColor;
+  Color textColor = Color::RGBA(1.0, 1.0, 1.0, 1.0);
   float textSize = 14;
   std::vector<std::string> fontFamilies;
 };

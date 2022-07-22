@@ -1,4 +1,7 @@
 #include "Button.h"
+#include "../events/PressEvent.h"
+#include "../events/FocusManager.h"
+#include "ViewManager.h"
 
 using namespace fluxe;
 
@@ -6,9 +9,7 @@ Button::Button()
 :title(Object<Text>::Create())
 {
   addSubView(title);
-  // mouseEventListeners = {
-  //   new PressDetector(this),
-  // };
+  addEventListener<PressDetector>(this);
 }
 
 ObjectPointer<Text> Button::getTitle()
@@ -57,7 +58,7 @@ void Button::build(ObjectPointer<ViewBuilder> builder)
 
 void Button::onPressStarted(PressStartedEvent event)
 {
-//   viewManager.focusManager.loseFocus();
+  getViewManager()->getFocusManager().loseFocus();
   state = ButtonState::Down;
   setNeedsRerender(true);
 }
@@ -67,7 +68,8 @@ void Button::onPressFinished(PressFinishedEvent event)
   state = ButtonState::Up;
   setNeedsRerender(true);
 
-//   onClick(static_cast<ObjectPointer<Button>>(getThisPointer()));
+  auto thisPtr = getThisPointer();
+  onClick(dynamic_pointer_cast<Button>(thisPtr));
 }
 
 void Button::onPressCanceled(PressCanceledEvent event)
