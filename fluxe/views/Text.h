@@ -14,6 +14,11 @@ public:
   void setTextSize(float size);
   void setFontFamilies(std::vector<std::string> fontFamilies);
 
+  std::string getText();
+  Color getTextColor();
+  float getTextSize();
+  std::vector<std::string> setFontFamilies();
+
   std::vector<TextBox> getRectsForRange(int start, int end);
   void buildAndMeasureText();
   void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;

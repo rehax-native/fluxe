@@ -34,6 +34,26 @@ void Text::setFontFamilies(std::vector<std::string> fontFamilies)
   setNeedsRerender(true);
 }
 
+std::string Text::getText()
+{
+  return text;
+}
+
+Color Text::getTextColor()
+{
+  return textColor;
+}
+
+float Text::getTextSize()
+{
+  return textSize;
+}
+
+std::vector<std::string> Text::setFontFamilies()
+{
+  return fontFamilies;
+}
+
 std::vector<TextBox> Text::getRectsForRange(int start, int end)
 {
   if (needsLayout) {

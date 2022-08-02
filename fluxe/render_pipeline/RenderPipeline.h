@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../misc/Object.h"
+#include <rehaxUtils/pointers/Object.h>
 #include "../views/View.h"
+
+using namespace rehaxUtils;
 
 namespace fluxe {
 

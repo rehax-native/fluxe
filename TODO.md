@@ -5,6 +5,7 @@
 - [] Documentation
 - [x] Text Inputs in c++
 - [] Flex Layout in c++
+- [] Image component
 
 - [] Checkboxes
 - [] Radio boxes

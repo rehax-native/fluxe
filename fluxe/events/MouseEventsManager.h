@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../misc/Object.h"
+#include <rehaxUtils/pointers/Object.h>
 #include "../../shell/callbacks.h"
 #include "MouseEvents.h"
 #include <set>
+
+using namespace rehaxUtils;
 
 namespace fluxe {
 

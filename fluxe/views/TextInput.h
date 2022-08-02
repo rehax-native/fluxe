@@ -42,8 +42,8 @@ public:
     .bottom = 7,
   };
 
-  virtual void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize);
-  virtual void build(ObjectPointer<ViewBuilder> builder);
+  virtual void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;
+  virtual void build(ObjectPointer<ViewBuilder> builder) override;
 
 
   void onPressStarted(PressStartedEvent event) override;

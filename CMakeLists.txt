@@ -13,6 +13,14 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+FetchContent_Declare(rehaxUtils
+    GIT_REPOSITORY https://github.com/rehax-native/utils.git
+    GIT_TAG        main
+)
+FetchContent_MakeAvailable(rehaxUtils)
+
+include_directories(${rehaxUtils_SOURCE_DIR})
+
 
 include_directories(.)
 include_directories(third_party/skia)
@@ -68,22 +76,6 @@ target_link_libraries(example-text-and-button-mac skunicode)
 
 
 enable_testing()
-
-add_executable(
-  ObjectPtrTest
-  fluxe/misc/Object.h
-  fluxe/misc/__test__/ReferenceCounterTest.cc
-  fluxe/misc/__test__/ReferenceCounterTreeTest.cc
-  fluxe/misc/__test__/CastTest.cc
-)
-target_link_libraries(
-  ObjectPtrTest
-  GTest::gtest_main
-)
-
-include(GoogleTest)
-gtest_discover_tests(ObjectPtrTest)
-
 
 # To run the tests:
 # cmake -S . -B build_test

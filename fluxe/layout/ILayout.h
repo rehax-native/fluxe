@@ -2,9 +2,11 @@
 
 #include <set>
 #include "./LayoutTypes.h"
-#include "../misc/Object.h"
+#include <rehaxUtils/pointers/Object.h>
 #include "LayoutConstraint.h"
 #include "ILayoutObject.h"
+
+using namespace rehaxUtils;
 
 namespace fluxe {
 

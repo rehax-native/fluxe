@@ -1,9 +1,11 @@
 #pragma once
 
 #include <vector>
-#include "../misc/Object.h"
-#include "render_backend/skia/canvas.h"
+#include <rehaxUtils/pointers/Object.h>
+#include "../../render_backend/skia/canvas.h"
 #include "../render_pipeline/RenderStrategy.h"
+
+using namespace rehaxUtils;
 
 namespace fluxe {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../misc/Object.h"
+#include <rehaxUtils/pointers/Object.h>
 #include "render_backend/skia/canvas.h"
 #include "View.h"
 #include "../render_pipeline/RenderPipeline.h"

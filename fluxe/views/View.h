@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../misc/Object.h"
+#include <rehaxUtils/pointers/Object.h>
 #include "../events/IEventListener.h"
 #include "../layout/ILayout.h"
 #include "../render_pipeline/RenderStrategy.h"
