@@ -63,16 +63,46 @@ set_target_properties(
     MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
     MACOSX_BUNDLE_INFO_PLIST examples/text_and_button/info.plist
 )
-target_link_libraries(example-text-and-button-mac fluxe-mac)
-target_link_libraries(example-text-and-button-mac "-framework Foundation")
-target_link_libraries(example-text-and-button-mac "-framework QuartzCore")
-target_link_libraries(example-text-and-button-mac "-framework AppKit")
-target_link_libraries(example-text-and-button-mac icu)
-target_link_libraries(example-text-and-button-mac skia)
-target_link_libraries(example-text-and-button-mac skparagraph)
-target_link_libraries(example-text-and-button-mac skshaper)
-target_link_libraries(example-text-and-button-mac sktext)
-target_link_libraries(example-text-and-button-mac skunicode)
+target_link_libraries(
+  example-text-and-button-mac
+  fluxe-mac
+  "-framework Foundation"
+  "-framework QuartzCore"
+  "-framework AppKit"
+  icu
+  skia
+  skparagraph
+  skshaper
+  sktext
+  skunicode
+)
+
+add_executable(
+    example-layouts-mac MACOSX_BUNDLE
+    examples/layouts/main.cpp
+)
+set_target_properties(
+    example-layouts-mac PROPERTIES
+    BUNDLE True
+    MACOSX_BUNDLE_GUI_IDENTIFIER dev.rehax.fluxe.example-layouts
+    MACOSX_BUNDLE_BUNDLE_NAME example-layouts-mac
+    MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+    MACOSX_BUNDLE_INFO_PLIST examples/layouts/info.plist
+)
+target_link_libraries(
+  example-layouts-mac
+  fluxe-mac
+  "-framework Foundation"
+  "-framework QuartzCore"
+  "-framework AppKit"
+  icu
+  skia
+  skparagraph
+  skshaper
+  sktext
+  skunicode
+)
 
 
 enable_testing()

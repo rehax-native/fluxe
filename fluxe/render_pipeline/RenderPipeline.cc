@@ -25,7 +25,7 @@ sk_sp<Surface> RenderPipeline::render(int width, int height, float scale)
     // }
 
     viewBuilder->scale = scale;
-    viewBuilder->rootNode->surface = fluxe::Surface::MakeRasterN32Premul(width, height);
+    viewBuilder->rootNode->surface = fluxe::Surface::MakeRasterN32Premul(width * scale, height * scale);
 
     auto canvas = viewBuilder->rootNode->surface->getCanvas();
     canvas->scale(scale, scale);
