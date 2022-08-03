@@ -43,9 +43,9 @@ void Button::build(ObjectPointer<ViewBuilder> builder)
     builder->getCanvas()->drawRRect(rrect, paint);
 
     if (state == ButtonState::Up) {
-        paint.setColor(Color::RGBA(0.2, 0.2, 0.2, 0.6).color);
+        paint.setColor(Color::RGBA(0.5, 0.5, 0.5, 0.2).color);
     } else if (state == ButtonState::Down) {
-        paint.setColor(Color::RGBA(0.2, 0.2, 0.2, 0.2).color);
+        paint.setColor(Color::RGBA(0.0, 0.0, 0.0, 0.2).color);
     // } else if (this.state == ButtonState.Hover) {
     //     paint.setColor(Color.RGBA(0.8, 0.8, 0.8, 0.8));
     // } else if (this.state == ButtonState.Disabled) {

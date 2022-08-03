@@ -32,9 +32,10 @@ public:
   virtual ~IEventListenerContainer();
 
   template <typename T, typename... Args>
-  void addEventListener(Args&&... args)
+  T* addEventListener(Args&&... args)
   {
-    eventListeners.insert(new T(std::forward<Args>(args)...));
+    auto listener = new T(std::forward<Args>(args)...);
+    eventListeners.insert(listener);
   }
 
   void onMouseDown(MouseDownEvent event) override;

@@ -15,7 +15,7 @@ public:
   float spacing = 0.0;
   StackLayoutDirection layoutDirection = StackLayoutDirection::Vertical;
 
-  LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::set<ILayoutObject*> items);
+  LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject*> items);
 
 private:
   void reduceConstraintsWidth(LayoutConstraint constraints, Nullable<float> amount);

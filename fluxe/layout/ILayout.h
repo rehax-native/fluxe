@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <vector>
 #include "./LayoutTypes.h"
 #include <rehaxUtils/pointers/Object.h>
 #include "LayoutConstraint.h"
@@ -13,7 +13,7 @@ namespace fluxe {
 class ILayout : public Object<ILayout>
 {
 public:
-  virtual LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::set<ILayoutObject *> items) = 0;
+  virtual LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject *> items) = 0;
 };
 
 }

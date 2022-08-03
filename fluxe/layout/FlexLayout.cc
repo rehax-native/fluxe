@@ -4,7 +4,7 @@
 
 using namespace fluxe;
 
-LayoutSize FlexLayout::layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::set<ILayoutObject*> items)
+LayoutSize FlexLayout::layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject*> items)
 {
   getAvailableSize(constraints, parentSize, parent);
 
@@ -59,7 +59,7 @@ void FlexLayout::getAvailableSize(LayoutConstraint constraints, PossibleLayoutSi
   }
 }
 
-void FlexLayout::collectAndMeasureChildren(std::set<ILayoutObject*> items, LayoutConstraint constraints) {
+void FlexLayout::collectAndMeasureChildren(std::vector<ILayoutObject*> items, LayoutConstraint constraints) {
   children = {};
   totalFlex = 0.0;
   childrenMainSizeFixed = 0.0;

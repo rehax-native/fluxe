@@ -51,8 +51,26 @@ WeakObjectPointer<View> View::getParent()
 
 void View::addSubView(ObjectPointer<View> view)
 {
+  view->removeFromParent();
   view->increaseReferenceCount();
-  subViews.insert(view.get());
+  subViews.push_back(view.get());
+
+  ObjectPointer<View> thisView = getThisPointer();
+  WeakObjectPointer<View> thisWeak = thisView;
+  view->parent = thisWeak;
+  auto manager = getViewManager();
+  if (manager.isValid()) {
+    manager->onViewAdded(view);
+  }
+  view->onAddedToParent(getThisPointer());
+}
+
+void View::addSubView(ObjectPointer<View> view, ObjectPointer<View> beforeView)
+{
+  view->removeFromParent();
+  auto beforeIt = std::find(subViews.begin(), subViews.end(), beforeView.get());
+  view->increaseReferenceCount();
+  subViews.insert(beforeIt, view.get());
 
   ObjectPointer<View> thisView = getThisPointer();
   WeakObjectPointer<View> thisWeak = thisView;
@@ -66,8 +84,7 @@ void View::addSubView(ObjectPointer<View> view)
 
 void View::removeSubView(ObjectPointer<View> view)
 {
-  auto it = subViews.find(view.get());
-
+  auto it = std::find(subViews.begin(), subViews.end(), view.get());
   if (it != subViews.end()) {
     (*it)->decreaseReferenceCount();
     subViews.erase(it);
@@ -79,6 +96,13 @@ void View::removeSubView(ObjectPointer<View> view)
     getViewManager()->onViewRemoved(view);
   }
   view->onRemovedFromParent(getThisPointer());
+}
+
+void View::removeFromParent()
+{
+  if (parent.isValid()) {
+    parent->removeSubView(getThisPointer());
+  }
 }
 
 void View::onAddedToParent(ObjectPointer<View> parent)
@@ -121,7 +145,7 @@ void View::measureLayout(LayoutConstraint constraints, PossibleLayoutSize parent
   // var subLayoutObjects = cast(this.subViews, Array<Dynamic>);
   // this.layoutSize = layout.layout(subLayoutObjects);
   // LayoutConstraintSetter.forwardLayoutConstraints(this);
-  auto subViewsAsLayoutObjects = reinterpret_cast<std::set<ILayoutObject *>&>(subViews);
+  auto subViewsAsLayoutObjects = reinterpret_cast<std::vector<ILayoutObject *>&>(subViews);
   layoutSize = layout->layout(constraints, parentSize, this, subViewsAsLayoutObjects);
 }
 

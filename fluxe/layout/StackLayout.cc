@@ -4,7 +4,7 @@
 
 using namespace fluxe;
 
-LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::set<ILayoutObject*> items)
+LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject*> items)
 {
   float pos = spacing;
   float maxCross = 0;

@@ -61,7 +61,7 @@ class FlexLayout : public ILayout
 {
 public:
 
-  LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::set<ILayoutObject*> items);
+  LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject*> items);
 
   FlexDirection direction = FlexDirection::Row;
   FlexJustifyContent justifyContent = FlexJustifyContent::FlexStart;
@@ -72,7 +72,7 @@ private:
 
   void positionChildren();
   void setSizeOfFlexChildren(LayoutConstraint constraints);
-  void collectAndMeasureChildren(std::set<ILayoutObject*> items, LayoutConstraint constraints);
+  void collectAndMeasureChildren(std::vector<ILayoutObject*> items, LayoutConstraint constraints);
   void getAvailableSize(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent);
   void setChildMainSize(ILayoutObject * child, float size);
   void setChildCrossSize(ILayoutObject * child, float size);

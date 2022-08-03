@@ -25,7 +25,9 @@ public:
   std::set<ObjectPointer<View>> getSubViews();
   WeakObjectPointer<View> getParent();
   void addSubView(ObjectPointer<View> view);
+  void addSubView(ObjectPointer<View> view, ObjectPointer<View> beforeView);
   void removeSubView(ObjectPointer<View> view);
+  void removeFromParent();
 
   virtual void onAddedToParent(ObjectPointer<View> parent);
   virtual void onRemovedFromParent(ObjectPointer<View> parent);
@@ -44,7 +46,7 @@ protected:
   Nullable<Color> backgroundColor;
 private:
   bool needsRerender = false;
-  std::set<View *> subViews;
+  std::vector<View *> subViews;
   WeakObjectPointer<View> parent;
 
 };
