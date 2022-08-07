@@ -53,7 +53,7 @@ class Engine {
   /**
    * Callbacks
    */
-  void setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback);
+  void setRenderCallback(std::function<void(int, int, float, sk_sp<SkSurface> surface)> callback);
   void setMouseCallback(std::function<void(ShellMouseInstruction instruction)> callback);
   void setTextCallback(std::function<void(const char* str)> callback);
   void setKeyCallback(std::function<void(ShellKeyboardKeyInstruction)> callback);

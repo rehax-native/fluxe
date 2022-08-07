@@ -36,6 +36,7 @@ public:
   {
     auto listener = new T(std::forward<Args>(args)...);
     eventListeners.insert(listener);
+    return listener;
   }
 
   void onMouseDown(MouseDownEvent event) override;

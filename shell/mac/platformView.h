@@ -2,8 +2,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-#ifdef FLUXE_USE_OPENGL
-#define VIEW_BASE NSOpenGLView
+// #define FLUXE_USE_OPENGL 0
+#define FLUXE_USE_METALKIT 1
+
+#ifdef FLUXE_USE_METALKIT
+#import <MetalKit/MetalKit.h>
+#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/mtl/GrMtlTypes.h"
+#define VIEW_BASE MTKView
 #else
 #define VIEW_BASE NSView
 #endif
@@ -15,6 +22,12 @@
 - (id) init;
 
 - (void) drawRect: (NSRect) bounds;
-- (void) render;
+- (CGContextRef) getCGContextRef;
+
+#ifdef FLUXE_USE_METALKIT
+@property (strong, nonatomic) id<MTLDevice> metalDevice;
+@property (assign, nonatomic) id<MTLCommandQueue> metalQueue;
+@property (assign, nonatomic) GrDirectContext* grContext;
+#endif
 
 @end

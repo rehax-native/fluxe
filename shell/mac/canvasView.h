@@ -8,7 +8,7 @@
 {
   @public
 
-  std::function<sk_sp<fluxe::Surface>(int, int, float)> renderCallback;
+  std::function<void(int, int, float, sk_sp<SkSurface> surface)> renderCallback;
   std::function<void(ShellMouseInstruction instruction)> mouseCallback;
   std::function<void(ShellKeyboardKeyInstruction instruction)> keyCallback;
   std::function<void(ShellKeyboardMoveInstruction instruction)> moveCallback;

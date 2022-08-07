@@ -1,10 +1,10 @@
 - [x] Text doesn't show any text and measures to size 0, 0
 - [x] Events, mouse, keyboard interactions, focusing
-- [] Memory debugging, verify pointer works correctly
-    - [] In the button and text example, several weak pointers are self deleting, why?
+- [x] Memory debugging, verify pointer works correctly
+    - [x] In the button and text example, several weak pointers are self deleting, why?
 - [] Documentation
 - [x] Text Inputs in c++
-- [] Flex Layout in c++
+- [x] Flex Layout in c++
 - [] Image component
 
 - [] Checkboxes

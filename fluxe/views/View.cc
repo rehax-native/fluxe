@@ -85,7 +85,8 @@ void View::addSubView(ObjectPointer<View> view, ObjectPointer<View> beforeView)
 void View::removeSubView(ObjectPointer<View> view)
 {
   auto it = std::find(subViews.begin(), subViews.end(), view.get());
-  if (it != subViews.end()) {
+  bool didFind = it != subViews.end();
+  if (didFind) {
     (*it)->decreaseReferenceCount();
     subViews.erase(it);
   }

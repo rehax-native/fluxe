@@ -1,6 +1,13 @@
 #import "platformView.h"
+#include "tools/skottie_ios_app/SkMetalViewBridge.h"
+#include "include/gpu/mtl/GrMtlBackendContext.h"
 
 @implementation FluxePlatformView
+#if defined FLUXE_USE_METALKIT
+{
+    sk_sp<GrDirectContext> fgrContext;
+}
+#endif
 
 - (id) init
 {
@@ -14,10 +21,23 @@
   self.layer.opaque = YES;
   self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
   
-  #if defined FLUXE_USE_METAL
-    self.layer = [CAMetalLayer new];
-    [(CAMetalLayer*)[self layer] setPixelFormat:MTLPixelFormatBGRA8Unorm];
-    ((CAMetalLayer*) self.layer).device = MTLCreateSystemDefaultDevice();
+  #if defined FLUXE_USE_METALKIT
+    self.metalDevice = MTLCreateSystemDefaultDevice();
+    self.device = self.metalDevice;
+    self.metalQueue = [[self device] newCommandQueue];
+    
+    GrContextOptions options;
+    GrMtlBackendContext backendContext = {};
+    backendContext.fDevice.reset(self.device);
+    backendContext.fQueue.reset(self.metalQueue);
+    fgrContext = GrDirectContext::MakeMetal(backendContext, options);
+    
+    self.grContext = fgrContext.get();
+    SkMtkViewConfigForSkia(self);
+
+    self.paused = true;
+    self.enableSetNeedsDisplay = true;
+    [self setNeedsDisplay:true];
     
   #elif defined FLUXE_USE_OPENGL
     NSOpenGLPixelFormatAttribute profile = NSOpenGLProfileVersionLegacy;
@@ -87,73 +107,46 @@
     return;
   }
   
-  // mGraphics->SetPlatformContext(nullptr);
-  
-  // if (newScale != mGraphics->GetScreenScale())
-  //   mGraphics->SetScreenScale(newScale);
+  CGFloat newScale = [pWindow backingScaleFactor];
 
   #if defined FLUXE_USE_OPENGL
     self.layer.contentsScale = 1./newScale;
-  #elif defined FLUXE_USE_METAL
+  #elif defined FLUXE_USE_METALKIT
     [(CAMetalLayer*)[self layer] setDrawableSize:CGSizeMake(self.frame.size.width * newScale, self.frame.size.height * newScale)];
   #endif
 }
 
-// - (CGContextRef) getCGContextRef
-// {
-//   CGContextRef pCGC = [NSGraphicsContext currentContext].CGContext;
-//   return [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
-// }
+ - (CGContextRef) getCGContextRef
+ {
+   CGContextRef pCGC = [NSGraphicsContext currentContext].CGContext;
+   return [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
+ }
 
 // not called for layer backed views
 - (void) drawRect: (NSRect) bounds
 {
-  #if !defined FLUXE_USE_OPENGL && !defined FLUXE_USE_METAL
-  // if (mGraphics)
-  // {
-  //   mGraphics->SetPlatformContext([self getCGContextRef]);
-      
-  //   if (mGraphics->GetPlatformContext())
-  //   {
-  //     const NSRect *rects;
-  //     NSInteger numRects;
-  //     [self getRectsBeingDrawn:&rects count:&numRects];
-  //     IRECTList drawRects;
-
-  //     for (int i = 0; i < numRects; i++)
-  //       drawRects.Add(ToIRECT(mGraphics, &rects[i]));
-      
-  //     mGraphics->Draw(drawRects);
-  //   }
-  // }
+  #if !defined FLUXE_USE_OPENGL && !defined FLUXE_USE_METALKIT
+//   if (mGraphics)
+//   {
+//     mGraphics->SetPlatformContext([self getCGContextRef]);
+//      
+//     if (mGraphics->GetPlatformContext())
+//     {
+//       const NSRect *rects;
+//       NSInteger numRects;
+//       [self getRectsBeingDrawn:&rects count:&numRects];
+//       IRECTList drawRects;
+//
+//       for (int i = 0; i < numRects; i++)
+//         drawRects.Add(ToIRECT(mGraphics, &rects[i]));
+//      
+//       mGraphics->Draw(drawRects);
+//     }
+//   }
   #else // this gets called on resize
   //TODO: set GL context/flush?
   //mGraphics->Draw(mDirtyRects);
   #endif
-}
-
-- (void) render
-{
-  // mDirtyRects.Clear();
-  
-  // if (mGraphics->IsDirty(mDirtyRects))
-  // {
-  //   mGraphics->SetAllControlsClean();
-      
-  //   #if !defined IGRAPHICS_GL && !defined IGRAPHICS_METAL // for layer-backed views setNeedsDisplayInRect/drawRect is not called
-  //     for (int i = 0; i < mDirtyRects.Size(); i++)
-  //       [self setNeedsDisplayInRect:ToNSRect(mGraphics, mDirtyRects.Get(i))];
-  //   #else
-  //     #ifdef IGRAPHICS_GL
-  //       [[self openGLContext] makeCurrentContext];
-  //     #endif
-  //     // so just draw on each frame, if something is dirty
-  //     mGraphics->Draw(mDirtyRects);
-  //   #endif
-  //   #ifdef IGRAPHICS_GL
-  //   [[self openGLContext] flushBuffer];
-  //   #endif
-  // }
 }
 
 @end

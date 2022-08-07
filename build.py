@@ -16,7 +16,7 @@ if build_type != 'release' and build_type != 'debug':
   exit(1)
 
 is_win = sys.platform == 'cygwin' or sys.platform == 'win32'
-# is_mac = sys.platform == 'darwin'
+is_mac = sys.platform == 'darwin'
 
 build_shared_skia_library = False
 # if is_win:
@@ -74,6 +74,9 @@ if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + li
   ]
   # if build_shared_skia_library:
     # flags.append('is_component_build=true')
+  
+  if is_mac:
+    flags.append('skia_use_metal=true')
 
   if build_type == 'debug':
     flags.append('is_debug=true')
@@ -135,6 +138,8 @@ else:
     'sktext',
     'icu',
     'skunicode',
+    'skottie',
+    'sksg',
   ]
   for lib in copy_libs:
     lib_full_name = lib_prefix + lib + '.' + lib_extension

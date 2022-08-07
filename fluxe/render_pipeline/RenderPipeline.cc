@@ -7,26 +7,19 @@ RenderPipeline::RenderPipeline(ObjectPointer<View> view)
 viewBuilder(Object<ViewBuilder>::Create())
 {}
 
-sk_sp<Surface> RenderPipeline::render(int width, int height, float scale)
+sk_sp<Surface> RenderPipeline::render(int width, int height, float scale, sk_sp<SkSurface> surface)
 {
-    this->width = width;
-    this->height = height;
-    // if (this.rootView.isSet) {
-    //     if (this.rootView.layoutConstraints == null) {
-    //         this.rootView.layoutConstraints = {
-    //             minWidth: null,
-    //             minHeight: null,
-    //             maxWidth: null,
-    //             maxHeight: null,
-    //         };
-    //     }
-    //     this.rootView.layoutConstraints.maxWidth = width;
-    //     this.rootView.layoutConstraints.maxHeight = height;
-    // }
+    if (this->width != width || this->height != height) {
+        this->width = width;
+        this->height = height;
+    }
 
     viewBuilder->scale = scale;
-    viewBuilder->rootNode->surface = fluxe::Surface::MakeRasterN32Premul(width * scale, height * scale);
-
+    viewBuilder->rootNode->surface = surface;
+    
+    viewBuilder->rootNode->surface->getCanvas()->clear(::fluxe::Color::RGBA(0.156, 0.156, 0.156, 1.0).color);
+    viewBuilder->rootNode->surface->getCanvas()->resetMatrix();
+    
     auto canvas = viewBuilder->rootNode->surface->getCanvas();
     canvas->scale(scale, scale);
 

@@ -47,9 +47,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxWidth.isSet) {
           item->layoutSize.value.width = constraints.value.maxWidth.value;
+        } else {
+          hasSizeHorizontally = false;
         }
+      } else {
+        hasSizeHorizontally = false;
       }
-      hasSizeHorizontally = false;
     } else if (auto * p = std::get_if<SizeDimensionTypes::Percentage>(&item->layoutSizeOverride.value.width)) {
       float percent = p->percent;
       if (parentSize.width.isSet) {
@@ -57,9 +60,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxWidth.isSet) {
           item->layoutSize.value.width = constraints.value.maxWidth.value * percent / 100.0;
+        } else {
+          hasSizeHorizontally = false;
         }
+      } else {
+        hasSizeHorizontally = false;
       }
-      hasSizeHorizontally = false;
     }
 
     if (auto * p = std::get_if<SizeDimensionTypes::Fixed>(&item->layoutSizeOverride.value.height)) {
@@ -70,9 +76,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxHeight.isSet) {
           item->layoutSize.value.height = constraints.value.maxHeight.value;
+        } else {
+          hasSizeVertically = false;
         }
+      } else {
+        hasSizeVertically = false;
       }
-      hasSizeVertically = false;
     } else if (auto * p = std::get_if<SizeDimensionTypes::Percentage>(&item->layoutSizeOverride.value.height)) {
       float percent = p->percent;
       if (parentSize.height.isSet) {
@@ -80,9 +89,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxHeight.isSet) {
           item->layoutSize.value.height = constraints.value.maxHeight.value * percent / 100.0;
+        } else {
+          hasSizeVertically = false;
         }
+      } else {
+        hasSizeVertically = false;
       }
-      hasSizeVertically = false;
     }
   }
 
@@ -96,9 +108,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxWidth.isSet) {
           item->layoutPosition.value.left = constraints.value.maxWidth.value * percent / 100.0;
+        } else {
+          hasPositionHorizontally = false;
         }
+      } else {
+        hasPositionHorizontally = false;
       }
-      hasPositionHorizontally = false;
     }
 
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.top)) {
@@ -110,9 +125,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxHeight.isSet) {
           item->layoutPosition.value.top = constraints.value.maxHeight.value * percent / 100.0;
+        } else {
+          hasPositionVertically = false;
         }
+      } else {
+        hasPositionVertically = false;
       }
-      hasPositionVertically = false;
     }
 
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.right)) {
@@ -124,9 +142,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxWidth.isSet) {
           item->layoutPosition.value.left = constraints.value.maxWidth.value * percent / 100.0 - item->layoutSize.value.width;
+        } else {
+          hasPositionHorizontally = false;
         }
+      } else {
+        hasPositionHorizontally = false;
       }
-      hasPositionHorizontally = false;
     }
 
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.bottom)) {
@@ -138,9 +159,12 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
       } else if (constraints.isSet) {
         if (constraints.value.maxHeight.isSet) {
           item->layoutPosition.value.top = constraints.value.maxHeight.value * percent / 100.0 - item->layoutSize.value.height;
+        } else {
+          hasPositionVertically = false;
         }
+      } else {
+        hasPositionVertically = false;
       }
-      hasPositionVertically = false;
     }
   }
 

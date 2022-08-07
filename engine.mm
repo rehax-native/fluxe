@@ -75,13 +75,14 @@ void fluxe::Engine::detachFromPlatformView()
 void fluxe::Engine::setNeedsRerender()
 {
   NSView * view = (__bridge NSView *) this->view;
-  view.needsDisplay = YES;
+  [view setNeedsDisplay:true];
 }
 
-void fluxe::Engine::setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback)
+void fluxe::Engine::setRenderCallback(std::function<void(int, int, float, sk_sp<SkSurface> surface)> callback)
 {
   CanvasView * view = (__bridge CanvasView *) this->view;
   view->renderCallback = callback;
+  setNeedsRerender();
 }
 
 void fluxe::Engine::setMouseCallback(std::function<void(ShellMouseInstruction instruction)> callback)

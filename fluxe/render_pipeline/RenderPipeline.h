@@ -12,7 +12,7 @@ class RenderPipeline
 public:
     RenderPipeline(ObjectPointer<View> view);
 
-    sk_sp<Surface> render(int width, int height, float scale);
+    sk_sp<Surface> render(int width, int height, float scale, sk_sp<SkSurface> surface);
     void layout();
     void build();
     void compose();

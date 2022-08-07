@@ -4,30 +4,53 @@
 #include "include/core/SkBitmap.h"
 #include "include/core/SkSurface.h"
 #include "include/utils/mac/SkCGUtils.h"
+#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/mtl/GrMtlTypes.h"
+#include "tools/skottie_ios_app/SkMetalViewBridge.h"
 
 @implementation CanvasView
-
 
 - (void) drawRect: (NSRect) bounds
 {
   @autoreleasepool {
     [super drawRect:bounds];
-
+      
+#if defined FLUXE_USE_METALKIT
+    if (![self grContext]) {
+      return;
+    }
+      
     float screenScale = self.window.screen.backingScaleFactor;
-    sk_sp<fluxe::Surface> rasterSurface = renderCallback(bounds.size.width, bounds.size.height, screenScale);
+    sk_sp<SkSurface> surface = SkMtkViewToSurface(self, [self grContext]);
+    renderCallback(self.bounds.size.width, self.bounds.size.height, screenScale, surface);
 
     SkPixmap pixmap;
-    rasterSurface->peekPixels(&pixmap);
+    surface->peekPixels(&pixmap);
+    SkBitmap bmp;
+    bmp.installPixels(pixmap);
+      
+    surface->flushAndSubmit();
+    surface = nullptr;
+    id<MTLCommandBuffer> commandBuffer = [[self metalQueue] commandBuffer];
+    [commandBuffer presentDrawable:[self currentDrawable]];
+    [commandBuffer commit];
+#else
+    float screenScale = self.window.screen.backingScaleFactor;
+    sk_sp<SkSurface> surface = fluxe::Surface::MakeRasterN32Premul(bounds.size.width * screenScale, bounds.size.height * screenScale);
+    renderCallback(bounds.size.width, bounds.size.height, screenScale, surface);
+
+    SkPixmap pixmap;
+    surface->peekPixels(&pixmap);
     SkBitmap bmp;
     bmp.installPixels(pixmap);
 
-    CGContextRef pCGC = [NSGraphicsContext currentContext].CGContext;
-    CGContext *pCGContext = [NSGraphicsContext graphicsContextWithCGContext: pCGC flipped: YES].CGContext;
-
-    CGContextSaveGState(pCGContext);
-    CGContextScaleCTM(pCGContext, 1.0 / screenScale, 1.0 / screenScale);
-    SkCGDrawBitmap(pCGContext, bmp, 0, 0);
-    CGContextRestoreGState(pCGContext);
+    CGContextRef context = [self getCGContextRef];
+    CGContextSaveGState(context);
+    CGContextScaleCTM(context, 1.0 / screenScale, 1.0 / screenScale);
+    SkCGDrawBitmap(context, bmp, 0, 0);
+    CGContextRestoreGState(context);
+#endif
   }
 }
 

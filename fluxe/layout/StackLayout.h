@@ -18,8 +18,8 @@ public:
   LayoutSize layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject*> items);
 
 private:
-  void reduceConstraintsWidth(LayoutConstraint constraints, Nullable<float> amount);
-  void reduceConstraintsHeight(LayoutConstraint constraints, Nullable<float> amount);
+  void reduceConstraintsWidth(LayoutConstraint & constraints, Nullable<float> amount);
+  void reduceConstraintsHeight(LayoutConstraint & constraints, Nullable<float> amount);
 
 };
 

@@ -41,12 +41,16 @@ file(GLOB FLUXE_MAC_SRC_FILES
     shell/*.h
     engine.h
     render_backend/skia/*.h
+
+    third_party/skia/tools/skottie_ios_app/SkMetalViewBridge.mm
+    third_party/skia/tools/skottie_ios_app/GrContextHolder.mm
 )
 
 add_library(
     fluxe-mac STATIC
     ${FLUXE_MAC_SRC_FILES}
 )
+target_compile_definitions(fluxe-mac PUBLIC -DSK_METAL)
 
 
 link_directories(./dist)
@@ -69,12 +73,16 @@ target_link_libraries(
   "-framework Foundation"
   "-framework QuartzCore"
   "-framework AppKit"
+  "-framework Metal"
+  "-framework MetalKit"
   icu
   skia
   skparagraph
   skshaper
   sktext
   skunicode
+  skottie
+  sksg
 )
 
 add_executable(
@@ -96,12 +104,16 @@ target_link_libraries(
   "-framework Foundation"
   "-framework QuartzCore"
   "-framework AppKit"
+  "-framework Metal"
+  "-framework MetalKit"
   icu
   skia
   skparagraph
   skshaper
   sktext
   skunicode
+  skottie
+  sksg
 )
 
 

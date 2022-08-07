@@ -17,10 +17,9 @@ void ViewManager::setNeedsRerender()
   onNeedsRerender();
 }
 
-sk_sp<Surface> ViewManager::renderCallback(int width, int height, float scale)
+void ViewManager::renderCallback(int width, int height, float scale, sk_sp<SkSurface> surface)
 {
-  auto surface = pipeline.render(width, height, scale);
-  return surface;
+  pipeline.render(width, height, scale, surface);
 }
 
 void ViewManager::mouseCallback(ShellMouseInstruction instruction)

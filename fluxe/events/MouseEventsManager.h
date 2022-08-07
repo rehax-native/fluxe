@@ -25,7 +25,9 @@ private:
   WeakObjectPointer<View> findViewAtPosition(float x, float y, ObjectPointer<View> view);
 
   ObjectPointer<View> rootView;
+  bool isMouseDown = false;
   std::set<WeakObjectPointer<View>> previousMouseMoveListeners;
+  std::set<WeakObjectPointer<View>> currentListenersWithMouseDown;
 };
 
 }

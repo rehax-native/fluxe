@@ -6,6 +6,8 @@ using namespace fluxe;
 
 LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent, std::vector<ILayoutObject*> items)
 {
+  auto overrideResult = LayoutConstraintSetter::handleLayoutOverride(constraints, parentSize, parent);
+
   float pos = spacing;
   float maxCross = 0;
   LayoutConstraint nextConstraints = {
@@ -50,14 +52,14 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
   }
 }
 
-void StackLayout::reduceConstraintsWidth(LayoutConstraint constraints, Nullable<float> amount)
+void StackLayout::reduceConstraintsWidth(LayoutConstraint & constraints, Nullable<float> amount)
 {
   if (constraints.maxWidth.isSet && amount.isSet) {
     constraints.maxWidth.value -= amount.value;
   }
 }
 
-void StackLayout::reduceConstraintsHeight(LayoutConstraint constraints, Nullable<float> amount)
+void StackLayout::reduceConstraintsHeight(LayoutConstraint & constraints, Nullable<float> amount)
 {
   if (constraints.maxHeight.isSet && amount.isSet) {
     constraints.maxHeight.value -= amount.value;

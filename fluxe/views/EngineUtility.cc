@@ -23,7 +23,7 @@ void EngineUtility::initWithWindow(ObjectPointer<View> view, void * window)
   viewManager->onNeedsRerender = [this] () {
     engine.setNeedsRerender();
   };
-  engine.setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); });
+  engine.setRenderCallback([this] (int w, int h, float scale, sk_sp<SkSurface> surface) { viewManager->renderCallback(w, h, scale, surface); });
   engine.setMouseCallback([this] (ShellMouseInstruction instruction) { return handleMouseCallback(instruction); });
   engine.setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); });
   engine.setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); });
@@ -40,7 +40,7 @@ void EngineUtility::initWithPlatformView(ObjectPointer<View> view, void * platfo
   viewManager->onNeedsRerender = [this] () {
     engine.setNeedsRerender();
   };
-  engine.setRenderCallback([this] (int w, int h, float scale) { return viewManager->renderCallback(w, h, scale); });
+  engine.setRenderCallback([this] (int w, int h, float scale, sk_sp<SkSurface> surface) { viewManager->renderCallback(w, h, scale, surface); });
   engine.setMouseCallback([this] (ShellMouseInstruction instruction) { return handleMouseCallback(instruction); });
   engine.setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); });
   engine.setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); });

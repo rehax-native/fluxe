@@ -23,8 +23,9 @@ int main() {
 
   auto button = Object<Button>::Create();
   button->getTitle()->setText("Click Me");
-  button->onClick = [] (ObjectPointer<Button> btn) {
+  button->onClick = [&text] (ObjectPointer<Button> btn) {
     std::cout << "Clicked" << std::endl;
+    text->removeFromParent();
   };
 
   auto textInput = Object<TextInput>::Create();

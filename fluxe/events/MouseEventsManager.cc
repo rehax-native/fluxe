@@ -31,24 +31,37 @@ void MouseEventsManager::handleInstruction(ShellMouseInstruction instruction)
 
 void MouseEventsManager::handleMouseDown(MouseDownEvent event)
 {
+  isMouseDown = true;
   auto hitView = findViewAtPosition(event.left, event.top, rootView);
   while (hitView.isValid()) {
     hitView->onMouseDown(event);
+    currentListenersWithMouseDown.insert(hitView);
     hitView = hitView->getParent();
   }
 }
 
 void MouseEventsManager::handleMouseUp(MouseUpEvent event)
 {
-  auto hitView = findViewAtPosition(event.left, event.top, rootView);
-  while (hitView.isValid()) {
-    hitView->onMouseUp(event);
-    hitView = hitView->getParent();
+  isMouseDown = false;
+  // this sends the mouse up event to the view that is under the mouse. Not sure we want that?
+//  auto hitView = findViewAtPosition(event.left, event.top, rootView);
+//  while (hitView.isValid()) {
+//    hitView->onMouseUp(event);
+//    hitView = hitView->getParent();
+//  }
+  for (auto listener : currentListenersWithMouseDown) {
+    listener->onMouseUp(event);
   }
+  currentListenersWithMouseDown.clear();
 }
 
 void MouseEventsManager::handleMouseMove(MouseMoveEvent event)
 {
+  if (isMouseDown) {
+    for (auto listener : currentListenersWithMouseDown) {
+      listener->onMouseMove(event);
+    }
+  }
   auto hitView = findViewAtPosition(event.left, event.top, rootView);
   std::set<WeakObjectPointer<View>> newListeners;
 
@@ -60,7 +73,9 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent event)
       });
     }
     newListeners.insert(hitView);
-    hitView->onMouseMove(event);
+    if (!isMouseDown) {
+      hitView->onMouseMove(event);
+    }
     hitView = hitView->getParent();
   }
 

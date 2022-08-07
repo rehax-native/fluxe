@@ -24,7 +24,7 @@ public:
   // MouseEventsManager getMouseEventsManager();
   FocusManager & getFocusManager();
 
-  sk_sp<Surface> renderCallback(int width, int height, float scale);
+  void renderCallback(int width, int height, float scale, sk_sp<SkSurface> surface);
   void mouseCallback(ShellMouseInstruction instruction);
   void keyCallback(ShellKeyboardKeyInstruction instruction);
   void textCallback(std::string str);

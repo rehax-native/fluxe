@@ -33,19 +33,18 @@ void FlexLayout::getAvailableSize(LayoutConstraint constraints, PossibleLayoutSi
   availableSize.height.unset();
     
   SizeDimensionTypes::Fixed * fp;
-
-  if (parentSize.width.isSet) {
-    availableSize.width.set(parentSize.width.value);
-  } else if (parent->layoutSizeOverride.isSet && (fp = std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.width))) {
+  if (parent->layoutSizeOverride.isSet && (fp = std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.width))) {
     availableSize.width.set(fp->size);
+  } else if (parentSize.width.isSet) {
+    availableSize.width.set(parentSize.width.value);
   } else if (constraints.maxWidth.isSet) {
     availableSize.width.set(constraints.maxWidth.value);
   }
 
-  if (parentSize.height.isSet) {
-    availableSize.height.set(parentSize.height.value);
-  } else if (parent->layoutSizeOverride.isSet && (fp = std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.height))) {
+  if (parent->layoutSizeOverride.isSet && (fp = std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.height))) {
     availableSize.height.set(fp->size);
+  } else if (parentSize.height.isSet) {
+    availableSize.height.set(parentSize.height.value);
   } else if (constraints.maxHeight.isSet) {
     availableSize.height.set(constraints.maxHeight.value);
   }
