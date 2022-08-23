@@ -248,8 +248,8 @@ project "fluxe-cpp-core"
     "./third_party/skia",
   }
 
-
   filter "system:macosx"
+    architecture "universal"
     files {
       "engine.h",
       "engine.mm",
@@ -261,6 +261,9 @@ project "fluxe-cpp-core"
     
     libdirs {
       "third_party/skia/out/Static"
+    }
+    defines {
+      "SK_METAL"
     }
 
     links { 

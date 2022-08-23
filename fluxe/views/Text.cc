@@ -9,7 +9,16 @@ Text::Text()
 
 void Text::setText(std::string text)
 {
-  this->text = text;
+  setText({
+    {
+      .text = text,
+    }
+  });
+}
+
+void Text::setText(std::vector<TextPart> textParts)
+{
+  this->textParts = textParts;
   setNeedsRerender(true);
   needsLayout = true;
 }
@@ -36,6 +45,10 @@ void Text::setFontFamilies(std::vector<std::string> fontFamilies)
 
 std::string Text::getText()
 {
+  std::string text = "";
+  for (auto part : textParts) {
+    text += part.text;
+  }
   return text;
 }
 
@@ -87,7 +100,31 @@ void Text::buildAndMeasureText()
   ParagraphBuilderImpl builder(paragraphStyle, fontCollection);
 
   std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
-  builder.addText(convert.from_bytes(text));
+  for (auto & part : textParts) {
+    TextStyle partStyle(textStyle);
+    if (part.color.isSet) {
+      partStyle.setColor(part.color.value.color);
+    }
+    if (part.fontSize.isSet) {
+      partStyle.setFontSize(part.fontSize.value);
+    }
+    SkFontStyle::Width width = SkFontStyle::kNormal_Width;
+    SkFontStyle::Weight weight = SkFontStyle::kNormal_Weight;
+    SkFontStyle::Slant slant = SkFontStyle::kUpright_Slant;
+    if (part.isItalic) {
+      slant = SkFontStyle::kItalic_Slant;
+    }
+    if (part.isUnderlined) {
+      partStyle.setDecoration(skia::textlayout::kUnderline);
+    }
+    if (part.isStrikedThrough) {
+      partStyle.setDecoration(skia::textlayout::kLineThrough);
+    }
+    partStyle.setFontStyle(SkFontStyle(weight, width, slant));
+    builder.pushStyle(partStyle);
+    builder.addText(convert.from_bytes(part.text));
+    builder.pop();
+  }
 
   paragraph = builder.Build();
   paragraph->layout(300);
@@ -105,6 +142,10 @@ void Text::measureLayout(LayoutConstraint constraints, PossibleLayoutSize parent
   if (needsLayout || !layoutSize.isSet) {
     buildAndMeasureText();
     needsLayout = false;
+  }
+  auto views = getSubViews();
+  for (auto & subView : views) {
+    subView->measureLayout(constraints, parentSize);
   }
 }
 

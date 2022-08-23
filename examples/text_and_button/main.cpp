@@ -39,6 +39,16 @@ int main() {
   container->addSubView(button);
   container->addSubView(textInput);
 
+  auto richText = Object<Text>::Create();
+  richText->setText({
+    { .text = "EDA" },
+    { .text = "?? ", .isUnderlined = true },
+    { .text = "red", .color = Color::RGBA(1.0, 0, 0, 0.5), .fontSize = 20, .isItalic = true },
+    { .text = " wrong", .isStrikedThrough = true },
+  });
+
+  container->addSubView(richText);
+
   EngineUtility::startWithView(container);
 
   return 0;

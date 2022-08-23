@@ -4,12 +4,22 @@
 
 namespace fluxe {
 
+struct TextPart {
+  std::string text;
+  Nullable<Color> color;
+  Nullable<float> fontSize;
+  bool isItalic = false;
+  bool isUnderlined = false;
+  bool isStrikedThrough = false;
+};
+
 class Text : public View
 {
 public:
   Text();
 
   void setText(std::string text);
+  void setText(std::vector<TextPart> textParts);
   void setTextColor(Color color);
   void setTextSize(float size);
   void setFontFamilies(std::vector<std::string> fontFamilies);
@@ -25,11 +35,12 @@ public:
   void build(ObjectPointer<ViewBuilder> builder) override;
 
 private:
-  std::string text;
+  // std::string text;
+  std::vector<TextPart> textParts;
   bool needsLayout = true;
   std::unique_ptr<Paragraph> paragraph;
   Color textColor = Color::RGBA(1.0, 1.0, 1.0, 1.0);
-  float textSize = 14;
+  float textSize = 12;
   std::vector<std::string> fontFamilies;
 };
 

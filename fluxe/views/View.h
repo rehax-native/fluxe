@@ -24,8 +24,8 @@ public:
   bool getNeedsRerender();
   std::set<ObjectPointer<View>> getSubViews();
   WeakObjectPointer<View> getParent();
-  void addSubView(ObjectPointer<View> view);
-  void addSubView(ObjectPointer<View> view, ObjectPointer<View> beforeView);
+  virtual void addSubView(ObjectPointer<View> view);
+  virtual void addSubView(ObjectPointer<View> view, ObjectPointer<View> beforeView);
   void removeSubView(ObjectPointer<View> view);
   void removeFromParent();
 

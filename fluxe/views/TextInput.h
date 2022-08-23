@@ -66,7 +66,7 @@ private:
   std::vector<TextBox> selectionRects;
   TextSelectionRange selectionRange;
   CaretPosition caretPosition;
-  Timer * caretTimer;
+  Timer * caretTimer = nullptr;
   bool isHiddenCharacters = false;
   float caretHeight = 0.0;
   bool isFocused = false;
