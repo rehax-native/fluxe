@@ -8,6 +8,7 @@ struct TextPart {
   std::string text;
   Nullable<Color> color;
   Nullable<float> fontSize;
+  std::vector<std::string> fontFamilies;
   bool isItalic = false;
   bool isUnderlined = false;
   bool isStrikedThrough = false;
@@ -20,17 +21,18 @@ public:
 
   void setText(std::string text);
   void setText(std::vector<TextPart> textParts);
-  void setTextColor(Color color);
-  void setTextSize(float size);
-  void setFontFamilies(std::vector<std::string> fontFamilies);
+  // void setTextColor(Color color);
+  // void setTextSize(float size);
+  // void setFontFamilies(std::vector<std::string> fontFamilies);
 
   std::string getText();
-  Color getTextColor();
-  float getTextSize();
-  std::vector<std::string> setFontFamilies();
+  std::vector<TextPart> getTextParts();
+  // Color getTextColor();
+  // float getTextSize();
+  // std::vector<std::string> setFontFamilies();
 
   std::vector<TextBox> getRectsForRange(int start, int end);
-  void buildAndMeasureText();
+  void buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize parentSize);
   void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;
   void build(ObjectPointer<ViewBuilder> builder) override;
 

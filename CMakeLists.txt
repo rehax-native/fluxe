@@ -70,6 +70,7 @@ set_target_properties(
 target_link_libraries(
   example-text-and-button-mac
   fluxe-mac
+  rehax-utils-mac
   "-framework Foundation"
   "-framework QuartzCore"
   "-framework AppKit"
@@ -101,6 +102,7 @@ set_target_properties(
 target_link_libraries(
   example-layouts-mac
   fluxe-mac
+  rehax-utils-mac
   "-framework Foundation"
   "-framework QuartzCore"
   "-framework AppKit"

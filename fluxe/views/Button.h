@@ -20,7 +20,7 @@ class Button : public View, public IPressEventListener
 protected:
 
     ObjectPointer<Text> title;
-    Padding padding = {
+    Padding textPadding = {
         .left = 10,
         .right = 10,
         .top = 5,

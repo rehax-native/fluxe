@@ -53,7 +53,8 @@ if not os.path.exists('third_party/skia/third_party/externals/jinja2'):
   else:
     os.system('cd third_party/skia && {} tools/git-sync-deps'.format(python))
 
-if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + lib_extension):
+# if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + lib_extension):
+if True:
   print('Building Skia')
   print('This takes a little bit')
 
@@ -77,6 +78,8 @@ if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + li
   
   if is_mac:
     flags.append('skia_use_metal=true')
+    # flags.append('target_os="mac"')
+    # flags.append('target_cpu="arm64"')
 
   if build_type == 'debug':
     flags.append('is_debug=true')
@@ -143,7 +146,7 @@ else:
   ]
   for lib in copy_libs:
     lib_full_name = lib_prefix + lib + '.' + lib_extension
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'dist/{}'.format(lib_full_name))
+    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'dist//out/{}'.format(lib_full_name))
 
 header_source_paths = [
   ('third_party/skia/include', 'dist/out/include/third_party/skia/include'),
@@ -156,13 +159,16 @@ header_files = [
 ] + [[path, 'dist/out/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
 
 print('Building fluxe core')
+build_type_capital = 'Debug' if build_type == 'debug' else 'Release'
 if is_win:
   os.environ["PATH"] = orig_env
 fluxe_lib = lib_prefix + 'fluxe-' + build_type + '.' + lib_extension
 if is_win:
   os.system('cd dev && make.exe fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/fluxe-cpp-core.lib ../dist/fluxe.lib')
+elif is_mac:
+  os.system('cd dev/fluxe-cpp-core && xcodebuild -configuration {} ONLY_ACTIVE_ARCH=NO -arch=universal && cp bin/{}/libfluxe-cpp-core.a ../../dist/out/libfluxe.a'.format(build_type_capital, build_type))
 else:
-  os.system('cd dev && make fluxe-cpp-core && cp fluxe-cpp-core/bin/Debug/libfluxe-cpp-core.a ../dist/libfluxe.a')
+  os.system('cd dev && make fluxe-cpp-core config={} && cp fluxe-cpp-core/bin/{}/libfluxe-cpp-core.a ../dist/libfluxe.a'.format(build_type, build_type_capital))
 
 dist_headers = []
 for source, target in header_source_paths:
@@ -177,5 +183,8 @@ for source, target in header_files:
     pathlib.Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, target)
 
-if not is_win:
-  os.system('libtool -static -o dist/out/libfluxe.a dist/libfluxe.a {}'.format(' '.join(['dist/lib{}.a'.format(lib) for lib in copy_libs])))
+# for lib in copy_libs:
+#   os.system('cp {}.a {}'.format(build_type, ' '.join(['dist/lib{}.a'.format(lib) for lib in copy_libs])))
+
+# if not is_win:
+  # os.system('libtool -static -o dist/out/libfluxe.a dist/libfluxe-{}.a {}'.format(build_type, ' '.join(['dist/lib{}.a'.format(lib) for lib in copy_libs])))

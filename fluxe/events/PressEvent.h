@@ -5,8 +5,16 @@
 
 namespace fluxe {
 
-struct PressStartedEvent {};
-struct PressFinishedEvent {};
+struct PressStartedEvent {
+  int button = 0;
+  float left;
+  float top;
+};
+struct PressFinishedEvent {
+  int button = 0;
+  float left;
+  float top;
+};
 struct PressCanceledEvent {};
 
 class IPressEventListener

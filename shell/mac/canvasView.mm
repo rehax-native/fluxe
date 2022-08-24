@@ -73,6 +73,19 @@
   }
 }
 
+- (void)rightMouseDown:(NSEvent *)theEvent
+{
+  @autoreleasepool {
+    NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    mouseCallback({
+      .left = (float) curPoint.x,
+      .top = (float) curPoint.y,
+      .button = (int) theEvent.buttonNumber,
+      .isDown = true,
+    });
+  }
+}
+
 - (void)mouseDragged:(NSEvent *)theEvent
 {
   @autoreleasepool {
@@ -100,6 +113,19 @@
 }
  
 - (void)mouseUp:(NSEvent *)theEvent
+{
+  @autoreleasepool {
+    NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    mouseCallback({
+      .left = (float) curPoint.x,
+      .top = (float) curPoint.y,
+      .button = (int) theEvent.buttonNumber,
+      .isUp = true,
+    });
+  }
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent
 {
   @autoreleasepool {
     NSPoint curPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];

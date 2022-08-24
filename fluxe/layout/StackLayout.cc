@@ -8,7 +8,8 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
 {
   auto overrideResult = LayoutConstraintSetter::handleLayoutOverride(constraints, parentSize, parent);
 
-  float pos = spacing;
+  float pos = spacing + (layoutDirection == StackLayoutDirection::Vertical ? parent->getPadding().top : parent->getPadding().left);
+  float maxPos = pos;
   float maxCross = 0;
   LayoutConstraint nextConstraints = {
     .maxWidth = constraints.maxWidth,
@@ -24,31 +25,47 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
 
     if (layoutDirection == StackLayoutDirection::Vertical) {
       if (overrideResult.hasSizeVertically) {
-        item->layoutPosition = LayoutPosition {
-          .left = spacing,
-          .top = pos,
-        };
-        pos += item->layoutSize.value.height + spacing;
-        reduceConstraintsHeight(nextConstraints, item->layoutSize.value.height);
+        if (!overrideResult.hasPositionVertically) {
+          item->layoutPosition = LayoutPosition {
+            .left = spacing,
+            .top = pos,
+          };
+          pos += item->layoutSize.value.height + spacing;
+          reduceConstraintsHeight(nextConstraints, item->layoutSize.value.height);
+        } else {
+          if (item->layoutPosition.value.left + item->layoutSize.value.width + spacing > maxPos) {
+            maxPos = item->layoutPosition.value.left + item->layoutSize.value.width + spacing;
+          }
+        }
       }
-      maxCross = std::max(maxCross, item->layoutSize.value.width + spacing * 2.0f);
+      maxCross = std::max(maxCross, item->layoutPosition.value.left + item->layoutSize.value.width + spacing);
     } else {
       if (overrideResult.hasSizeHorizontally) {
-        item->layoutPosition = LayoutPosition {
-          .left = pos,
-          .top = spacing,
-        };
-        pos += item->layoutSize.value.width + spacing;
-        reduceConstraintsWidth(nextConstraints, item->layoutSize.value.width);
+        if (!overrideResult.hasPositionHorizontally) {
+          item->layoutPosition = LayoutPosition {
+            .left = pos,
+            .top = spacing,
+          };
+          pos += item->layoutSize.value.width + spacing;
+          reduceConstraintsWidth(nextConstraints, item->layoutSize.value.width);
+        } else {
+          if (item->layoutPosition.value.top + item->layoutSize.value.height + spacing > maxPos) {
+            maxPos = item->layoutPosition.value.top + item->layoutSize.value.height + spacing;
+          }
+        }
       }
-      maxCross = std::max(maxCross, item->layoutSize.value.width + spacing * 2.0f);
+      maxCross = std::max(maxCross, item->layoutPosition.value.top + item->layoutSize.value.width + spacing);
     }
   }
 
+  if (pos > maxPos) {
+    maxPos = pos;
+  }
+
   if (layoutDirection == StackLayoutDirection::Vertical) {
-    return { .width = maxCross, .height = pos };
+    return { .width = maxCross + parent->getPadding().left + parent->getPadding().right, .height = maxPos + parent->getPadding().bottom };
   } else {
-    return { .width = pos, .height = maxCross };
+    return { .width = maxPos + parent->getPadding().right, .height = maxCross + parent->getPadding().top + parent->getPadding().bottom };
   }
 }
 

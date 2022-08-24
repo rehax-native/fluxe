@@ -1,4 +1,5 @@
 #include "LayoutConstraintSetter.h"
+#include <iostream>
 
 using namespace fluxe;
 
@@ -35,8 +36,8 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
 {
   auto hasSizeVertically = true;
   auto hasSizeHorizontally = true;
-  auto hasPositionHorizontally = true;
-  auto hasPositionVertically = true;
+  auto hasPositionHorizontally = false;
+  auto hasPositionVertically = false;
 
   if (item->layoutSizeOverride.isSet) {
     if (auto * p = std::get_if<SizeDimensionTypes::Fixed>(&item->layoutSizeOverride.value.width)) {
@@ -101,69 +102,77 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
   if (item->layoutPositionOverride.isSet) {
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.left)) {
       item->layoutPosition.value.left = p->amount;
+      item->layoutPosition.isSet = true;
+      hasPositionHorizontally = true;
     } else if (auto * p = std::get_if<PositionDimensionTypes::Percentage>(&item->layoutPositionOverride.value.left)) {
       float percent = p->percent;
       if (parentSize.width.isSet) {
         item->layoutPosition.value.left = parentSize.width.value * percent / 100.0;
+        item->layoutPosition.isSet = true;
+        hasPositionHorizontally = true;
       } else if (constraints.isSet) {
         if (constraints.value.maxWidth.isSet) {
           item->layoutPosition.value.left = constraints.value.maxWidth.value * percent / 100.0;
-        } else {
-          hasPositionHorizontally = false;
+          item->layoutPosition.isSet = true;
+          hasPositionHorizontally = true;
         }
-      } else {
-        hasPositionHorizontally = false;
       }
     }
 
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.top)) {
       item->layoutPosition.value.top = p->amount;
+      item->layoutPosition.isSet = true;
+      hasPositionVertically = true;
     } else if (auto * p = std::get_if<PositionDimensionTypes::Percentage>(&item->layoutPositionOverride.value.top)) {
       float percent = p->percent;
       if (parentSize.height.isSet) {
         item->layoutPosition.value.top = parentSize.height.value * percent / 100.0;
+        item->layoutPosition.isSet = true;
+        hasPositionVertically = true;
       } else if (constraints.isSet) {
         if (constraints.value.maxHeight.isSet) {
           item->layoutPosition.value.top = constraints.value.maxHeight.value * percent / 100.0;
-        } else {
-          hasPositionVertically = false;
+          item->layoutPosition.isSet = true;
+          hasPositionVertically = true;
         }
-      } else {
-        hasPositionVertically = false;
       }
     }
 
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.right)) {
       item->layoutPosition.value.left = p->amount - item->layoutSize.value.width;
+      item->layoutPosition.isSet = true;
+      hasPositionHorizontally = true;
     } else if (auto * p = std::get_if<PositionDimensionTypes::Percentage>(&item->layoutPositionOverride.value.right)) {
       float percent = p->percent;
       if (parentSize.width.isSet) {
         item->layoutPosition.value.left = parentSize.width.value * percent / 100.0 - item->layoutSize.value.width;
+        item->layoutPosition.isSet = true;
+        hasPositionHorizontally = true;
       } else if (constraints.isSet) {
         if (constraints.value.maxWidth.isSet) {
           item->layoutPosition.value.left = constraints.value.maxWidth.value * percent / 100.0 - item->layoutSize.value.width;
-        } else {
-          hasPositionHorizontally = false;
+          item->layoutPosition.isSet = true;
+          hasPositionHorizontally = true;
         }
-      } else {
-        hasPositionHorizontally = false;
       }
     }
 
     if (auto * p = std::get_if<PositionDimensionTypes::Fixed>(&item->layoutPositionOverride.value.bottom)) {
       item->layoutPosition.value.top = p->amount - item->layoutSize.value.height;
+      item->layoutPosition.isSet = true;
+      hasPositionVertically = true;
     } else if (auto * p = std::get_if<PositionDimensionTypes::Percentage>(&item->layoutPositionOverride.value.bottom)) {
       float percent = p->percent;
       if (parentSize.height.isSet) {
         item->layoutPosition.value.top = parentSize.height.value * percent / 100.0 - item->layoutSize.value.height;
+        item->layoutPosition.isSet = true;
+        hasPositionVertically = true;
       } else if (constraints.isSet) {
         if (constraints.value.maxHeight.isSet) {
           item->layoutPosition.value.top = constraints.value.maxHeight.value * percent / 100.0 - item->layoutSize.value.height;
-        } else {
-          hasPositionVertically = false;
+          item->layoutPosition.isSet = true;
+          hasPositionVertically = true;
         }
-      } else {
-        hasPositionVertically = false;
       }
     }
   }

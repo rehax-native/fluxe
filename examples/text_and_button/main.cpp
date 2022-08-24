@@ -44,7 +44,11 @@ int main() {
     { .text = "EDA" },
     { .text = "?? ", .isUnderlined = true },
     { .text = "red", .color = Color::RGBA(1.0, 0, 0, 0.5), .fontSize = 20, .isItalic = true },
-    { .text = " wrong", .isStrikedThrough = true },
+    { .text = " wrong", .isStrikedThrough = true, .fontFamilies = { "Courier New" } },
+  });
+  richText->setPadding({
+    .left = 30,
+    .top = 40,
   });
 
   container->addSubView(richText);

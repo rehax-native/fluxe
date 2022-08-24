@@ -21,12 +21,12 @@ void Button::measureLayout(LayoutConstraint constraints, PossibleLayoutSize pare
 {
   title->measureLayout(constraints, parentSize);
   layoutSize = Nullable<LayoutSize>({
-    .width = title->layoutSize.value.width + padding.left + padding.right,
-    .height = title->layoutSize.value.height + padding.top + padding.bottom,
+    .width = title->layoutSize.value.width + textPadding.left + textPadding.right + padding.left + padding.right,
+    .height = title->layoutSize.value.height + textPadding.top + textPadding.bottom + padding.top + padding.bottom,
   });
   title->layoutPosition = Nullable<LayoutPosition>({
-    .left = padding.left,
-    .top = padding.top,
+    .left = textPadding.left + padding.left,
+    .top = textPadding.top + padding.top,
   });
 }
 

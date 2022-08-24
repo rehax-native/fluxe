@@ -23,25 +23,25 @@ void Text::setText(std::vector<TextPart> textParts)
   needsLayout = true;
 }
 
-void Text::setTextColor(Color color)
-{
-  textColor = color;
-  setNeedsRerender(true);
-}
+// void Text::setTextColor(Color color)
+// {
+//   textColor = color;
+//   setNeedsRerender(true);
+// }
 
-void Text::setTextSize(float size)
-{
-  textSize = size;
-  needsLayout = true;
-  setNeedsRerender(true);
-}
+// void Text::setTextSize(float size)
+// {
+//   textSize = size;
+//   needsLayout = true;
+//   setNeedsRerender(true);
+// }
 
-void Text::setFontFamilies(std::vector<std::string> fontFamilies)
-{
-  this->fontFamilies = fontFamilies;
-  needsLayout = true;
-  setNeedsRerender(true);
-}
+// void Text::setFontFamilies(std::vector<std::string> fontFamilies)
+// {
+//   this->fontFamilies = fontFamilies;
+//   needsLayout = true;
+//   setNeedsRerender(true);
+// }
 
 std::string Text::getText()
 {
@@ -52,32 +52,37 @@ std::string Text::getText()
   return text;
 }
 
-Color Text::getTextColor()
+std::vector<TextPart> Text::getTextParts()
 {
-  return textColor;
+  return textParts;
 }
 
-float Text::getTextSize()
-{
-  return textSize;
-}
+// Color Text::getTextColor()
+// {
+//   return textColor;
+// }
 
-std::vector<std::string> Text::setFontFamilies()
-{
-  return fontFamilies;
-}
+// float Text::getTextSize()
+// {
+//   return textSize;
+// }
+
+// std::vector<std::string> Text::setFontFamilies()
+// {
+//   return fontFamilies;
+// }
 
 std::vector<TextBox> Text::getRectsForRange(int start, int end)
 {
   if (needsLayout) {
-    buildAndMeasureText();
+    buildAndMeasureText({}, {});
     needsLayout = false;
   }
   auto rects = paragraph->getRectsForRange(start, end, skia::textlayout::RectHeightStyle::kTight, skia::textlayout::RectWidthStyle::kTight);
   return rects;
 }
 
-void Text::buildAndMeasureText()
+void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize parentSize)
 {
   TextStyle textStyle;
   sk_sp<FontCollection> fontCollection = sk_make_sp<FontCollection>();
@@ -87,14 +92,6 @@ void Text::buildAndMeasureText()
   textStyle.setColor(textColor.color);
   textStyle.setFontSize(textSize);
 
-  if (fontFamilies.size() > 0) {
-    std::vector<SkString> vector;
-    for (auto & familiy : fontFamilies) {
-      vector.push_back(SkString(familiy));
-    }
-    textStyle.setFontFamilies(vector);
-  }
-
   ParagraphStyle paragraphStyle;
   paragraphStyle.setTextStyle(textStyle);
   ParagraphBuilderImpl builder(paragraphStyle, fontCollection);
@@ -102,6 +99,15 @@ void Text::buildAndMeasureText()
   std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
   for (auto & part : textParts) {
     TextStyle partStyle(textStyle);
+
+    if (part.fontFamilies.size() > 0) {
+      std::vector<SkString> vector;
+      for (auto & familiy : part.fontFamilies) {
+        vector.push_back(SkString(familiy));
+      }
+      partStyle.setFontFamilies(vector);
+    }
+
     if (part.color.isSet) {
       partStyle.setColor(part.color.value.color);
     }
@@ -126,21 +132,29 @@ void Text::buildAndMeasureText()
     builder.pop();
   }
 
+  float maxSize = 99999;
+  if (parentSize.width.isSet) {
+    maxSize = parentSize.width.value;
+  } else if (constraints.maxWidth.isSet) {
+    maxSize = constraints.maxWidth.value;
+  }
+  maxSize -= padding.left + padding.right;
+
   paragraph = builder.Build();
-  paragraph->layout(300);
+  paragraph->layout(maxSize);
   auto height = paragraph->getHeight();
   auto width = paragraph->getLongestLine();
 
   layoutSize = Nullable<LayoutSize>({
-    .width = width,
-    .height = height,
+    .width = width + padding.left + padding.right,
+    .height = height + padding.top + padding.bottom,
   });
 }
 
 void Text::measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize)
 {
   if (needsLayout || !layoutSize.isSet) {
-    buildAndMeasureText();
+    buildAndMeasureText(constraints, parentSize);
     needsLayout = false;
   }
   auto views = getSubViews();
@@ -159,5 +173,5 @@ void Text::build(ObjectPointer<ViewBuilder> builder)
   // var blob = TextBlob.MakeFromString(this.text, font);
 
   // builder.canvas.drawTextBlob(blob, 0, 15, paint);
-  paragraph->paint(builder->getCanvas(), 0, 0);
+  paragraph->paint(builder->getCanvas(), padding.left, padding.top);
 }

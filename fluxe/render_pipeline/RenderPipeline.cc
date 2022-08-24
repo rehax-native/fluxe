@@ -73,11 +73,13 @@ void RenderPipeline::buildTraverse(ObjectPointer<View> view, ObjectPointer<ViewB
         dy = view->layoutPosition.value.top;
     }
     viewBuilder->getCanvas()->translate(dx, dy);
+    view->buildEnter(viewBuilder);
     view->build(viewBuilder);
     auto subViews = view->getSubViews();
     for (auto & subView : subViews) {
         buildTraverse(subView, viewBuilder);
     }
+    view->buildExit(viewBuilder);
     viewBuilder->getCanvas()->translate(-dx, -dy);
 }
 

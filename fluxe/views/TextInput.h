@@ -5,7 +5,7 @@
 #include "Text.h"
 #include "../events/PressEvent.h"
 #include "../layout/Padding.h"
-#include "../../shell/timer.h"
+#include <rehaxUtils/timer/timer.h>
 
 namespace fluxe {
 
@@ -35,7 +35,7 @@ public:
   std::string getValue();
 
   std::function<void (std::string)> onValueChanged = [] (std::string value) {};
-  Padding padding = {
+  Padding textPadding = {
     .left = 10,
     .right = 10,
     .top = 7,
@@ -59,6 +59,10 @@ public:
 
   void startCaretBlink();
   void stopCaretBlink();
+
+  void copyTextToClipboard();
+  void cutTextToClipboard();
+  void pasteTextFromClipboard();
 
 private:
   ObjectPointer<Text> text;

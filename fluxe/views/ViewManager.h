@@ -33,9 +33,15 @@ public:
   void onViewAdded(ObjectPointer<View> view);
   void onViewRemoved(ObjectPointer<View> view);
 
+  void showContextMenu(ObjectPointer<View> view);
+  ObjectPointer<View> getContextMenu();
+  void closeContextMenu();
+
 private:
   ObjectPointer<ViewsContainer> container;
+  ObjectPointer<View> contextMenu;
   RenderPipeline pipeline;
+  bool hasRenderedOnce = false;
   MouseEventsManager mouseEventsManager;
   FocusManager focusManager;
   KeyboardEventsManager keyboardEventsManager;

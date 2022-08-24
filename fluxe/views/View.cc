@@ -35,11 +35,11 @@ bool View::getNeedsRerender()
   return needsRerender;
 }
 
-std::set<ObjectPointer<View>> View::getSubViews()
+std::vector<ObjectPointer<View>> View::getSubViews()
 {
-  std::set<ObjectPointer<View>> list;
+  std::vector<ObjectPointer<View>> list;
   for (auto &view : subViews) {
-    list.insert(view->getThisPointer());
+    list.push_back(view->getThisPointer());
   }
   return list;
 }
@@ -106,6 +106,18 @@ void View::removeFromParent()
   }
 }
 
+bool View::isInSubViewTreeOf(ObjectPointer<View> view)
+{
+  auto parent = getParent();
+  while (parent.isValid()) {
+    if (view == parent) {
+      return true;
+    }
+    parent = parent->getParent();
+  }
+  return false;
+}
+
 void View::onAddedToParent(ObjectPointer<View> parent)
 {
 
@@ -138,6 +150,21 @@ void View::setBackgroundColor(Nullable<Color> color)
   setNeedsRerender(true);
 }
 
+void View::setBorderRadius(Nullable<BorderRadius> borderRadius)
+{
+  this->borderRadius = borderRadius;
+}
+
+void View::setBorderWidth(float width)
+{
+  borderWidth = width;
+}
+
+void View::setBorderColor(Nullable<Color> color)
+{
+  borderColor = color;
+}
+
 void View::measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize)
 {
   if (!layout.hasPointer()) {
@@ -150,8 +177,32 @@ void View::measureLayout(LayoutConstraint constraints, PossibleLayoutSize parent
   layoutSize = layout->layout(constraints, parentSize, this, subViewsAsLayoutObjects);
 }
 
+void View::buildEnter(ObjectPointer<ViewBuilder> builder)
+{
+  builder->getCanvas()->save();
+}
+
+void View::buildExit(ObjectPointer<ViewBuilder> builder)
+{
+  builder->getCanvas()->restore();
+}
+
 void View::build(ObjectPointer<ViewBuilder> builder)
 {
+  SkRRect roundedRect;
+  bool hasRounded = false;
+
+  if (borderRadius.isSet) {
+    SkVector radii[4];
+    radii[SkRRect::Corner::kUpperLeft_Corner] = SkVector::Make(borderRadius.value.topLeft, borderRadius.value.topLeft);
+    radii[SkRRect::Corner::kUpperRight_Corner] = SkVector::Make(borderRadius.value.topRight, borderRadius.value.topRight);
+    radii[SkRRect::Corner::kLowerRight_Corner] = SkVector::Make(borderRadius.value.bottomRight, borderRadius.value.bottomRight);
+    radii[SkRRect::Corner::kLowerLeft_Corner] = SkVector::Make(borderRadius.value.bottomLeft, borderRadius.value.bottomLeft);
+    roundedRect.setRectRadii(Rect::MakeXYWH(0, 0, layoutSize.value.width, layoutSize.value.height), radii);
+    builder->getCanvas()->clipRRect(roundedRect);
+    hasRounded = true;
+  }
+
   if (backgroundColor.isSet) {
     auto rect = Rect::MakeXYWH(0, 0, layoutSize.value.width, layoutSize.value.height);
     Paint paint;
@@ -159,5 +210,22 @@ void View::build(ObjectPointer<ViewBuilder> builder)
     paint.setColor(backgroundColor.value.color);
     paint.setStyle(Paint::Style::kFill_Style);
     builder->getCanvas()->drawRect(rect, paint);
+  }
+
+
+  if (borderColor.isSet && borderWidth > 0) {
+    Paint paint;
+    paint.setAntiAlias(true);
+    paint.setColor(borderColor.value.color);
+    paint.setStyle(Paint::Style::kStroke_Style);
+    paint.setStrokeWidth(borderWidth);
+    if (hasRounded) {
+      RRect r = roundedRect;
+      r.inset(1, 1);
+      builder->getCanvas()->drawRRect(r, paint);
+    } else {
+      auto rect = Rect::MakeXYWH(0, 0, layoutSize.value.width, layoutSize.value.height);
+      builder->getCanvas()->drawRect(rect, paint);
+    }
   }
 }

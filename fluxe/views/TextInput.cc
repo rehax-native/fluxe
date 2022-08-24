@@ -1,15 +1,132 @@
 #include "TextInput.h"
 #include "ViewManager.h"
+#include "../layout/FlexLayout.h"
 
 using namespace fluxe;
 
 const std::regex TextInput::NEW_LINE_REGEX = std::regex("\n");
+
+class ContextMenuItem : public View, public IPressEventListener
+{
+public:
+  ContextMenuItem()
+  {
+    textView = Object<Text>::Create();
+    textView->setPadding({
+      .left = 10,
+      .right = 10,
+      .top = 7,
+      .bottom = 7,
+    });
+    addSubView(textView);
+    addEventListener<PressDetector>(this);
+  }
+
+  void setText(std::string text)
+  {
+    textView->setText(text);
+  }
+
+  void setPressHandler(std::function<void(void)> handler)
+  {
+    pressHandler = handler;
+  }
+
+  void onPressStarted(PressStartedEvent event) override
+  {
+    setBackgroundColor(::fluxe::Color::RGBA(1, 1, 1, 0.1));
+  }
+
+  void onPressFinished(PressFinishedEvent event) override
+  {
+    pressHandler();
+    setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0));
+  }
+
+  void onPressCanceled(PressCanceledEvent event) override
+  {
+    setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0));
+  }
+
+private:
+  ObjectPointer<Text> textView;
+  std::function<void(void)> pressHandler;
+};
+
+class ContextMenu : public View
+{
+public:
+  ContextMenu()
+  {
+    setBackgroundColor(::fluxe::Color::RGBA(0.136, 0.136, 0.136, 1.0));
+    setBorderColor(Color::RGBA(0.6, 0.6, 0.6, 0.8));
+    setBorderWidth(1);
+    setBorderRadius(BorderRadius {
+      .topLeft = 7,
+      .bottomLeft = 7,
+      .topRight = 7,
+      .bottomRight = 7,
+    });
+    auto layout = Object<FlexLayout>::Create();
+    layout->direction = FlexDirection::Column;
+    layout->alignItems = FlexAlignItems::Stretch;
+    // layout->spacing = 10.0;
+    setLayout(layout);
+    setSize({
+        .width = SizeDimensionTypes::Fixed { 250 }
+    });
+  }
+
+  void addItem(std::string title, std::function<void(void)> pressHandler)
+  {
+    auto item = Object<ContextMenuItem>::Create();
+    item->setText(title);
+    item->setPressHandler(pressHandler);
+    addSubView(item);
+  }
+};
+
+class TextInputContextMenu : public ContextMenu
+{
+public:
+  TextInputContextMenu(ObjectPointer<TextInput> textInput)
+  :textInput(textInput)
+  {
+    addItem("Copy", [this] () {
+      this->textInput->copyTextToClipboard();
+      this->textInput->getViewManager()->closeContextMenu();
+    });
+    addItem("Cut", [this] () {
+      this->textInput->cutTextToClipboard();
+      this->textInput->getViewManager()->closeContextMenu();
+    });
+    addItem("Paste", [this] () {
+      this->textInput->pasteTextFromClipboard();
+      this->textInput->getViewManager()->closeContextMenu();
+    });
+      
+    addItem("Paste realyy long time realyy long time realyy long time a realyy b long c time d realyy e long time", [this] () {
+      this->textInput->pasteTextFromClipboard();
+      this->textInput->getViewManager()->closeContextMenu();
+    });
+  }
+
+  ObjectPointer<TextInput> textInput;
+};
 
 TextInput::TextInput()
 :text(Object<Text>::Create())
 {
   addSubView(text);
   addEventListener<PressDetector>(this);
+  setBorderColor(Color::RGBA(0.6, 0.6, 0.6, 0.8));
+  setBorderWidth(1);
+  setBorderRadius(BorderRadius {
+    .topLeft = 3,
+    .topRight = 3,
+    .bottomLeft = 3,
+    .bottomRight = 3,
+  });
 }
 
 void TextInput::setValue(std::string value)
@@ -39,20 +156,20 @@ void TextInput::measureLayout(LayoutConstraint constraints, PossibleLayoutSize p
 {
   text->measureLayout(constraints, parentSize);
   auto minWidth = 100.0;
-  auto width = text->layoutSize.value.width + padding.left + padding.right;
+  auto width = text->layoutSize.value.width + textPadding.left + textPadding.right;
   if (width < minWidth) {
     width = minWidth;
   }
   layoutSize = Nullable<LayoutSize>({
-    .width = width,
-    .height = text->layoutSize.value.height + padding.top + padding.bottom,
+    .width = width + padding.left + padding.right,
+    .height = text->layoutSize.value.height + textPadding.top + textPadding.bottom + padding.top + padding.bottom,
   });
   if (caretHeight < 1.0) {
     caretHeight = text->layoutSize.value.height;
   }
   text->layoutPosition = Nullable<LayoutPosition>({
-    .left = padding.left,
-    .top =  padding.top,
+    .left = textPadding.left + padding.left,
+    .top =  textPadding.top + padding.top,
   });
 }
 
@@ -64,9 +181,7 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
 
   Paint paint;
   paint.setAntiAlias(true);
-  paint.setColor(Color::RGBA(0.6, 0.6, 0.6, 0.8).color);
   paint.setStyle(Paint::Style::kStroke_Style);
-  builder->getCanvas()->drawRRect(rrect, paint);
 
   if (isFocused) {
     paint.setColor(Color::RGBA(0.6, 0.8, 1.0, 0.8).color);
@@ -147,6 +262,16 @@ void TextInput::onPressStarted(PressStartedEvent event)
 void TextInput::onPressFinished(PressFinishedEvent event)
 {
   getViewManager()->getFocusManager().gainFocus(getThisPointer());
+  if (event.button == 1) {
+
+    auto menu = Object<TextInputContextMenu>::Create(dynamic_pointer_cast<TextInput>(getThisPointer()));
+    menu->setPosition({
+      .left = PositionDimensionTypes::Fixed{event.left},
+      .top = PositionDimensionTypes::Fixed{event.top},
+    });
+
+    getViewManager()->showContextMenu(menu);
+  }
 }
 
 void TextInput::onPressCanceled(PressCanceledEvent event)
@@ -350,4 +475,19 @@ void TextInput::stopCaretBlink()
      Timer::stopTimer(caretTimer);
      caretTimer = nullptr;
  }
+}
+
+void TextInput::copyTextToClipboard()
+{
+
+}
+
+void TextInput::cutTextToClipboard()
+{
+
+}
+
+void TextInput::pasteTextFromClipboard()
+{
+
 }

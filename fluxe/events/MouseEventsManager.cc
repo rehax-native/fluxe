@@ -1,10 +1,11 @@
 #include "MouseEventsManager.h"
 #include "../views/View.h"
+#include "../views/ViewManager.h"
 
 using namespace fluxe;
 
-MouseEventsManager::MouseEventsManager(ObjectPointer<View> rootView)
-:rootView(rootView)
+MouseEventsManager::MouseEventsManager(ViewManager * viewManager, ObjectPointer<View> rootView)
+:viewManager(viewManager), rootView(rootView)
 {}
 
 void MouseEventsManager::handleInstruction(ShellMouseInstruction instruction)
@@ -33,10 +34,23 @@ void MouseEventsManager::handleMouseDown(MouseDownEvent event)
 {
   isMouseDown = true;
   auto hitView = findViewAtPosition(event.left, event.top, rootView);
+  auto contextMenu = viewManager->getContextMenu();
+  bool hasContextMenuOpen = hitView.isValid();
+  bool shouldCloseContextMenu = false;
+  if (hasContextMenuOpen) {
+    if (!hitView.isValid() || !(hitView == contextMenu || hitView->isInSubViewTreeOf(contextMenu))) {
+      shouldCloseContextMenu = true;
+    }
+  }
+
   while (hitView.isValid()) {
     hitView->onMouseDown(event);
     currentListenersWithMouseDown.insert(hitView);
     hitView = hitView->getParent();
+  }
+
+  if (shouldCloseContextMenu) {
+    viewManager->closeContextMenu();
   }
 }
 
@@ -99,7 +113,9 @@ WeakObjectPointer<View> MouseEventsManager::findViewAtPosition(float x, float y,
   if (x >= view->layoutPosition.value.left && x <= view->layoutPosition.value.left + view->layoutSize.value.width) {
     if (y >= view->layoutPosition.value.top && y <= view->layoutPosition.value.top + view->layoutSize.value.height) {
       auto subViews = view->getSubViews();
-      for (auto item : subViews) {
+      // for (auto item : subViews) {
+      for (auto it = subViews.rbegin(); it != subViews.rend(); it++) {
+        auto item = * it;
         auto hitView = findViewAtPosition(x - view->layoutPosition.value.left, y - view->layoutPosition.value.top, item);
         if (hitView.isValid()) {
           return hitView;

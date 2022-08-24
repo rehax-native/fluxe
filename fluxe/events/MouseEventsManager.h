@@ -10,11 +10,12 @@ using namespace rehaxUtils;
 namespace fluxe {
 
 class View;
+class ViewManager;
 
 class MouseEventsManager 
 {
 public:
-  MouseEventsManager(ObjectPointer<View> rootView);
+  MouseEventsManager(ViewManager * viewManager, ObjectPointer<View> rootView);
 
   void handleInstruction(ShellMouseInstruction instruction);
   void handleMouseDown(MouseDownEvent event);
@@ -24,6 +25,7 @@ public:
 private:
   WeakObjectPointer<View> findViewAtPosition(float x, float y, ObjectPointer<View> view);
 
+  ViewManager * viewManager;
   ObjectPointer<View> rootView;
   bool isMouseDown = false;
   std::set<WeakObjectPointer<View>> previousMouseMoveListeners;
