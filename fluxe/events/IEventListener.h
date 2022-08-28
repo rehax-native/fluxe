@@ -23,6 +23,10 @@ public:
   virtual void onTextInput(std::string text);
   virtual void onKeyboardMoveAction(ShellKeyboardMoveInstruction event);
 
+  virtual bool isHandlingKeyboardCommand(ShellKeyboardCommand command);
+  virtual void onKeyboardCommand(ShellKeyboardCommand command);
+
+  virtual void onClipboardData(ShellClipboardData data);
 private:
 };
 

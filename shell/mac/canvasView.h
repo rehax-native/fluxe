@@ -10,9 +10,12 @@
 
   std::function<void(int, int, float, sk_sp<SkSurface> surface)> renderCallback;
   std::function<void(ShellMouseInstruction instruction)> mouseCallback;
+  std::function<bool(ShellKeyboardCommand instruction)> canHandleKeyboardCommandCallback;
+  std::function<void(ShellKeyboardCommand instruction)> keyboardCommandCallback;
   std::function<void(ShellKeyboardKeyInstruction instruction)> keyCallback;
   std::function<void(ShellKeyboardMoveInstruction instruction)> moveCallback;
   std::function<void(const char * str)> textCallback;
+  // std::function<void(ShellClipboardInstruction instruction)> clipboardCallback;
 }
 
 - (void) drawRect: (NSRect) bounds;

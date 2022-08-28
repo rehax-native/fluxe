@@ -58,6 +58,9 @@ class Engine {
   void setTextCallback(std::function<void(const char* str)> callback);
   void setKeyCallback(std::function<void(ShellKeyboardKeyInstruction)> callback);
   void setMoveCallback(std::function<void(ShellKeyboardMoveInstruction)> callback);
+  void setCanHandleKeyboardCommandCallback(std::function<bool(ShellKeyboardCommand)> callback);
+  void setKeyboardCommandCallback(std::function<void(ShellKeyboardCommand)> callback);
+  // void setClipboardCallback(std::function<void(ShellClipboardInstruction)> callback);
 
   void setNeedsRerender();
 

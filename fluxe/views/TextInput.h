@@ -56,6 +56,12 @@ public:
 
   void onTextInput(std::string text) override;
   void onKeyboardMoveAction(ShellKeyboardMoveInstruction event) override;
+  bool isHandlingKeyboardCommand(ShellKeyboardCommand command) override;
+  void onKeyboardCommand(ShellKeyboardCommand command) override;
+
+  // void onClipboardData(ShellClipboardData data) override;
+
+  std::string getSelectedText();
 
   void startCaretBlink();
   void stopCaretBlink();

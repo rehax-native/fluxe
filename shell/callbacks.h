@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 struct ShellMouseInstruction
 {
   int button = 0;
@@ -19,7 +21,6 @@ struct ShellKeyboardKeyInstruction
 
 struct ShellKeyboardMoveInstruction
 {
-  // Don't change the order of these, they have to match what's in fluxe/views/Externs.hx
   bool isRight = false;
   bool isLeft = false;
   bool isForwards = false;
@@ -42,4 +43,37 @@ struct ShellKeyboardMoveInstruction
   bool isEnter = false;
   bool isCopy = false;
   bool isPaste = false;
+};
+
+struct ShellKeyboardCommand
+{
+  std::string commandKey;
+
+  bool isWithShiftModifier = false;
+  bool isWithCmdCtrlModifier = false;
+
+  bool isWithMacControlModifier = false;
+  bool isWithMacOptionModifier = false;
+  bool isWithMacCommandModifier = false;
+
+  bool isWitWinControlModifier = false;
+  bool isWitWinAltModifier = false;
+  bool isWitWinWinModifier = false;
+};
+
+struct ShellClipboardData
+{
+  std::string mimeType = "";
+  std::string stringData = "";
+  void * otherData = nullptr;
+};
+
+struct ShellClipboardInstruction
+{
+  bool isCopy = false;
+  bool isPaste = false;
+  bool isCut = false;
+  bool isDragAndDrop = false;
+
+  ShellClipboardData data;
 };

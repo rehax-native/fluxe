@@ -28,6 +28,9 @@ void EngineUtility::initWithWindow(ObjectPointer<View> view, void * window)
   engine.setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); });
   engine.setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); });
   engine.setTextCallback([this] (const char * str) { return viewManager->textCallback(std::string(str)); });
+  engine.setCanHandleKeyboardCommandCallback([this] (ShellKeyboardCommand command) { return viewManager->isHandlingKeyboardCommand(command); });
+  engine.setKeyboardCommandCallback([this] (ShellKeyboardCommand command) { return viewManager->handleKeyboardCommand(command); });
+  // engine.setClipboardCallback([this] (ShellClipboardInstruction instruction) { return viewManager->clipboardCallback(instruction); });
   engine.startMainLoop();
   engine.detachFromPlatformWindow();
   engine.closePlatformWindow(window);
@@ -45,6 +48,9 @@ void EngineUtility::initWithPlatformView(ObjectPointer<View> view, void * platfo
   engine.setKeyCallback([this] (ShellKeyboardKeyInstruction instruction) { return handleKeyCallback(instruction); });
   engine.setMoveCallback([this] (ShellKeyboardMoveInstruction instruction) { return handleMoveCallback(instruction); });
   engine.setTextCallback([this] (const char * str) { return viewManager->textCallback(std::string(str)); });
+  engine.setCanHandleKeyboardCommandCallback([this] (ShellKeyboardCommand command) { return viewManager->isHandlingKeyboardCommand(command); });
+  engine.setKeyboardCommandCallback([this] (ShellKeyboardCommand command) { return viewManager->handleKeyboardCommand(command); });
+  // engine.setClipboardCallback([this] (ShellClipboardInstruction instruction) { return viewManager->clipboardCallback(instruction); });
 }
 
 void EngineUtility::handleMouseCallback(ShellMouseInstruction instruction)

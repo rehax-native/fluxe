@@ -7,7 +7,8 @@ ViewManager::ViewManager(ObjectPointer<View> view)
 container(Object<ViewsContainer>::Create(this)),
 pipeline(container),
 mouseEventsManager(this, container),
-keyboardEventsManager(focusManager)
+keyboardEventsManager(focusManager),
+clipboardManager(focusManager)
 {
   container->addSubView(view);
 }
@@ -40,6 +41,28 @@ void ViewManager::moveCallback(ShellKeyboardMoveInstruction instruction)
 {
   keyboardEventsManager.onKeyboardMoveAction(instruction);
 }
+
+bool ViewManager::isHandlingKeyboardCommand(ShellKeyboardCommand instruction)
+{
+  auto currentFocusable = focusManager.getCurrentFocusable();
+  if (currentFocusable.isValid()) {
+    return currentFocusable->isHandlingKeyboardCommand(instruction);
+  }
+  return false;
+}
+
+void ViewManager::handleKeyboardCommand(ShellKeyboardCommand instruction)
+{
+  auto currentFocusable = focusManager.getCurrentFocusable();
+  if (currentFocusable.isValid()) {
+    currentFocusable->onKeyboardCommand(instruction);
+  }
+}
+
+// void ViewManager::clipboardCallback(ShellClipboardInstruction instruction)
+// {
+//   clipboardManager.handleClipboardInstruction(instruction);
+// }
 
 void ViewManager::onViewAdded(ObjectPointer<View> view)
 {

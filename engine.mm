@@ -109,6 +109,24 @@ void fluxe::Engine::setMoveCallback(std::function<void(ShellKeyboardMoveInstruct
   view->moveCallback = callback;
 }
 
+void fluxe::Engine::setCanHandleKeyboardCommandCallback(std::function<bool(ShellKeyboardCommand)> callback)
+{
+  CanvasView * view = (__bridge CanvasView *) this->view;
+  view->canHandleKeyboardCommandCallback = callback;
+}
+
+void fluxe::Engine::setKeyboardCommandCallback(std::function<void(ShellKeyboardCommand)> callback)
+{
+  CanvasView * view = (__bridge CanvasView *) this->view;
+  view->keyboardCommandCallback = callback;
+}
+
+// void fluxe::Engine::setClipboardCallback(std::function<void(ShellClipboardInstruction)> callback)
+// {
+//   CanvasView * view = (__bridge CanvasView *) this->view;
+//   view->clipboardCallback = callback;
+// }
+
 void fluxe::Engine::startMainLoop()
 {
   @autoreleasepool {

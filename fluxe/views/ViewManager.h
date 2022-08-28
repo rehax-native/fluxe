@@ -8,6 +8,7 @@
 #include "../events/MouseEventsManager.h"
 #include "../events/FocusManager.h"
 #include "../events/KeyboardEventsManager.h"
+#include "../events/ClipboardManager.h"
 
 namespace fluxe {
 
@@ -29,6 +30,9 @@ public:
   void keyCallback(ShellKeyboardKeyInstruction instruction);
   void textCallback(std::string str);
   void moveCallback(ShellKeyboardMoveInstruction instruction);
+  bool isHandlingKeyboardCommand(ShellKeyboardCommand instruction);
+  void handleKeyboardCommand(ShellKeyboardCommand instruction);
+  // void clipboardCallback(ShellClipboardInstruction instruction);
 
   void onViewAdded(ObjectPointer<View> view);
   void onViewRemoved(ObjectPointer<View> view);
@@ -45,6 +49,7 @@ private:
   MouseEventsManager mouseEventsManager;
   FocusManager focusManager;
   KeyboardEventsManager keyboardEventsManager;
+  ClipboardManager clipboardManager;
 };
 
 }

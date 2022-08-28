@@ -35,6 +35,15 @@ void IEventListener::onTextInput(std::string text)
 void IEventListener::onKeyboardMoveAction(ShellKeyboardMoveInstruction event)
 {}
 
+bool IEventListener::isHandlingKeyboardCommand(ShellKeyboardCommand command)
+{}
+
+void IEventListener::onKeyboardCommand(ShellKeyboardCommand command)
+{}
+
+void IEventListener::onClipboardData(ShellClipboardData data)
+{}
+
 IEventListenerContainer::~IEventListenerContainer()
 {
   for (auto listener : eventListeners) {

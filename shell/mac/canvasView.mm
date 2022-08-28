@@ -11,6 +11,20 @@
 
 @implementation CanvasView
 
+- (id) init
+{
+  self = [super init];
+  if (self) {
+    [self registerForDraggedTypes:@[
+      NSPasteboardTypeString,
+      NSPasteboardTypeTabularText,
+      NSPasteboardTypeURL,
+      NSPasteboardTypeFileURL
+    ]];
+  }
+  return self;
+}
+
 - (void) drawRect: (NSRect) bounds
 {
   @autoreleasepool {
@@ -146,12 +160,25 @@
       .code = theEvent.keyCode,
       .isDown = true,
     });
-    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    if ([@"a" isEqualToString:theEvent.characters] && theEvent.modifierFlags & NSEventModifierFlagCommand) {
-      moveCallback({
-        .isSelect = true,
-        .isAll = true,
-      });
+
+    ShellKeyboardCommand command {
+      .commandKey = std::string(theEvent.characters.UTF8String),
+
+      .isWithShiftModifier = (theEvent.modifierFlags & NSEventModifierFlagShift) > 0,
+      .isWithCmdCtrlModifier = (theEvent.modifierFlags & NSEventModifierFlagCommand) > 0,
+
+      .isWithMacControlModifier = (theEvent.modifierFlags & NSEventModifierFlagControl) > 0,
+      .isWithMacOptionModifier = (theEvent.modifierFlags & NSEventModifierFlagOption) > 0,
+      .isWithMacCommandModifier = (theEvent.modifierFlags & NSEventModifierFlagCommand) > 0,
+
+     .isWitWinControlModifier = false,
+     .isWitWinAltModifier = false,
+     .isWitWinWinModifier = false,
+    };
+    if (canHandleKeyboardCommandCallback(command)) {
+      keyboardCommandCallback(command);
+    } else {
+      [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
     }
   }
 }
@@ -744,7 +771,18 @@
 
 - (void)yank:(nullable id)sender
 {
+    NSLog(@"YANK");
 }
 
+- (void)draggingEnded:(id<NSDraggingInfo>)sender
+{
+    // this is called when the user drop something in the window
+    
+    // to initiate a drag from the window, use:
+//    self performDragOperation:<#(nonnull id<NSDraggingInfo>)#>
+    
+//    NSLog(@"ended");
+//    [[NSPasteboard generalPasteboard] pasteboardItems][0] ;
+}
 
 @end

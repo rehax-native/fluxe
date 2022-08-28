@@ -1,6 +1,7 @@
 #include "TextInput.h"
 #include "ViewManager.h"
 #include "../layout/FlexLayout.h"
+#include "../../shell/clipboard.h"
 
 using namespace fluxe;
 
@@ -73,7 +74,7 @@ public:
     // layout->spacing = 10.0;
     setLayout(layout);
     setSize({
-        .width = SizeDimensionTypes::Fixed { 250 }
+        .width = SizeDimensionTypes::Fixed { 150 }
     });
   }
 
@@ -101,11 +102,6 @@ public:
       this->textInput->getViewManager()->closeContextMenu();
     });
     addItem("Paste", [this] () {
-      this->textInput->pasteTextFromClipboard();
-      this->textInput->getViewManager()->closeContextMenu();
-    });
-      
-    addItem("Paste realyy long time realyy long time realyy long time a realyy b long c time d realyy e long time", [this] () {
       this->textInput->pasteTextFromClipboard();
       this->textInput->getViewManager()->closeContextMenu();
     });
@@ -453,6 +449,57 @@ void TextInput::onKeyboardMoveAction(ShellKeyboardMoveInstruction event)
   startCaretBlink();
 }
 
+bool TextInput::isHandlingKeyboardCommand(ShellKeyboardCommand command)
+{
+  if (
+    command.isWithCmdCtrlModifier && (
+      command.commandKey == "a" ||
+      command.commandKey == "c" ||
+      command.commandKey == "v" ||
+      command.commandKey == "x"
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
+void TextInput::onKeyboardCommand(ShellKeyboardCommand command)
+{
+  if (!command.isWithCmdCtrlModifier) {
+    return;
+  }
+  if (command.commandKey == "a") {
+    onKeyboardMoveAction({
+      .isSelect = true,
+      .isAll = true,
+    });
+  } else if (command.commandKey == "c") {
+    copyTextToClipboard();
+  } else if (command.commandKey == "x") {
+    cutTextToClipboard();
+  } else if (command.commandKey == "v") {
+    pasteTextFromClipboard();
+  }
+}
+
+// void TextInput::onClipboardData(ShellClipboardData data)
+// {
+//   onTextInput(data.stringData);
+// }
+
+std::string TextInput::getSelectedText()
+{
+  auto start = selectionRange.start;
+  auto end = selectionRange.end;
+  if (start > end) {
+    auto t = start;
+    start = end;
+    end = t;
+  }
+  return value.substr(start, end - start);
+}
+
 void TextInput::startCaretBlink()
 {
   stopCaretBlink();
@@ -479,15 +526,23 @@ void TextInput::stopCaretBlink()
 
 void TextInput::copyTextToClipboard()
 {
-
+  if (selectionRange.start != selectionRange.end && !isHiddenCharacters) {
+    auto str = getSelectedText();
+    Clipboard::copyStringToClipboard(str);
+  }
 }
 
 void TextInput::cutTextToClipboard()
 {
-
+  if (selectionRange.start != selectionRange.end && !isHiddenCharacters) {
+    auto str = getSelectedText();
+    Clipboard::copyStringToClipboard(str);
+    onTextInput("");
+  }
 }
 
 void TextInput::pasteTextFromClipboard()
 {
-
+  auto str = Clipboard::pasteStringFromClipboard();
+  onTextInput(str);
 }
