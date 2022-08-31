@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
+#include <cstringt.h>
+#include <atlstr.h>
 
 #include <iostream>
 
@@ -45,7 +47,8 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
 
             auto renderCallback = view->getRenderCallback();
 
-            sk_sp<SkSurface> surface = renderCallback(width, height, scale);
+            sk_sp<SkSurface> surface = fluxe::Surface::MakeRasterN32Premul(width * scale, height * scale);
+            renderCallback(width, height, scale, surface);
             SkPixmap pixmap;
             surface->peekPixels(&pixmap);
 
@@ -189,27 +192,32 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
               // case 0x0D: // Carriage Return 
               default:
               {
-
-                if (view->isCtrlDown) {
-                  TCHAR character = (TCHAR) wparam;
-                  if (character == 'c' || character == 'C') {
-                    view->getKeyboardMoveCallback()({
-                      .isCopy = true,
-                    });
-                  } else if (character == 'v' || character == 'V') {
-                    view->getKeyboardMoveCallback()({
-                      .isPaste = true,
-                    });
-                  }
-                  break;
+                CString ss((wchar_t) wparam);
+                if (wparam >= 1 && wparam <= 26) {
+                  ss = CString((wchar_t) (wparam + 96));
                 }
-                TCHAR tStr[2];
-                tStr[0] = (TCHAR) wparam;
-                tStr[1] = '\0';
+                std::string str(ss);
 
-                std::wstring test(&tStr[0]); //convert to wstring
-                std::string str(test.begin(), test.end());
-                view->getTextCallback()(str.c_str());
+                ShellKeyboardCommand command {
+                  .commandKey = str,
+
+                  .isWithShiftModifier = view->isShiftDown,
+                  .isWithCmdCtrlModifier = view->isCtrlDown,
+
+                  .isWithMacControlModifier = false,
+                  .isWithMacOptionModifier = false,
+                  .isWithMacCommandModifier = false,
+
+                  .isWitWinControlModifier = view->isCtrlDown,
+                  .isWitWinAltModifier = view->isAltDown,
+                  .isWitWinWinModifier = view->isWinDown,
+                };
+
+                if (view->getCanHandleKeyboardCommandCallback()(command)) {
+                  view->getKeyboardCommandCallback()(command);
+                } else if (!view->isCtrlDown && !view->isAltDown && !view->isWinDown) {
+                  view->getTextCallback()(str.c_str());
+                }
               }
             }
           }
@@ -227,6 +235,13 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
             case VK_CONTROL:
               view->isCtrlDown = false;
               break;
+            case VK_MENU:
+              view->isAltDown = false;
+              break;
+            case VK_LWIN:
+            case VK_RWIN:
+              view->isWinDown = false;
+              break;
           }
           break;
         case WM_KEYDOWN:
@@ -240,6 +255,13 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
               break;
             case VK_CONTROL:
               view->isCtrlDown = true;
+              break;
+            case VK_MENU:
+              view->isAltDown = true;
+              break;
+            case VK_LWIN:
+            case VK_RWIN:
+              view->isWinDown = true;
               break;
             case VK_LEFT:
               view->getKeyboardMoveCallback()({
@@ -309,7 +331,7 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
     return result;
 }
 
-const wchar_t FLUXE_VIEW_CLASS_NAME[] = L"FLUXE_VIEW";
+const char FLUXE_VIEW_CLASS_NAME[] = "FLUXE_VIEW";
 
 fluxe::FluxePlatformView::FluxePlatformView()
 {
@@ -350,7 +372,7 @@ void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)
 
   HWND window = CreateWindow(
     FLUXE_VIEW_CLASS_NAME,
-    L"Fluxe View",
+    "Fluxe View",
     WS_CHILD | WS_VISIBLE | SS_LEFT | SS_NOTIFY,
     0, 0,
     600, 600,
@@ -381,14 +403,18 @@ void fluxe::FluxePlatformView::setNeedsRerender()
   UpdateWindow(hWnd);
 }
 
-std::function<sk_sp<fluxe::Surface>(int, int, float)> fluxe::FluxePlatformView::getRenderCallback() { return renderCallback; }
+std::function<void(int, int, float, sk_sp<fluxe::Surface>)> fluxe::FluxePlatformView::getRenderCallback() { return renderCallback; }
 std::function<void(ShellMouseInstruction)> fluxe::FluxePlatformView::getMouseCallback() { return mouseCallback; }
 std::function<void(ShellKeyboardKeyInstruction)> fluxe::FluxePlatformView::getKeyCallback() { return keyCallback; }
 std::function<void(ShellKeyboardMoveInstruction)> fluxe::FluxePlatformView::getKeyboardMoveCallback() { return moveCallback; }
 std::function<void(const char*)> fluxe::FluxePlatformView::getTextCallback() { return textCallback; }
+std::function<bool(ShellKeyboardCommand instruction)> fluxe::FluxePlatformView::getCanHandleKeyboardCommandCallback() { return canHandleKeyboardCommandCallback; }
+std::function<void(ShellKeyboardCommand instruction)> fluxe::FluxePlatformView::getKeyboardCommandCallback() { return keyboardCommandCallback; }
 
-void fluxe::FluxePlatformView::setRenderCallback(std::function<sk_sp<Surface>(int, int, float)> callback) { renderCallback = callback; setNeedsRerender(); }
+void fluxe::FluxePlatformView::setRenderCallback(std::function<void(int, int, float, sk_sp<fluxe::Surface>)> callback) { renderCallback = callback; setNeedsRerender(); }
 void fluxe::FluxePlatformView::setMouseCallback(std::function<void(ShellMouseInstruction)> callback) { mouseCallback = callback; }
 void fluxe::FluxePlatformView::setKeyCallback(std::function<void(ShellKeyboardKeyInstruction)> callback) { keyCallback = callback; }
 void fluxe::FluxePlatformView::setKeyboardMoveCallback(std::function<void(ShellKeyboardMoveInstruction)> callback) { moveCallback = callback; }
 void fluxe::FluxePlatformView::setTextCallback(std::function<void(const char*)> callback) { textCallback = callback; }
+void fluxe::FluxePlatformView::setCanHandleKeyboardCommandCallback(std::function<bool(ShellKeyboardCommand instruction)> callback) { canHandleKeyboardCommandCallback = callback; }
+void fluxe::FluxePlatformView::setKeyboardCommandCallback(std::function<void(ShellKeyboardCommand instruction)> callback) { keyboardCommandCallback = callback; }

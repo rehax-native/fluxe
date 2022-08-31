@@ -10,13 +10,13 @@
 
 #include <iostream>
 
-BOOL GiveFocusToChildren(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK GiveFocusToChildren(HWND hwnd, LPARAM lParam)
 {
     SetFocus(hwnd);
     return true;
 }
 
-BOOL ResizeChildren(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK ResizeChildren(HWND hwnd, LPARAM lParam)
 {
     HWND parent = reinterpret_cast<HWND>(lParam);
     RECT rect;
@@ -70,7 +70,7 @@ void* OpenPlatformWindow()
     // window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     window_class.hbrBackground = 0;
     window_class.lpszMenuName = NULL;
-    window_class.lpszClassName = L"FLUXE_WIN";
+    window_class.lpszClassName = "FLUXE_WIN";
     window_class.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
 
     if (!RegisterClassEx(&window_class)) {
@@ -79,7 +79,7 @@ void* OpenPlatformWindow()
 
     HWND window = CreateWindow(
         window_class.lpszClassName,
-        L"Window Title",
+        "Window Title",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         600, 600,

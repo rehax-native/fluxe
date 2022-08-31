@@ -178,8 +178,8 @@ LayoutOverrideResult LayoutConstraintSetter::handleLayoutOverride(Nullable<Layou
   }
 
   return {
-    .hasSizeVertically = hasSizeVertically,
     .hasSizeHorizontally = hasSizeHorizontally,
+    .hasSizeVertically = hasSizeVertically,
     .hasPositionHorizontally = hasPositionHorizontally,
     .hasPositionVertically = hasPositionVertically
   };

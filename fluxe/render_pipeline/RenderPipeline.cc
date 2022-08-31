@@ -43,8 +43,8 @@ void RenderPipeline::layout()
         .maxWidth = Nullable<float>(width),
         .maxHeight = Nullable<float>(height),
     }, {
-        .width = width,
-        .height = height,
+        .width = Nullable<float>(width),
+        .height = Nullable<float>(height),
     });
 }
 

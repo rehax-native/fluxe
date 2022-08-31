@@ -80,6 +80,8 @@ if True:
     flags.append('skia_use_metal=true')
     # flags.append('target_os="mac"')
     # flags.append('target_cpu="arm64"')
+  if is_win:
+    flags.append('skia_enable_gpu=true')
 
   if build_type == 'debug':
     flags.append('is_debug=true')
@@ -129,6 +131,7 @@ if is_win:
     'sktext.lib',
     'icu.lib',
     'skunicode.lib',
+    # 'skottie.lib',
     'icudtl.dat', # This file must be copied next to the binary
   ]
   for lib in copy_libs:

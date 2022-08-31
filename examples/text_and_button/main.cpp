@@ -9,13 +9,13 @@
 
 using namespace fluxe;
 
-#if _WIN32
-#include <windows.h>
+// #if _WIN32
+// #include <windows.h>
 
-int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
-#else
+// int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
+// #else
 int main() {
-#endif
+// #endif
 
 
   auto text = Object<Text>::Create();
@@ -44,7 +44,7 @@ int main() {
     { .text = "EDA" },
     { .text = "?? ", .isUnderlined = true },
     { .text = "red", .color = Color::RGBA(1.0, 0, 0, 0.5), .fontSize = 20, .isItalic = true },
-    { .text = " wrong", .isStrikedThrough = true, .fontFamilies = { "Courier New" } },
+    { .text = " wrong", .fontFamilies = { "Courier New" }, .isStrikedThrough = true},
   });
   richText->setPadding({
     .left = 30,

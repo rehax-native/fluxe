@@ -64,8 +64,8 @@ public:
     setBorderWidth(1);
     setBorderRadius(BorderRadius {
       .topLeft = 7,
-      .bottomLeft = 7,
       .topRight = 7,
+      .bottomLeft = 7,
       .bottomRight = 7,
     });
     auto layout = Object<FlexLayout>::Create();
@@ -274,7 +274,9 @@ void TextInput::onPressCanceled(PressCanceledEvent event)
 {}
 
 bool TextInput::isFocusable()
-{}
+{
+  return true;
+}
 
 void TextInput::didGainFocus()
 {
@@ -471,8 +473,8 @@ void TextInput::onKeyboardCommand(ShellKeyboardCommand command)
   }
   if (command.commandKey == "a") {
     onKeyboardMoveAction({
-      .isSelect = true,
       .isAll = true,
+      .isSelect = true,
     });
   } else if (command.commandKey == "c") {
     copyTextToClipboard();

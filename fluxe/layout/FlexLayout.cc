@@ -65,10 +65,10 @@ void FlexLayout::collectAndMeasureChildren(std::vector<ILayoutObject*> items, La
   childrenMaxCross = 0.0;
 
   LayoutConstraint nextConstraints {
-    .maxWidth = constraints.maxWidth,
-    .maxHeight = constraints.maxHeight,
     .minWidth = constraints.minWidth,
     .minHeight = constraints.minHeight,
+    .maxWidth = constraints.maxWidth,
+    .maxHeight = constraints.maxHeight,
   };
 
   for (int i = 0; i < items.size(); i++) {
@@ -119,10 +119,10 @@ void FlexLayout::setSizeOfFlexChildren(LayoutConstraint constraints) {
       float maxWidth = direction == FlexDirection::Row || direction == FlexDirection::RowReverse ? size : constraints.maxWidth.value;
       float maxHeight = direction == FlexDirection::Column || direction == FlexDirection::ColumnReverse ? size : constraints.maxHeight.value;
       LayoutConstraint itemConstraints {
-        .maxWidth = maxWidth,
-        .maxHeight = maxHeight,
         .minWidth = constraints.minWidth,
         .minHeight = constraints.minHeight,
+        .maxWidth = maxWidth,
+        .maxHeight = maxHeight,
       };
 
       item.item->measureLayout(itemConstraints, availableSize);

@@ -83,7 +83,7 @@ void fluxe::Engine::startEngine()
 void fluxe::Engine::stopEngine()
 {}
 
-void fluxe::Engine::setRenderCallback(std::function<sk_sp<fluxe::Surface>(int, int, float)> callback)
+void fluxe::Engine::setRenderCallback(std::function<void(int, int, float, sk_sp<SkSurface> surface)> callback)
 {
   FluxePlatformView * view = (FluxePlatformView *) this->view;
   view->setRenderCallback(callback);
@@ -117,4 +117,16 @@ void fluxe::Engine::setMoveCallback(std::function<void(ShellKeyboardMoveInstruct
 {
   FluxePlatformView * view = (FluxePlatformView *) this->view;
   view->setKeyboardMoveCallback(callback);
+}
+
+void fluxe::Engine::setCanHandleKeyboardCommandCallback(std::function<bool(ShellKeyboardCommand)> callback)
+{
+  FluxePlatformView * view = (FluxePlatformView *) this->view;
+  view->setCanHandleKeyboardCommandCallback(callback);
+}
+
+void fluxe::Engine::setKeyboardCommandCallback(std::function<void(ShellKeyboardCommand)> callback)
+{
+  FluxePlatformView * view = (FluxePlatformView *) this->view;
+  view->setKeyboardCommandCallback(callback);
 }

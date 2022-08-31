@@ -36,7 +36,9 @@ void IEventListener::onKeyboardMoveAction(ShellKeyboardMoveInstruction event)
 {}
 
 bool IEventListener::isHandlingKeyboardCommand(ShellKeyboardCommand command)
-{}
+{
+  return false;
+}
 
 void IEventListener::onKeyboardCommand(ShellKeyboardCommand command)
 {}

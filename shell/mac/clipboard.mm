@@ -4,7 +4,6 @@
 using namespace fluxe;
 
 void Clipboard::copyStringToClipboard(std::string text) {
-    NSLog(@"%s", text.c_str());
   [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
   [[NSPasteboard generalPasteboard] setString:[NSString stringWithUTF8String:text.c_str()] forType:NSPasteboardTypeString];
 }

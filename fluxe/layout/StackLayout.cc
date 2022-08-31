@@ -12,10 +12,10 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
   float maxPos = pos;
   float maxCross = 0;
   LayoutConstraint nextConstraints = {
-    .maxWidth = constraints.maxWidth,
-    .maxHeight = constraints.maxHeight,
     .minWidth = constraints.minWidth,
     .minHeight = constraints.minHeight,
+    .maxWidth = constraints.maxWidth,
+    .maxHeight = constraints.maxHeight,
   };
   for (auto & item : items)
   {
