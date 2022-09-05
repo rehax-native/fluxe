@@ -1,11 +1,12 @@
 #include "platformView.h"
 #include <windows.h>
+#include <winuser.h>
 #include <windowsx.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
-#include <cstringt.h>
-#include <atlstr.h>
+// #include <cstringt.h>
+// #include <atlstr.h>
 
 #include <iostream>
 
@@ -192,11 +193,16 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
               // case 0x0D: // Carriage Return 
               default:
               {
-                CString ss((wchar_t) wparam);
+                wchar_t wStrPtr[2];
+                wStrPtr[1] = '\0';
+                wStrPtr[0] = (wchar_t) wparam;
+                // CString ss((wchar_t) wparam);
                 if (wparam >= 1 && wparam <= 26) {
-                  ss = CString((wchar_t) (wparam + 96));
+                  // ss = CString((wchar_t) (wparam + 96));
+                  wStrPtr[0] = (wchar_t) (wparam + 96);
                 }
-                std::string str(ss);
+                std::wstring ws(wStrPtr);
+                std::string str(ws.begin(), ws.end());
 
                 ShellKeyboardCommand command {
                   .commandKey = str,

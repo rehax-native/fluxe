@@ -307,6 +307,11 @@ project "fluxe-cpp-core"
       -- "skunicode.dll.lib",
       -- "icu.lib",
     }
+    defines {
+        "NOMINMAX",
+        "_WIN32_WINNT=0x0605",
+        "WINVER=0x0605",
+    }
 
 
 -- project "fluxe-example-text-and-button"

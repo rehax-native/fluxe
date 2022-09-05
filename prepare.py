@@ -11,5 +11,8 @@ if is_mac:
   os.system('premake5 xcode4')
 if is_win:
   os.system('premake5 vs2022')
+  os.system('cmake -G "Visual Studio 17 2022" -S . -B build')
+else:
+  # os.system('premake5 gmake2')
+  os.system('cmake -S . -B build')
 
-os.system('premake5 gmake2')

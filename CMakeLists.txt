@@ -149,16 +149,17 @@ if (${WIN})
         # third_party/skia/tools/skottie_ios_app/GrContextHolder.mm
     )
 
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     add_library(
         fluxe-win STATIC
         ${FLUXE_WIN_SRC_FILES}
     )
-    # target_compile_definitions(fluxe-win PUBLIC -DSK_METAL)
+    target_compile_definitions(fluxe-win PUBLIC -DNOMINMAX -DWINVER=0x0605)
 
 
     add_executable(
-        example-text-and-button-win
-        # example-text-and-button-win WIN32
+        #example-text-and-button-win
+        example-text-and-button-win WIN32
         examples/text_and_button/main.cpp
     )
     # set_target_properties(

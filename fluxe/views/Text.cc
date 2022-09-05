@@ -9,7 +9,7 @@ Text::Text()
 
 void Text::setText(std::string text)
 {
-  setText({
+  setText(std::vector<TextPart> {
     {
       .text = text,
     }
