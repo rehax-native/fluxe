@@ -58,8 +58,9 @@ void fluxe::Engine::startMainLoop()
   while (GetMessageA(&msg, 0, 0, 0))
   {
     if (msg.message == WM_QUIT) {
-    } else if (msg.message == WM_PAINT) {
-        DefWindowProcA(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+    //} else if (msg.message == WM_PAINT) {
+    //    std::cout << "Engine paint" << std::endl;
+    //    DefWindowProcA(msg.hwnd, msg.message, msg.wParam, msg.lParam);
     } else {
       TranslateMessage(&msg);
       DispatchMessageA(&msg);

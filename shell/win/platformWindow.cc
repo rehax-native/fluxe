@@ -43,7 +43,15 @@ window_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam)
             EnumChildWindows(window, GiveFocusToChildren, lparam);
         }
         break;
+        /*
+        case WM_ERASEBKGND:
+            std::cout << "erase" << std::endl;
+            return 1;
+        case WM_PAINT:
+            std::cout << "parent paint" << std::endl;
+            */
         default:
+            //std::cout << "parent " << msg << std::endl;
             result = DefWindowProcA(window, msg, wparam, lparam);
             break;
     }
@@ -67,8 +75,8 @@ void* OpenPlatformWindow()
     window_class.hInstance = hInstance;
     window_class.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
     window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
-    // window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-    window_class.hbrBackground = 0;
+    window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    // window_class.hbrBackground = 0;
     window_class.lpszMenuName = NULL;
     window_class.lpszClassName = "FLUXE_WIN";
     window_class.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));

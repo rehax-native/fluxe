@@ -49,6 +49,7 @@ public:
   bool isWinDown = false;
   bool hasPainted = false;
   HWND hWnd = nullptr;
+  HWND hParentWnd = nullptr;
 
 private:
 //   HINSTANCE mHInstance = nullptr;

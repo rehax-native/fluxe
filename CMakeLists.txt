@@ -158,8 +158,8 @@ if (${WIN})
 
 
     add_executable(
-        #example-text-and-button-win
-        example-text-and-button-win WIN32
+        example-text-and-button-win
+        # example-text-and-button-win WIN32
         examples/text_and_button/main.cpp
     )
     # set_target_properties(

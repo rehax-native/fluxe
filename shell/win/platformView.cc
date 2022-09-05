@@ -33,8 +33,12 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
           }
         }
           break;
+        case WM_ERASEBKGND:
+            result = 1;
+            break;
         case WM_PAINT:
         {
+            // std::cout << "paint" << std::endl;
             result = 1;
 
             RECT rect;
@@ -330,6 +334,7 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
           }
           break;
         default:
+            // std::cout << "Message " << msg << std::endl;
             result = DefWindowProcA(window, msg, wparam, lparam);
             break;
     }
@@ -359,7 +364,7 @@ fluxe::FluxePlatformView::FluxePlatformView()
     window_class.hInstance = hInstance;
     window_class.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
     window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
-    // window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     window_class.hbrBackground = 0;
     window_class.lpszMenuName = NULL;
     window_class.lpszClassName = FLUXE_VIEW_CLASS_NAME;
@@ -396,17 +401,18 @@ void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)
   EnableWindow(window, true);
   SetFocus(window);
 
+  hParentWnd = parentWindow;
   hWnd = window;
 }
 
 void fluxe::FluxePlatformView::setNeedsRerender()
 {
-  InvalidateRect(
+  auto res = InvalidateRgn(
     hWnd,
-    nullptr,
+    NULL,
     true
   );
-  UpdateWindow(hWnd);
+  // UpdateWindow(hWnd); // This triggers the paint right away
 }
 
 std::function<void(int, int, float, sk_sp<fluxe::Surface>)> fluxe::FluxePlatformView::getRenderCallback() { return renderCallback; }

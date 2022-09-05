@@ -9,13 +9,13 @@
 
 using namespace fluxe;
 
-#if _WIN32
-#include <windows.h>
+//#if _WIN32
+//#include <windows.h>
 
-int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
-#else
+//int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
+//#else
 int main() {
-#endif
+//#endif
 
   auto text = Object<Text>::Create();
   text->setText("Hello World");
