@@ -31,9 +31,9 @@ include_directories(${rehaxUtils_SOURCE_DIR})
 
 include_directories(.)
 include_directories(third_party/skia)
-link_directories(./dist)
+link_directories(./dist/out)
 
-if (${MAXOSX})
+if (${MACOSX})
     file(GLOB FLUXE_MAC_SRC_FILES
         fluxe/events/*.cc
         fluxe/layout/*.cc

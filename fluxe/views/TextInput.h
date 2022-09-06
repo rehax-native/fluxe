@@ -35,6 +35,9 @@ public:
   std::string getValue();
 
   std::function<void (std::string)> onValueChanged = [] (std::string value) {};
+  std::function<void ()> onFocus = [] () {};
+  std::function<void ()> onBlur = [] () {};
+
   Padding textPadding = {
     .left = 10,
     .right = 10,
@@ -49,6 +52,9 @@ public:
   void onPressStarted(PressStartedEvent event) override;
   void onPressFinished(PressFinishedEvent event) override;
   void onPressCanceled(PressCanceledEvent event) override;
+
+  void focus();
+  void blur();
 
   bool isFocusable() override;
   void didGainFocus() override;

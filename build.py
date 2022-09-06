@@ -135,7 +135,7 @@ if is_win:
     'icudtl.dat', # This file must be copied next to the binary
   ]
   for lib in copy_libs:
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib), 'dist/{}'.format(lib))
+    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib), 'dist/out/{}'.format(lib))
 else:
   copy_libs = [
     'skia',
@@ -149,7 +149,7 @@ else:
   ]
   for lib in copy_libs:
     lib_full_name = lib_prefix + lib + '.' + lib_extension
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'dist//out/{}'.format(lib_full_name))
+    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'dist/out/{}'.format(lib_full_name))
 
 header_source_paths = [
   ('third_party/skia/include', 'dist/out/include/third_party/skia/include'),
@@ -178,7 +178,7 @@ if is_win:
   # os.system('cd build && msbuild fluxe-win.vcxproj && cp libfluxe-win.a ../dist/fluxe.lib')
   os.system('cd build && cp Debug/fluxe-win.lib ../dist/fluxe.lib')
 elif is_mac:
-  os.system('cd dev/fluxe-cpp-core && xcodebuild -configuration {} ONLY_ACTIVE_ARCH=NO -arch=universal && cp bin/{}/libfluxe-cpp-core.a ../../dist/out/libfluxe.a'.format(build_type_capital, build_type))
+  os.system('cd build && xcodebuild -target fluxe-mac -configuration {} ONLY_ACTIVE_ARCH=NO -arch=universal && cp {}/libfluxe-mac.a ../dist/out/libfluxe.a'.format(build_type_capital, build_type_capital))
 else:
   os.system('cd dev && make fluxe-cpp-core config={} && cp fluxe-cpp-core/bin/{}/libfluxe-cpp-core.a ../dist/libfluxe.a'.format(build_type, build_type_capital))
 

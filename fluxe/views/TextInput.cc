@@ -252,6 +252,17 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
   }
 }
 
+void TextInput::focus() {
+  getViewManager()->getFocusManager().gainFocus(getThisPointer());
+}
+
+void TextInput::blur() {
+  // should probably be moved to focus manager
+  if (getViewManager()->getFocusManager().getCurrentFocusable().get() == this) {
+    getViewManager()->getFocusManager().loseFocus();
+  }
+}
+
 void TextInput::onPressStarted(PressStartedEvent event)
 {}
 
@@ -282,12 +293,14 @@ void TextInput::didGainFocus()
 {
   isFocused = true;
   startCaretBlink();
+  onFocus();
 }
 
 void TextInput::didLoseFocus()
 {
   isFocused = false;
   stopCaretBlink();
+  onBlur();
 }
 
 void TextInput::onTextInput(std::string text)
