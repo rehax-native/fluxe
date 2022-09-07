@@ -156,6 +156,19 @@ void TextInput::measureLayout(LayoutConstraint constraints, PossibleLayoutSize p
   if (width < minWidth) {
     width = minWidth;
   }
+  if (layoutSizeOverride.isSet) {
+    if (auto p = std::get_if<SizeDimensionTypes::Fixed>(&layoutSizeOverride.value.width)) {
+      width = p->size;
+    } else if (auto p = std::get_if<SizeDimensionTypes::Percentage>(&layoutSizeOverride.value.width)) {
+      if (parentSize.width.isSet) {
+        width = parentSize.width.value * p->percent / 100.0;
+      }
+    } else if (auto p = std::get_if<SizeDimensionTypes::Fill>(&layoutSizeOverride.value.width)) {
+      if (parentSize.width.isSet) {
+        width = parentSize.width.value;
+      }
+    }
+  }
   layoutSize = Nullable<LayoutSize>({
     .width = width + padding.left + padding.right,
     .height = text->layoutSize.value.height + textPadding.top + textPadding.bottom + padding.top + padding.bottom,
