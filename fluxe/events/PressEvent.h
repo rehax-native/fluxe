@@ -5,17 +5,29 @@
 
 namespace fluxe {
 
-struct PressStartedEvent {
+struct PressEvent {
+  void stopPropagation() {
+    doesPropagate = false;
+  }
+  void stopImmediatePropagation() {
+    doesPropagateToSiblings = false;
+  }
+
+  bool doesPropagate = true;
+  bool doesPropagateToSiblings = true;
+};
+
+struct PressStartedEvent : PressEvent {
   int button = 0;
   float left;
   float top;
 };
-struct PressFinishedEvent {
+struct PressFinishedEvent : PressEvent {
   int button = 0;
   float left;
   float top;
 };
-struct PressCanceledEvent {};
+struct PressCanceledEvent : PressEvent {};
 
 class IPressEventListener
 {

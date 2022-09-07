@@ -44,6 +44,9 @@ void MouseEventsManager::handleMouseDown(MouseDownEvent event)
   }
 
   while (hitView.isValid()) {
+    if (!event.doesPropagate) {
+      break;
+    }
     hitView->onMouseDown(event);
     currentListenersWithMouseDown.insert(hitView);
     hitView = hitView->getParent();
@@ -64,6 +67,9 @@ void MouseEventsManager::handleMouseUp(MouseUpEvent event)
 //    hitView = hitView->getParent();
 //  }
   for (auto listener : currentListenersWithMouseDown) {
+    if (!event.doesPropagate) {
+      break;
+    }
     listener->onMouseUp(event);
   }
   currentListenersWithMouseDown.clear();
@@ -73,6 +79,9 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent event)
 {
   if (isMouseDown) {
     for (auto listener : currentListenersWithMouseDown) {
+    if (!event.doesPropagate) {
+      break;
+    }
       listener->onMouseMove(event);
     }
   }

@@ -7,28 +7,37 @@ PressDetector::PressDetector(IPressEventListener * eventListener)
 {
 }
 
-void PressDetector::onMouseDown(MouseDownEvent event)
+void PressDetector::onMouseDown(MouseDownEvent mouseEvent)
 {
   isPressing = true;
-  eventListener->onPressStarted({ .button = event.button, .left = event.left, .top = event.top });
+  PressStartedEvent event { .button = mouseEvent.button, .left = mouseEvent.left, .top = mouseEvent.top };
+  eventListener->onPressStarted(event);
+  mouseEvent.doesPropagate = event.doesPropagate;
+  mouseEvent.doesPropagateToSiblings = event.doesPropagateToSiblings;
 }
 
-void PressDetector::onMouseUp(MouseUpEvent event)
+void PressDetector::onMouseUp(MouseUpEvent mouseEvent)
 {
   if (isPressing) {
     isPressing = false;
-    eventListener->onPressFinished({ .button = event.button, .left = event.left, .top = event.top });
+    PressFinishedEvent event { .button = mouseEvent.button, .left = mouseEvent.left, .top = mouseEvent.top };
+    eventListener->onPressFinished(event);
+    mouseEvent.doesPropagate = event.doesPropagate;
+    mouseEvent.doesPropagateToSiblings = event.doesPropagateToSiblings;
   }
 }
 
-void PressDetector::onMouseEnter(MouseEnterEvent event)
+void PressDetector::onMouseEnter(MouseEnterEvent mouseEvent)
 {
 }
 
-void PressDetector::onMouseExit(MouseExitEvent event)
+void PressDetector::onMouseExit(MouseExitEvent mouseEvent)
 {
   if (isPressing) {
     isPressing = false;
-    eventListener->onPressCanceled({});
+    PressCanceledEvent event {};
+    eventListener->onPressCanceled(event);
+    mouseEvent.doesPropagate = event.doesPropagate;
+    mouseEvent.doesPropagateToSiblings = event.doesPropagateToSiblings;
   }
 }

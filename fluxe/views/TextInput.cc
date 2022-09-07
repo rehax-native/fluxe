@@ -292,6 +292,7 @@ void TextInput::onPressFinished(PressFinishedEvent event)
 
     getViewManager()->showContextMenu(menu);
   }
+  event.stopPropagation();
 }
 
 void TextInput::onPressCanceled(PressCanceledEvent event)

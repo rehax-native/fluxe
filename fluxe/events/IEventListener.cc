@@ -56,6 +56,9 @@ IEventListenerContainer::~IEventListenerContainer()
 void IEventListenerContainer::onMouseDown(MouseDownEvent event)
 {
   for (auto listener : eventListeners) {
+    if (!event.doesPropagateToSiblings) {
+      break;
+    }
     listener->onMouseDown(event);
   }
 }
@@ -63,6 +66,9 @@ void IEventListenerContainer::onMouseDown(MouseDownEvent event)
 void IEventListenerContainer::onMouseUp(MouseUpEvent event)
 {
   for (auto listener : eventListeners) {
+    if (!event.doesPropagateToSiblings) {
+      break;
+    }
     listener->onMouseUp(event);
   }
 }
@@ -70,6 +76,9 @@ void IEventListenerContainer::onMouseUp(MouseUpEvent event)
 void IEventListenerContainer::onMouseMove(MouseMoveEvent event)
 {
   for (auto listener : eventListeners) {
+    if (!event.doesPropagateToSiblings) {
+      break;
+    }
     listener->onMouseMove(event);
   }
 }
@@ -77,6 +86,9 @@ void IEventListenerContainer::onMouseMove(MouseMoveEvent event)
 void IEventListenerContainer::onMouseEnter(MouseEnterEvent event)
 {
   for (auto listener : eventListeners) {
+    if (!event.doesPropagateToSiblings) {
+      break;
+    }
     listener->onMouseEnter(event);
   }
 }
@@ -84,6 +96,9 @@ void IEventListenerContainer::onMouseEnter(MouseEnterEvent event)
 void IEventListenerContainer::onMouseExit(MouseExitEvent event)
 {
   for (auto listener : eventListeners) {
+    if (!event.doesPropagateToSiblings) {
+      break;
+    }
     listener->onMouseExit(event);
   }
 }
