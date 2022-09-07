@@ -85,9 +85,7 @@ std::vector<TextBox> Text::getRectsForRange(int start, int end)
 void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize parentSize)
 {
   TextStyle textStyle;
-  sk_sp<FontCollection> fontCollection = sk_make_sp<FontCollection>();
-
-  fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
+  sk_sp<FontCollection> fontCollection = FontManager::Shared().getFontCollection();
 
   textStyle.setColor(textColor.color);
   textStyle.setFontSize(textSize);

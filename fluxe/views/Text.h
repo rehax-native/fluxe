@@ -1,6 +1,7 @@
 #pragma once
 
 #include "View.h"
+#include "FontManager.h"
 
 namespace fluxe {
 
