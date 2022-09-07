@@ -283,7 +283,6 @@ void TextInput::onPressFinished(PressFinishedEvent & event)
 {
   getViewManager()->getFocusManager().gainFocus(getThisPointer());
   if (event.button == 1) {
-
     auto menu = Object<TextInputContextMenu>::Create(dynamic_pointer_cast<TextInput>(getThisPointer()));
     menu->setPosition({
       .left = PositionDimensionTypes::Fixed{event.left},
@@ -478,8 +477,17 @@ void TextInput::onKeyboardMoveAction(ShellKeyboardMoveInstruction event)
   startCaretBlink();
 }
 
+constexpr char FLUXE_TEXTINPUT_CHAR_ENTER = 13;
+constexpr char FLUXE_TEXTINPUT_CHAR_ESCAPE = 27;
+
 bool TextInput::isHandlingKeyboardCommand(ShellKeyboardCommand command)
 {
+  if (command.commandKey.size() > 0 && command.commandKey.data()[0] == FLUXE_TEXTINPUT_CHAR_ENTER) {
+    return true;
+  }
+  if (command.commandKey.size() > 0 && command.commandKey.data()[0] == FLUXE_TEXTINPUT_CHAR_ESCAPE) {
+    return true;
+  }
   if (
     command.isWithCmdCtrlModifier && (
       command.commandKey == "a" ||
@@ -495,6 +503,15 @@ bool TextInput::isHandlingKeyboardCommand(ShellKeyboardCommand command)
 
 void TextInput::onKeyboardCommand(ShellKeyboardCommand command)
 {
+  if (command.commandKey.size() > 0 && command.commandKey.data()[0] == FLUXE_TEXTINPUT_CHAR_ENTER) {
+    onSubmit();
+    blur();
+    return;
+  }
+  if (command.commandKey.size() > 0 && command.commandKey.data()[0] == FLUXE_TEXTINPUT_CHAR_ESCAPE) {
+    blur();
+    return;
+  }
   if (!command.isWithCmdCtrlModifier) {
     return;
   }

@@ -37,6 +37,7 @@ public:
   std::function<void (std::string)> onValueChanged = [] (std::string value) {};
   std::function<void ()> onFocus = [] () {};
   std::function<void ()> onBlur = [] () {};
+  std::function<void ()> onSubmit = [] () {};
 
   Padding textPadding = {
     .left = 10,

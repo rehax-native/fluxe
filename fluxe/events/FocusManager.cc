@@ -10,7 +10,9 @@ WeakObjectPointer<View> FocusManager::getCurrentFocusable()
 
 void FocusManager::gainFocus(ObjectPointer<View> view)
 {
-  loseFocus();
+  if (currentFocusable.isValid() && view.hasPointer() && currentFocusable.get() != view.get()) {
+    loseFocus();
+  }
   currentFocusable = view;
   currentFocusable->didGainFocus();
 }
