@@ -18,9 +18,9 @@ public:
   MouseEventsManager(ViewManager * viewManager, ObjectPointer<View> rootView);
 
   void handleInstruction(ShellMouseInstruction instruction);
-  void handleMouseDown(MouseDownEvent event);
-  void handleMouseUp(MouseUpEvent event);
-  void handleMouseMove(MouseMoveEvent event);
+  void handleMouseDown(MouseDownEvent & event);
+  void handleMouseUp(MouseUpEvent & event);
+  void handleMouseMove(MouseMoveEvent & event);
 
 private:
   WeakObjectPointer<View> findViewAtPosition(float x, float y, ObjectPointer<View> view);

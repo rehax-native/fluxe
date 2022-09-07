@@ -32,9 +32,9 @@ struct PressCanceledEvent : PressEvent {};
 class IPressEventListener
 {
 public:
-  virtual void onPressStarted(PressStartedEvent event) = 0;
-  virtual void onPressFinished(PressFinishedEvent event) = 0;
-  virtual void onPressCanceled(PressCanceledEvent event) = 0;
+  virtual void onPressStarted(PressStartedEvent & event) = 0;
+  virtual void onPressFinished(PressFinishedEvent & event) = 0;
+  virtual void onPressCanceled(PressCanceledEvent & event) = 0;
 };
 
 class PressDetector : public IEventListener
@@ -42,10 +42,10 @@ class PressDetector : public IEventListener
 public:
   PressDetector(IPressEventListener * eventListener);
 
-  void onMouseDown(MouseDownEvent event) override;
-  void onMouseUp(MouseUpEvent event) override;
-  void onMouseEnter(MouseEnterEvent event) override;
-  void onMouseExit(MouseExitEvent event) override;
+  void onMouseDown(MouseDownEvent & event) override;
+  void onMouseUp(MouseUpEvent & event) override;
+  void onMouseEnter(MouseEnterEvent & event) override;
+  void onMouseExit(MouseExitEvent & event) override;
 
 private:
   IPressEventListener * eventListener;

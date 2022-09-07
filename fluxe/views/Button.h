@@ -38,9 +38,9 @@ public:
     void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;
     void build(ObjectPointer<ViewBuilder> builder) override;
 
-    void onPressStarted(PressStartedEvent event) override;
-    void onPressFinished(PressFinishedEvent event) override;
-    void onPressCanceled(PressCanceledEvent event) override;
+    void onPressStarted(PressStartedEvent & event) override;
+    void onPressFinished(PressFinishedEvent & event) override;
+    void onPressCanceled(PressCanceledEvent & event) override;
 };
 
 }

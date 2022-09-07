@@ -3,19 +3,19 @@
 
 using namespace fluxe;
 
-void IEventListener::onMouseDown(MouseDownEvent event)
+void IEventListener::onMouseDown(MouseDownEvent & event)
 {}
 
-void IEventListener::onMouseUp(MouseUpEvent event)
+void IEventListener::onMouseUp(MouseUpEvent & event)
 {}
 
-void IEventListener::onMouseMove(MouseMoveEvent event)
+void IEventListener::onMouseMove(MouseMoveEvent & event)
 {}
 
-void IEventListener::onMouseEnter(MouseEnterEvent event)
+void IEventListener::onMouseEnter(MouseEnterEvent & event)
 {}
 
-void IEventListener::onMouseExit(MouseExitEvent event)
+void IEventListener::onMouseExit(MouseExitEvent & event)
 {}
 
 bool IEventListener::isFocusable()
@@ -53,7 +53,7 @@ IEventListenerContainer::~IEventListenerContainer()
   }
 }
 
-void IEventListenerContainer::onMouseDown(MouseDownEvent event)
+void IEventListenerContainer::onMouseDown(MouseDownEvent & event)
 {
   for (auto listener : eventListeners) {
     if (!event.doesPropagateToSiblings) {
@@ -63,7 +63,7 @@ void IEventListenerContainer::onMouseDown(MouseDownEvent event)
   }
 }
 
-void IEventListenerContainer::onMouseUp(MouseUpEvent event)
+void IEventListenerContainer::onMouseUp(MouseUpEvent & event)
 {
   for (auto listener : eventListeners) {
     if (!event.doesPropagateToSiblings) {
@@ -73,7 +73,7 @@ void IEventListenerContainer::onMouseUp(MouseUpEvent event)
   }
 }
 
-void IEventListenerContainer::onMouseMove(MouseMoveEvent event)
+void IEventListenerContainer::onMouseMove(MouseMoveEvent & event)
 {
   for (auto listener : eventListeners) {
     if (!event.doesPropagateToSiblings) {
@@ -83,7 +83,7 @@ void IEventListenerContainer::onMouseMove(MouseMoveEvent event)
   }
 }
 
-void IEventListenerContainer::onMouseEnter(MouseEnterEvent event)
+void IEventListenerContainer::onMouseEnter(MouseEnterEvent & event)
 {
   for (auto listener : eventListeners) {
     if (!event.doesPropagateToSiblings) {
@@ -93,7 +93,7 @@ void IEventListenerContainer::onMouseEnter(MouseEnterEvent event)
   }
 }
 
-void IEventListenerContainer::onMouseExit(MouseExitEvent event)
+void IEventListenerContainer::onMouseExit(MouseExitEvent & event)
 {
   for (auto listener : eventListeners) {
     if (!event.doesPropagateToSiblings) {

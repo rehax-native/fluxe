@@ -11,26 +11,29 @@ MouseEventsManager::MouseEventsManager(ViewManager * viewManager, ObjectPointer<
 void MouseEventsManager::handleInstruction(ShellMouseInstruction instruction)
 {
   if (instruction.isDown && !instruction.isMove) {
-    handleMouseDown({
+    MouseDownEvent event {
       .left = instruction.left,
       .top = instruction.top,
       .button = instruction.button,
-    });
+    };
+    handleMouseDown(event);
   } else if (instruction.isUp && !instruction.isMove) {
-    handleMouseUp({
+    MouseUpEvent event {
       .left = instruction.left,
       .top = instruction.top,
       .button = instruction.button,
-    });
+    };
+    handleMouseUp(event);
   } else if (instruction.isMove) {
-    handleMouseMove({
+    MouseMoveEvent event {
       .left = instruction.left,
       .top = instruction.top,
-    });
+    };
+    handleMouseMove(event);
   }
 }
 
-void MouseEventsManager::handleMouseDown(MouseDownEvent event)
+void MouseEventsManager::handleMouseDown(MouseDownEvent & event)
 {
   isMouseDown = true;
   auto hitView = findViewAtPosition(event.left, event.top, rootView);
@@ -57,7 +60,7 @@ void MouseEventsManager::handleMouseDown(MouseDownEvent event)
   }
 }
 
-void MouseEventsManager::handleMouseUp(MouseUpEvent event)
+void MouseEventsManager::handleMouseUp(MouseUpEvent & event)
 {
   isMouseDown = false;
   // this sends the mouse up event to the view that is under the mouse. Not sure we want that?
@@ -75,7 +78,7 @@ void MouseEventsManager::handleMouseUp(MouseUpEvent event)
   currentListenersWithMouseDown.clear();
 }
 
-void MouseEventsManager::handleMouseMove(MouseMoveEvent event)
+void MouseEventsManager::handleMouseMove(MouseMoveEvent & event)
 {
   if (isMouseDown) {
     for (auto listener : currentListenersWithMouseDown) {
@@ -90,10 +93,11 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent event)
 
   while (hitView.isValid()) {
     if (previousMouseMoveListeners.find(hitView) == previousMouseMoveListeners.end()) {
-      hitView->onMouseEnter(MouseEnterEvent {
+      MouseEnterEvent event {
         .left = event.left,
         .top = event.top,
-      });
+      };
+      hitView->onMouseEnter(event);
     }
     newListeners.insert(hitView);
     if (!isMouseDown) {
@@ -104,10 +108,11 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent event)
 
   for (auto listener : previousMouseMoveListeners) {
     if (newListeners.find(listener) == newListeners.end()) {
-      listener->onMouseExit(MouseExitEvent {
+      MouseExitEvent event {
         .left = event.left,
         .top = event.top,
-      });
+      };
+      listener->onMouseExit(event);
     }
   }
 

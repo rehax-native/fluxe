@@ -56,14 +56,14 @@ void Button::build(ObjectPointer<ViewBuilder> builder)
     builder->getCanvas()->drawRRect(rrect, paint);
 }
 
-void Button::onPressStarted(PressStartedEvent event)
+void Button::onPressStarted(PressStartedEvent & event)
 {
   getViewManager()->getFocusManager().loseFocus();
   state = ButtonState::Down;
   setNeedsRerender(true);
 }
 
-void Button::onPressFinished(PressFinishedEvent event)
+void Button::onPressFinished(PressFinishedEvent & event)
 {
   state = ButtonState::Up;
   setNeedsRerender(true);
@@ -72,7 +72,7 @@ void Button::onPressFinished(PressFinishedEvent event)
   onClick(dynamic_pointer_cast<Button>(thisPtr));
 }
 
-void Button::onPressCanceled(PressCanceledEvent event)
+void Button::onPressCanceled(PressCanceledEvent & event)
 {
   state = ButtonState::Up;
   setNeedsRerender(true);

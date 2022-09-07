@@ -49,9 +49,9 @@ public:
   virtual void build(ObjectPointer<ViewBuilder> builder) override;
 
 
-  void onPressStarted(PressStartedEvent event) override;
-  void onPressFinished(PressFinishedEvent event) override;
-  void onPressCanceled(PressCanceledEvent event) override;
+  void onPressStarted(PressStartedEvent & event) override;
+  void onPressFinished(PressFinishedEvent & event) override;
+  void onPressCanceled(PressCanceledEvent & event) override;
 
   void focus();
   void blur();

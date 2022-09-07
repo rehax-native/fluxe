@@ -10,11 +10,11 @@ class IEventListener
 {
 public:
   virtual ~IEventListener() = default;
-  virtual void onMouseDown(MouseDownEvent event);
-  virtual void onMouseUp(MouseUpEvent event);
-  virtual void onMouseMove(MouseMoveEvent event);
-  virtual void onMouseEnter(MouseEnterEvent event);
-  virtual void onMouseExit(MouseExitEvent event);
+  virtual void onMouseDown(MouseDownEvent & event);
+  virtual void onMouseUp(MouseUpEvent & event);
+  virtual void onMouseMove(MouseMoveEvent & event);
+  virtual void onMouseEnter(MouseEnterEvent & event);
+  virtual void onMouseExit(MouseExitEvent & event);
 
   virtual bool isFocusable();
   virtual void didGainFocus();
@@ -43,11 +43,11 @@ public:
     return listener;
   }
 
-  void onMouseDown(MouseDownEvent event) override;
-  void onMouseUp(MouseUpEvent event) override;
-  void onMouseMove(MouseMoveEvent event) override;
-  void onMouseEnter(MouseEnterEvent event) override;
-  void onMouseExit(MouseExitEvent event) override;
+  void onMouseDown(MouseDownEvent & event) override;
+  void onMouseUp(MouseUpEvent & event) override;
+  void onMouseMove(MouseMoveEvent & event) override;
+  void onMouseEnter(MouseEnterEvent & event) override;
+  void onMouseExit(MouseExitEvent & event) override;
 
 private:
   std::set<IEventListener *> eventListeners;

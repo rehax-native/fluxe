@@ -33,18 +33,18 @@ public:
     pressHandler = handler;
   }
 
-  void onPressStarted(PressStartedEvent event) override
+  void onPressStarted(PressStartedEvent & event) override
   {
     setBackgroundColor(::fluxe::Color::RGBA(1, 1, 1, 0.1));
   }
 
-  void onPressFinished(PressFinishedEvent event) override
+  void onPressFinished(PressFinishedEvent & event) override
   {
     pressHandler();
     setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0));
   }
 
-  void onPressCanceled(PressCanceledEvent event) override
+  void onPressCanceled(PressCanceledEvent & event) override
   {
     setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0));
   }
@@ -276,10 +276,10 @@ void TextInput::blur() {
   }
 }
 
-void TextInput::onPressStarted(PressStartedEvent event)
+void TextInput::onPressStarted(PressStartedEvent & event)
 {}
 
-void TextInput::onPressFinished(PressFinishedEvent event)
+void TextInput::onPressFinished(PressFinishedEvent & event)
 {
   getViewManager()->getFocusManager().gainFocus(getThisPointer());
   if (event.button == 1) {
@@ -295,7 +295,7 @@ void TextInput::onPressFinished(PressFinishedEvent event)
   event.stopPropagation();
 }
 
-void TextInput::onPressCanceled(PressCanceledEvent event)
+void TextInput::onPressCanceled(PressCanceledEvent & event)
 {}
 
 bool TextInput::isFocusable()
