@@ -40,16 +40,21 @@ std::vector<SelectOption> Select::getOptions() {
 
 void Select::setValue(Nullable<std::string> value) {
   this->value = value;
-  std::string newName = "";
+  Nullable<SelectOption> newValue;
   if (value.isSet) {
     for (auto option : options) {
       if (option.value == value.value) {
-        newName = option.name;
+        newValue = option;
         break;
       }
     }
   }
-  title->setText(newName);
+  if (newValue.isSet) {
+    title->setText(newValue.value.name);
+  } else {
+    title->setText("");
+  }
+  onValueChanged(newValue);
   setNeedsRerender(true);
 }
 

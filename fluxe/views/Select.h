@@ -37,6 +37,8 @@ public:
   void onPressFinished(PressFinishedEvent & event) override;
   void onPressCanceled(PressCanceledEvent & event) override;
 
+  std::function<void (Nullable<SelectOption>)> onValueChanged = [] (Nullable<SelectOption>) {};
+
 private:
   std::vector<SelectOption> options;
   ObjectPointer<Text> title;
