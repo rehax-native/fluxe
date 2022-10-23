@@ -2,90 +2,11 @@
 #include "ViewManager.h"
 #include "../layout/FlexLayout.h"
 #include "../../shell/clipboard.h"
+#include "ContextMenu.h"
 
 using namespace fluxe;
 
 const std::regex TextInput::NEW_LINE_REGEX = std::regex("\n");
-
-class ContextMenuItem : public View, public IPressEventListener
-{
-public:
-  ContextMenuItem()
-  {
-    textView = Object<Text>::Create();
-    textView->setPadding({
-      .left = 10,
-      .right = 10,
-      .top = 7,
-      .bottom = 7,
-    });
-    addSubView(textView);
-    addEventListener<PressDetector>(this);
-  }
-
-  void setText(std::string text)
-  {
-    textView->setText(text);
-  }
-
-  void setPressHandler(std::function<void(void)> handler)
-  {
-    pressHandler = handler;
-  }
-
-  void onPressStarted(PressStartedEvent & event) override
-  {
-    setBackgroundColor(::fluxe::Color::RGBA(1, 1, 1, 0.1));
-  }
-
-  void onPressFinished(PressFinishedEvent & event) override
-  {
-    pressHandler();
-    setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0));
-  }
-
-  void onPressCanceled(PressCanceledEvent & event) override
-  {
-    setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0));
-  }
-
-private:
-  ObjectPointer<Text> textView;
-  std::function<void(void)> pressHandler;
-};
-
-class ContextMenu : public View
-{
-public:
-  ContextMenu()
-  {
-    setBackgroundColor(::fluxe::Color::RGBA(0.136, 0.136, 0.136, 1.0));
-    setBorderColor(Color::RGBA(0.6, 0.6, 0.6, 0.8));
-    setBorderWidth(1);
-    setBorderRadius(BorderRadius {
-      .topLeft = 7,
-      .topRight = 7,
-      .bottomLeft = 7,
-      .bottomRight = 7,
-    });
-    auto layout = Object<FlexLayout>::Create();
-    layout->direction = FlexDirection::Column;
-    layout->alignItems = FlexAlignItems::Stretch;
-    // layout->spacing = 10.0;
-    setLayout(layout);
-    setSize({
-        .width = SizeDimensionTypes::Fixed { 150 }
-    });
-  }
-
-  void addItem(std::string title, std::function<void(void)> pressHandler)
-  {
-    auto item = Object<ContextMenuItem>::Create();
-    item->setText(title);
-    item->setPressHandler(pressHandler);
-    addSubView(item);
-  }
-};
 
 class TextInputContextMenu : public ContextMenu
 {
@@ -266,7 +187,9 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
 }
 
 void TextInput::focus() {
-  getViewManager()->getFocusManager().gainFocus(getThisPointer());
+  if (auto viewManager = getViewManager()) {
+    viewManager->getFocusManager().gainFocus(getThisPointer());
+  }
 }
 
 void TextInput::blur() {

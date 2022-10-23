@@ -1,6 +1,7 @@
 #include "fluxe/views/View.h"
 #include "fluxe/views/Text.h"
 #include "fluxe/views/Button.h"
+#include "fluxe/views/Select.h"
 #include "fluxe/views/TextInput.h"
 #include "fluxe/layout/StackLayout.h"
 #include "fluxe/views/EngineUtility.h"
@@ -37,6 +38,13 @@ int main() {
   // container->setBackgroundColor(Color::RGBA(1.0, 0, 0, 0.5));
   container->addSubView(button);
   container->addSubView(textInput);
+
+  auto select = Object<Select>::Create();
+  select->setOptions({
+    SelectOption { .name = "Value 1", .value = "val1" },
+    SelectOption { .name = "Value 2", .value = "val2" },
+  });
+  container->addSubView(select);
 
   auto richText = Object<Text>::Create();
   richText->setText({

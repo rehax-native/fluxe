@@ -9,8 +9,8 @@
 
 - [] Checkboxes
 - [] Radio boxes
-- [] Context menues
-- [] Dropdowns
+- [x] Context menues
+- [x] Dropdowns
 - [] Tests
 - [] Animations
 - [] Better rendering strategies

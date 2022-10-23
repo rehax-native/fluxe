@@ -54,7 +54,7 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
           }
         }
       }
-      maxCross = std::max(maxCross, item->layoutPosition.value.top + item->layoutSize.value.width + spacing);
+      maxCross = std::max(maxCross, item->layoutPosition.value.top + item->layoutSize.value.height + spacing);
     }
   }
 
