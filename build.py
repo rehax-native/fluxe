@@ -176,7 +176,8 @@ if is_win:
   # See: https://skia.org/docs/user/build/#windows
 
   # os.system('cd build && msbuild fluxe-win.vcxproj && cp libfluxe-win.a ../dist/fluxe.lib')
-  os.system('cd build && cp Debug/fluxe-win.lib ../dist/fluxe.lib')
+  print("WARNING: You must build the fluxe library manually with a developer shell and msbuild fluxe-win.vcxproj")
+  os.system('cd build && cp Debug/fluxe-win.lib ../dist/out/fluxe.lib')
 elif is_mac:
   os.system('cd build && xcodebuild -target fluxe-mac -configuration {} ONLY_ACTIVE_ARCH=NO -arch=universal && cp {}/libfluxe-mac.a ../dist/out/libfluxe.a'.format(build_type_capital, build_type_capital))
 else:
