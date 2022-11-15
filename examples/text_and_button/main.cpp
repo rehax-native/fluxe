@@ -19,7 +19,7 @@ int main() {
 //#endif
 
   auto text = Object<Text>::Create();
-  text->setText("Hello World");
+  text->setText("Hello World 😅");
 
   auto button = Object<Button>::Create();
   button->getTitle()->setText("Click Me");
