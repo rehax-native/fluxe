@@ -1,10 +1,23 @@
 #pragma once
 
+// #define SK_VULKAN
+#define SK_GL
+#define GLFW_EXPOSE_NATIVE_WIN32
+
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 
 #include <functional>
 #include <windows.h>
 #include "render_backend/skia/canvas.h"
 #include "../callbacks.h"
+
+#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/gl/GrGLInterface.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkSurface.h"
 
 // #ifdef FLUXE_USE_OPENGL
 // #define VIEW_BASE NSOpenGLView
@@ -50,6 +63,10 @@ public:
   bool hasPainted = false;
   HWND hWnd = nullptr;
   HWND hParentWnd = nullptr;
+
+  GrDirectContext * sContext = nullptr;
+  GLFWwindow * glWindow = nullptr;
+  sk_sp<SkSurface> sSurface;
 
 private:
 //   HINSTANCE mHInstance = nullptr;

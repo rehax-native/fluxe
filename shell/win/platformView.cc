@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
+#include <commctrl.h>
 // #include <cstringt.h>
 // #include <atlstr.h>
 
@@ -29,6 +30,27 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
         case WM_WINDOWPOSCHANGED:
         {
           if (view != nullptr && view->hasPainted) {
+            RECT rect;
+            GetWindowRect(window, &rect);
+            int width = rect.right - rect.left;
+            int height = rect.bottom - rect.top;
+
+            GrGLFramebufferInfo framebufferInfo;
+            framebufferInfo.fFBOID = 0; // assume default framebuffer
+            // We are always using OpenGL and we use RGBA8 internal format for both RGBA and BGRA configs in OpenGL.
+            //(replace line below with this one to enable correct color spaces) framebufferInfo.fFormat = GL_SRGB8_ALPHA8;
+            framebufferInfo.fFormat = GL_RGBA8;
+
+            SkColorType colorType = kRGBA_8888_SkColorType;
+            GrBackendRenderTarget backendRenderTarget(width, height,
+                0, // sample count
+                0, // stencil bits
+                framebufferInfo);
+
+            //(replace line below with this one to enable correct color spaces) sSurface = SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, SkColorSpace::MakeSRGB(), nullptr).release();
+            view->sSurface = SkSurface::MakeFromBackendRenderTarget(view->sContext, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr);
+
+            glfwSetWindowSize(view->glWindow, width, height);
             view->setNeedsRerender();
           }
         }
@@ -52,8 +74,13 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
 
             auto renderCallback = view->getRenderCallback();
 
-            sk_sp<SkSurface> surface = fluxe::Surface::MakeRasterN32Premul(width * scale, height * scale);
-            renderCallback(width, height, scale, surface);
+            // sk_sp<SkSurface> surface = fluxe::Surface::MakeRasterN32Premul(width * scale, height * scale);
+            renderCallback(width, height, scale, view->sSurface);
+
+            view->sContext->flush();
+		        glfwSwapBuffers(view->glWindow);
+
+/*
             SkPixmap pixmap;
             surface->peekPixels(&pixmap);
 
@@ -69,6 +96,7 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
 
             StretchDIBits(dc, 0, 0, width, height, 0, 0, width, height, pixmap.addr(), &bmi, DIB_RGB_COLORS, SRCCOPY);
             ReleaseDC(window, dc);
+            */
 
             result = DefWindowProcA(window, msg, wparam, lparam);
 
@@ -194,7 +222,8 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
                   });
                 }
                 break;
-              // case 0x0D: // Carriage Return 
+              case 0x0D: // Carriage Return
+                  break;
               default:
               {
                 wchar_t wStrPtr[2];
@@ -207,6 +236,8 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
                 }
                 std::wstring ws(wStrPtr);
                 std::string str(ws.begin(), ws.end());
+
+                // std::cout << "c " << str << std::endl;
 
                 ShellKeyboardCommand command {
                   .commandKey = str,
@@ -272,6 +303,12 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
             case VK_LWIN:
             case VK_RWIN:
               view->isWinDown = true;
+              break;
+            case VK_RETURN:
+              // std::cout << "Enter 1" << std::endl;
+              view->getKeyboardMoveCallback()({
+                .isEnter = true,
+              });
               break;
             case VK_LEFT:
               view->getKeyboardMoveCallback()({
@@ -342,6 +379,12 @@ fluxe_platform_view_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam
     return result;
 }
 
+
+static LRESULT CALLBACK
+fluxe_platform_view_callback_gl(HWND window, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+  return fluxe_platform_view_callback(window, msg, wparam, lparam);
+}
+
 const char FLUXE_VIEW_CLASS_NAME[] = "FLUXE_VIEW";
 
 fluxe::FluxePlatformView::FluxePlatformView()
@@ -379,6 +422,40 @@ fluxe::FluxePlatformView::FluxePlatformView()
 
 void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)
 {
+    if (!glfwInit()) {
+        // TODO: Continue without GPU
+    }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //(uncomment to enable correct color spaces) glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    glfwWindowHint(GLFW_STENCIL_BITS, 0);
+    //glfwWindowHint(GLFW_ALPHA_BITS, 0);
+    glfwWindowHint(GLFW_DEPTH_BITS, 0);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    glWindow = glfwCreateWindow(600, 600, "", NULL, NULL);
+    glfwMakeContextCurrent(glWindow);
+
+    auto window = glfwGetWin32Window(glWindow);
+
+    SetWindowSubclass(
+      window,
+      fluxe_platform_view_callback_gl,
+      
+      // WINLAMBDA([](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR, DWORD_PTR dwRefData) noexcept {
+      //   try {
+      //     return reinterpret_cast<PlatformView *>(dwRefData)->messageHandler(uMsg, wParam, lParam);
+      //   } catch (std::exception& e) {
+      //     FB2K_console_formatter()
+      //         << "Exception in foo_chronflow EngineWindow MessageHandler: " << e.what();
+      //     return DefSubclassProc(hwnd, uMsg, wParam, lParam);
+      //   }
+      // }),
+      0, reinterpret_cast<DWORD_PTR>(this));
+
+/*
   HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(nullptr);
 
   HWND window = CreateWindow(
@@ -396,6 +473,11 @@ void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)
   if (!window) {
     exit(622);
   }
+  */
+
+  SetParent(window, parentWindow);
+  const LONG nNewStyle = (GetWindowLong(window, GWL_STYLE) & ~WS_POPUP) | WS_CHILDWINDOW;
+  SetWindowLong(window, GWL_STYLE, nNewStyle);
 
   SetWindowLongPtrW(window, GWLP_USERDATA, (LONG_PTR) this);
   EnableWindow(window, true);
@@ -403,6 +485,26 @@ void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)
 
   hParentWnd = parentWindow;
   hWnd = window;
+
+  sk_sp<const GrGLInterface> glInterface = GrGLMakeNativeInterface();
+  sContext = GrDirectContext::MakeGL(glInterface).release();
+
+  GrGLFramebufferInfo framebufferInfo;
+  framebufferInfo.fFBOID = 0; // assume default framebuffer
+  // We are always using OpenGL and we use RGBA8 internal format for both RGBA and BGRA configs in OpenGL.
+  //(replace line below with this one to enable correct color spaces) framebufferInfo.fFormat = GL_SRGB8_ALPHA8;
+  framebufferInfo.fFormat = GL_RGBA8;
+
+  SkColorType colorType = kRGBA_8888_SkColorType;
+  GrBackendRenderTarget backendRenderTarget(600, 600,
+      0, // sample count
+      0, // stencil bits
+      framebufferInfo);
+
+  //(replace line below with this one to enable correct color spaces) sSurface = SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, SkColorSpace::MakeSRGB(), nullptr).release();
+  sSurface = SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr);
+
+  glfwShowWindow(glWindow);
 }
 
 void fluxe::FluxePlatformView::setNeedsRerender()

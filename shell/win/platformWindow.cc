@@ -10,6 +10,10 @@
 
 #include <iostream>
 
+// #define GLFW_EXPOSE_NATIVE_WIN32
+// #include <GLFW/glfw3.h>
+// #include <GLFW/glfw3native.h>
+
 BOOL CALLBACK GiveFocusToChildren(HWND hwnd, LPARAM lParam)
 {
     SetFocus(hwnd);
@@ -85,10 +89,11 @@ void* OpenPlatformWindow()
         exit(621);
     }
 
-    HWND window = CreateWindow(
+    HWND window = CreateWindowEx(
+        WS_EX_APPWINDOW,
         window_class.lpszClassName,
         "Window Title",
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_THICKFRAME,
         CW_USEDEFAULT, CW_USEDEFAULT,
         600, 600,
         NULL,
@@ -107,4 +112,22 @@ void* OpenPlatformWindow()
     UpdateWindow(window);
 
     return window;
+    /*
+    if (!glfwInit()) {
+        // TODO: Continue without GPU
+    }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //(uncomment to enable correct color spaces) glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    glfwWindowHint(GLFW_STENCIL_BITS, 0);
+    //glfwWindowHint(GLFW_ALPHA_BITS, 0);
+    glfwWindowHint(GLFW_DEPTH_BITS, 0);
+    // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    GLFWwindow* glWindow = glfwCreateWindow(600, 600, "", NULL, NULL);
+    glfwMakeContextCurrent(glWindow);
+
+    return glfwGetWin32Window(glWindow);
+    */
 }

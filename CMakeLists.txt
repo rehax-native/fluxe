@@ -128,6 +128,18 @@ if (${MACOSX})
 endif()
 
 if (${WIN})
+    FetchContent_Declare(glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG        dd8a678a66f1967372e5a5e3deac41ebf65ee127
+    )
+    set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
+    set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
+    FetchContent_MakeAvailable(glfw)
+    include_directories(${glfw_SOURCE_DIR}/include)
+
+    find_package(OpenGL REQUIRED)
+    include_directories(${OPENGL_INCLUDE_DIRS})
+
     file(GLOB FLUXE_WIN_SRC_FILES
         fluxe/events/*.cc
         fluxe/layout/*.cc
@@ -184,6 +196,8 @@ if (${WIN})
         # skottie
         # sksg
         opengl32
+        glfw
+        Comctl32
     )
 
     # add_executable(
