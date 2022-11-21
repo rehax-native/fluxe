@@ -97,6 +97,10 @@ void FlexLayout::collectAndMeasureChildren(std::vector<ILayoutObject*> items, La
       totalFlex += info.flexGrow.value;
     }
 
+    if (i > 0) {
+      childrenMainSizeFixed += gap;
+    }
+
     children.push_back({
       .item = item,
       .info = info,
@@ -141,7 +145,7 @@ void FlexLayout::setSizeOfFlexChildren(LayoutConstraint constraints) {
 
 void FlexLayout::positionChildren() {
   float mainPos = 0.0;
-  float spacing = 0.0;
+  float spacing = gap;
 
   switch (justifyContent) {
     case FlexJustifyContent::FlexStart:

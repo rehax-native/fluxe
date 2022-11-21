@@ -67,6 +67,7 @@ public:
   FlexJustifyContent justifyContent = FlexJustifyContent::FlexStart;
   FlexAlignItems alignItems = FlexAlignItems::FlexStart;
   std::vector<FlexItem> itemInfos;
+  float gap = 0;
 
 private:
 

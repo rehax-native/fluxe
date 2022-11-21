@@ -27,6 +27,7 @@ int main() {
     
   auto layoutFlex = [&container, &isHorizontal, &enableFlexGrow, &flexJustify, &alignItems] () {
     auto layout = Object<FlexLayout>::Create();
+    layout->gap = 10;
     layout->justifyContent = flexJustify;
     layout->alignItems = alignItems;
     layout->direction = isHorizontal ? FlexDirection::Row : FlexDirection::Column;
