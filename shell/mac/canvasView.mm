@@ -21,9 +21,25 @@
       NSPasteboardTypeURL,
       NSPasteboardTypeFileURL
     ]];
+    
+    [NSApp addObserver:self forKeyPath:@"effectiveAppearance" options:NSKeyValueObservingOptionNew context:nil];
   }
   return self;
 }
+
+-(void)dealloc
+{
+  [super dealloc];
+  [NSApp removeObserver:self forKeyPath:@"effectiveAppearance"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+  if ([keyPath isEqual:@"effectiveAppearance"]) {
+    [self setNeedsDisplay:true];
+  }
+}
+
 
 - (void) drawRect: (NSRect) bounds
 {

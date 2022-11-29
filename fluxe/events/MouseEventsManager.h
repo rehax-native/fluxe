@@ -24,6 +24,8 @@ public:
 
 private:
   WeakObjectPointer<View> findViewAtPosition(float x, float y, ObjectPointer<View> view);
+  template <typename T>
+  T adjustEventCoordinatesForView(T event, WeakObjectPointer<View> hitView);
 
   ViewManager * viewManager;
   ObjectPointer<View> rootView;

@@ -28,9 +28,23 @@ void MouseEventsManager::handleInstruction(ShellMouseInstruction instruction)
     MouseMoveEvent event {
       .left = instruction.left,
       .top = instruction.top,
+      .isDown = instruction.isDown,
     };
     handleMouseMove(event);
   }
+}
+
+template <typename T>
+T MouseEventsManager::adjustEventCoordinatesForView(T event, WeakObjectPointer<View> hitView)
+{
+  auto viewEvent = event;
+  auto parent = hitView;
+  while (parent != nullptr) {
+    viewEvent.left = viewEvent.left - parent->layoutPosition.value.left;
+    viewEvent.top = viewEvent.top - parent->layoutPosition.value.top;
+    parent = parent->getParent();
+  }
+  return viewEvent;
 }
 
 void MouseEventsManager::handleMouseDown(MouseDownEvent & event)
@@ -50,7 +64,9 @@ void MouseEventsManager::handleMouseDown(MouseDownEvent & event)
     if (!event.doesPropagate) {
       break;
     }
-    hitView->onMouseDown(event);
+    auto viewEvent = adjustEventCoordinatesForView(event, hitView);
+    hitView->onMouseDown(viewEvent);
+    event.doesPropagate = viewEvent.doesPropagate;
     currentListenersWithMouseDown.insert(hitView);
     hitView = hitView->getParent();
   }
@@ -73,7 +89,9 @@ void MouseEventsManager::handleMouseUp(MouseUpEvent & event)
     if (!event.doesPropagate) {
       break;
     }
-    listener->onMouseUp(event);
+    auto viewEvent = adjustEventCoordinatesForView(event, listener);
+    listener->onMouseUp(viewEvent);
+    event.doesPropagate = viewEvent.doesPropagate;
   }
   currentListenersWithMouseDown.clear();
 }
@@ -82,10 +100,12 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent & event)
 {
   if (isMouseDown) {
     for (auto listener : currentListenersWithMouseDown) {
-    if (!event.doesPropagate) {
-      break;
-    }
-      listener->onMouseMove(event);
+      if (!event.doesPropagate) {
+        break;
+      }
+      auto viewEvent = adjustEventCoordinatesForView(event, listener);
+      listener->onMouseMove(viewEvent);
+      event.doesPropagate = viewEvent.doesPropagate;
     }
   }
   auto hitView = findViewAtPosition(event.left, event.top, rootView);
@@ -97,11 +117,15 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent & event)
         .left = event.left,
         .top = event.top,
       };
-      hitView->onMouseEnter(event);
+      auto viewEvent = adjustEventCoordinatesForView(event, hitView);
+      hitView->onMouseEnter(viewEvent);
+      event.doesPropagate = viewEvent.doesPropagate;
     }
     newListeners.insert(hitView);
     if (!isMouseDown) {
-      hitView->onMouseMove(event);
+      auto viewEvent = adjustEventCoordinatesForView(event, hitView);
+      hitView->onMouseMove(viewEvent);
+      event.doesPropagate = viewEvent.doesPropagate;
     }
     hitView = hitView->getParent();
   }
@@ -112,7 +136,9 @@ void MouseEventsManager::handleMouseMove(MouseMoveEvent & event)
         .left = event.left,
         .top = event.top,
       };
-      listener->onMouseExit(event);
+      auto viewEvent = adjustEventCoordinatesForView(event, listener);
+      listener->onMouseExit(viewEvent);
+      event.doesPropagate = viewEvent.doesPropagate;
     }
   }
 

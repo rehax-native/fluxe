@@ -2,6 +2,7 @@
 #include "fluxe/views/Text.h"
 #include "fluxe/views/Button.h"
 #include "fluxe/views/Select.h"
+#include "fluxe/views/CheckBox.h"
 #include "fluxe/views/TextInput.h"
 #include "fluxe/layout/StackLayout.h"
 #include "fluxe/views/EngineUtility.h"
@@ -59,6 +60,13 @@ int main() {
   });
 
   container->addSubView(richText);
+
+  auto checkBox = Object<CheckBox>::Create();
+//  checkBox->getTitle()->setText("Toggle");
+  checkBox->onToggle = [] (ObjectPointer<CheckBox> box) {
+    std::cout << "value changed " << box->getValue() << std::endl;
+  };
+  container->addSubView(checkBox);
 
   EngineUtility::startWithView(container);
 

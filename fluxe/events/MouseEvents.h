@@ -32,6 +32,7 @@ struct MouseMoveEvent : MouseEvent
 {
   float left;
   float top;
+  bool isDown = false;
 };
 
 struct MouseEnterEvent : MouseEvent
