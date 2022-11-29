@@ -1,6 +1,7 @@
 #include "Text.h"
 #include <locale>
 #include <codecvt>
+#include <rehaxUtils/app/app.h>
 
 using namespace fluxe;
 
@@ -87,7 +88,12 @@ void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize 
   TextStyle textStyle;
   sk_sp<FontCollection> fontCollection = FontManager::Shared().getFontCollection();
 
-  textStyle.setColor(textColor.color);
+  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
+    textStyle.setColor(::fluxe::Color::RGBA(1, 1, 1, 1.0).color);
+  } else {
+    textStyle.setColor(::fluxe::Color::RGBA(0, 0, 0, 1.0).color);
+  }
+  // textStyle.setColor(textColor.color);
   textStyle.setFontSize(textSize);
 
   ParagraphStyle paragraphStyle;
@@ -108,6 +114,12 @@ void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize 
 
     if (part.color.isSet) {
       partStyle.setColor(part.color.value.color);
+    } else {
+      if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
+        partStyle.setColor(::fluxe::Color::RGBA(1, 1, 1, 1.0).color);
+      } else {
+        partStyle.setColor(::fluxe::Color::RGBA(0, 0, 0, 1.0).color);
+      }
     }
     if (part.fontSize.isSet) {
       partStyle.setFontSize(part.fontSize.value);

@@ -3,6 +3,7 @@
 #include <functional>
 #include "render_backend/skia/canvas.h"
 #include "../callbacks.h"
+#include <rehaxUtils/app/app.h>
 
 @interface CanvasView : FluxePlatformView
 {
@@ -16,6 +17,8 @@
   std::function<void(ShellKeyboardMoveInstruction instruction)> moveCallback;
   std::function<void(const char * str)> textCallback;
   // std::function<void(ShellClipboardInstruction instruction)> clipboardCallback;
+
+  rehaxUtils::App::ApplicationThemeListenerId themeChangeListener;
 }
 
 - (void) drawRect: (NSRect) bounds;

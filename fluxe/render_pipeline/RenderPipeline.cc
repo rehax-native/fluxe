@@ -1,4 +1,5 @@
 #include "RenderPipeline.h"
+#include <rehaxUtils/app/app.h>
 
 using namespace fluxe;
 
@@ -16,8 +17,12 @@ sk_sp<Surface> RenderPipeline::render(int width, int height, float scale, sk_sp<
 
     viewBuilder->scale = scale;
     viewBuilder->rootNode->surface = surface;
-    
-    viewBuilder->rootNode->surface->getCanvas()->clear(::fluxe::Color::RGBA(0.156, 0.156, 0.156, 1.0).color);
+
+    if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
+        viewBuilder->rootNode->surface->getCanvas()->clear(::fluxe::Color::RGBA(0.156, 0.156, 0.156, 1.0).color);
+    } else {
+        viewBuilder->rootNode->surface->getCanvas()->clear(::fluxe::Color::RGBA(0.944, 0.944, 0.944, 1.0).color);
+    }
     viewBuilder->rootNode->surface->getCanvas()->resetMatrix();
     
     auto canvas = viewBuilder->rootNode->surface->getCanvas();

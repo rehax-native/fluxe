@@ -3,6 +3,7 @@
 #include "../layout/FlexLayout.h"
 #include "../../shell/clipboard.h"
 #include "ContextMenu.h"
+#include <rehaxUtils/app/app.h>
 
 using namespace fluxe;
 
@@ -129,7 +130,11 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
   }
 
   paint.setStyle(Paint::Style::kFill_Style);
-  paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 0.3).color);
+  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
+    paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 0.3).color);
+  } else {
+    paint.setColor(Color::RGBA(0.0, 0.0, 0.0, 0.3).color);
+  }
 
   if (needsCaretUpdate) {
     bool hasSelection = selectionRange.start != selectionRange.end;
@@ -181,7 +186,11 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
   if (isShowingCaret) {
     auto caretRect = Rect::MakeXYWH(text->layoutPosition.value.left + caretPosition.x, text->layoutPosition.value.top + caretPosition.y, 1, caretHeight);
     paint.setStyle(Paint::Style::kFill_Style);
-    paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 1.0).color);
+    if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
+      paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 1.0).color);
+    } else {
+      paint.setColor(Color::RGBA(0.0, 0.0, 0.0, 1.0).color);
+    }
     builder->getCanvas()->drawRect(caretRect, paint);
   }
 }
