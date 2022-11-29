@@ -17,10 +17,23 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
     .maxWidth = constraints.maxWidth,
     .maxHeight = constraints.maxHeight,
   };
+
+  PossibleLayoutSize nextParentSize = parentSize;
+
   for (auto & item : items)
   {
-    item->measureLayout(constraints, parentSize);
-    auto overrideResult = LayoutConstraintSetter::handleLayoutOverride(nextConstraints, parentSize, item);
+    auto parentSizeForChild = nextParentSize;
+    if (layoutDirection == StackLayoutDirection::Vertical) {
+      if (item->layoutPositionOverride.isSet && !std::get_if<PositionDimensionTypes::Natural>(&item->layoutPositionOverride.value.top)) {
+        parentSizeForChild = parentSize;
+      }
+    } else {
+      if (item->layoutPositionOverride.isSet && !std::get_if<PositionDimensionTypes::Natural>(&item->layoutPositionOverride.value.left)) {
+        parentSizeForChild = parentSize;
+      }
+    }
+    item->measureLayout(constraints, parentSizeForChild);
+    auto overrideResult = LayoutConstraintSetter::handleLayoutOverride(nextConstraints, parentSizeForChild, item);
     LayoutConstraintSetter::applyLayoutConstraints(item, constraints);
 
     if (layoutDirection == StackLayoutDirection::Vertical) {
@@ -32,6 +45,7 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
           };
           pos += item->layoutSize.value.height + spacing;
           reduceConstraintsHeight(nextConstraints, item->layoutSize.value.height);
+          reduceParentSizeHeight(nextParentSize, item->layoutSize.value.height);
         } else {
           if (item->layoutPosition.value.left + item->layoutSize.value.width + spacing > maxPos) {
             maxPos = item->layoutPosition.value.left + item->layoutSize.value.width + spacing;
@@ -48,6 +62,7 @@ LayoutSize StackLayout::layout(LayoutConstraint constraints, PossibleLayoutSize 
           };
           pos += item->layoutSize.value.width + spacing;
           reduceConstraintsWidth(nextConstraints, item->layoutSize.value.width);
+          reduceParentSizeWidth(nextParentSize, item->layoutSize.value.width);
         } else {
           if (item->layoutPosition.value.top + item->layoutSize.value.height + spacing > maxPos) {
             maxPos = item->layoutPosition.value.top + item->layoutSize.value.height + spacing;
@@ -80,5 +95,19 @@ void StackLayout::reduceConstraintsHeight(LayoutConstraint & constraints, Nullab
 {
   if (constraints.maxHeight.isSet && amount.isSet) {
     constraints.maxHeight.value -= amount.value;
+  }
+}
+
+void StackLayout::reduceParentSizeWidth(PossibleLayoutSize & size, Nullable<float> amount)
+{
+  if (size.width.isSet && amount.isSet) {
+    size.width.value -= amount.value;
+  }
+}
+
+void StackLayout::reduceParentSizeHeight(PossibleLayoutSize & size, Nullable<float> amount)
+{
+  if (size.height.isSet && amount.isSet) {
+    size.height.value -= amount.value;
   }
 }

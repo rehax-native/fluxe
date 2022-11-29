@@ -20,6 +20,8 @@ public:
 private:
   void reduceConstraintsWidth(LayoutConstraint & constraints, Nullable<float> amount);
   void reduceConstraintsHeight(LayoutConstraint & constraints, Nullable<float> amount);
+  void reduceParentSizeWidth(PossibleLayoutSize & size, Nullable<float> amount);
+  void reduceParentSizeHeight(PossibleLayoutSize & size, Nullable<float> amount);
 
 };
 

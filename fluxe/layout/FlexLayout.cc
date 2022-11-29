@@ -13,7 +13,12 @@ LayoutSize FlexLayout::layout(LayoutConstraint constraints, PossibleLayoutSize p
   positionChildren();
 
   auto ownSizeMain = totalFlex > 0.0 || justifyContent != FlexJustifyContent::FlexStart ? availableMainAxis : childrenMainSizeFixed;
-  auto ownSizeCross = alignItems != FlexAlignItems::FlexStart ? availableCrossAxis : childrenMaxCross;
+  auto ownSizeCross = availableCrossAxis;
+  if (alignItems == FlexAlignItems::FlexStart) {
+    ownSizeCross = childrenMaxCross;
+  } else if (alignItems == FlexAlignItems::FlexEnd) {
+    ownSizeCross = childrenMaxCross;
+  }
 
   if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
     return {
@@ -172,6 +177,12 @@ void FlexLayout::positionChildren() {
 
   float crossPos = 0.0;
 
+
+  auto ownSizeCross = availableCrossAxis.value;
+  if (alignItems == FlexAlignItems::FlexEnd) {
+    ownSizeCross = childrenMaxCross;
+  }
+
   for (auto item : children) {
     item.item->layoutPosition = LayoutPosition {
       .left = 0.0,
@@ -191,7 +202,7 @@ void FlexLayout::positionChildren() {
       setChildCrossSize(item.item, availableCrossAxis.value);
       setChildCrossPos(item.item, 0);
     } else if (alignItems == FlexAlignItems::FlexEnd) {
-      setChildCrossPos(item.item, availableCrossAxis.value - childSizeCross);
+      setChildCrossPos(item.item, ownSizeCross - childSizeCross);
     }
   }
 }
