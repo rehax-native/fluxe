@@ -31,6 +31,7 @@ protected:
 public:
 
     CheckBox();
+    virtual std::string description() override;
     // ObjectPointer<Text> getTitle();
     std::function<void (ObjectPointer<CheckBox>)> onToggle = [] (ObjectPointer<CheckBox> checkBox) {};
 

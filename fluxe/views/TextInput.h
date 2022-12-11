@@ -30,6 +30,7 @@ public:
 //   ~/win/i.match(Sys.systemName()) ? ~/\r\n/i : ~/\n/i;
 
   TextInput();
+  virtual std::string description() override;
 
   void setValue(std::string value);
   std::string getValue();

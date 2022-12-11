@@ -25,6 +25,7 @@ public:
   static ObjectPointer<RenderStrategy> defaultRenderStrategy;
 
   View();
+  virtual std::string description();
   virtual ObjectPointer<RenderStrategy> renderStrategy();
 
   virtual WeakObjectPointer<ViewManager> getViewManager();

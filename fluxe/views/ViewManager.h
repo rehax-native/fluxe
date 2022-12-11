@@ -41,6 +41,8 @@ public:
   ObjectPointer<View> getContextMenu();
   void closeContextMenu();
 
+  void setDebugViews(bool debug);
+
 private:
   ObjectPointer<ViewsContainer> container;
   ObjectPointer<View> contextMenu;

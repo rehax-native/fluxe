@@ -23,6 +23,7 @@ public:
   };
 
   Select();
+  virtual std::string description() override;
 
   void setOptions(std::vector<SelectOption> options);
   std::vector<SelectOption> getOptions();

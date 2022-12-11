@@ -8,6 +8,11 @@ using namespace fluxe;
 Text::Text()
 {}
 
+std::string Text::description()
+{
+  return "Text";
+}
+
 void Text::setText(std::string text)
 {
   setText(std::vector<TextPart> {
@@ -88,10 +93,10 @@ void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize 
   TextStyle textStyle;
   sk_sp<FontCollection> fontCollection = FontManager::Shared().getFontCollection();
 
-  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
-    textStyle.setColor(::fluxe::Color::RGBA(1, 1, 1, 1.0).color);
-  } else {
+  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemLight) {
     textStyle.setColor(::fluxe::Color::RGBA(0, 0, 0, 1.0).color);
+  } else {
+    textStyle.setColor(::fluxe::Color::RGBA(1, 1, 1, 1.0).color);
   }
   // textStyle.setColor(textColor.color);
   textStyle.setFontSize(textSize);
@@ -115,10 +120,10 @@ void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize 
     if (part.color.isSet) {
       partStyle.setColor(part.color.value.color);
     } else {
-      if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
-        partStyle.setColor(::fluxe::Color::RGBA(1, 1, 1, 1.0).color);
-      } else {
+      if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemLight) {
         partStyle.setColor(::fluxe::Color::RGBA(0, 0, 0, 1.0).color);
+      } else {
+        partStyle.setColor(::fluxe::Color::RGBA(1, 1, 1, 1.0).color);
       }
     }
     if (part.fontSize.isSet) {

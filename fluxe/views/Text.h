@@ -19,6 +19,7 @@ class Text : public View
 {
 public:
   Text();
+  virtual std::string description() override;
 
   void setText(std::string text);
   void setText(std::vector<TextPart> textParts);

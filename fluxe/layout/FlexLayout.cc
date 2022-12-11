@@ -10,15 +10,20 @@ LayoutSize FlexLayout::layout(LayoutConstraint constraints, PossibleLayoutSize p
 
   collectAndMeasureChildren(items, constraints);
   setSizeOfFlexChildren(constraints);
-  positionChildren();
 
   auto ownSizeMain = totalFlex > 0.0 || justifyContent != FlexJustifyContent::FlexStart ? availableMainAxis : childrenMainSizeFixed;
   auto ownSizeCross = availableCrossAxis;
-  if (alignItems == FlexAlignItems::FlexStart) {
-    ownSizeCross = childrenMaxCross;
-  } else if (alignItems == FlexAlignItems::FlexEnd) {
-    ownSizeCross = childrenMaxCross;
+  if (totalFlex == 0) {
+    if (alignItems == FlexAlignItems::FlexStart) {
+      ownSizeCross = childrenMaxCross;
+    } else if (alignItems == FlexAlignItems::Center) {
+      ownSizeCross = childrenMaxCross;
+    } else if (alignItems == FlexAlignItems::FlexEnd) {
+      ownSizeCross = childrenMaxCross;
+    }
   }
+
+  positionChildren();
 
   if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
     return {
@@ -36,6 +41,9 @@ LayoutSize FlexLayout::layout(LayoutConstraint constraints, PossibleLayoutSize p
 void FlexLayout::getAvailableSize(LayoutConstraint constraints, PossibleLayoutSize parentSize, ILayoutObject * parent) {
   availableSize.width.unset();
   availableSize.height.unset();
+
+  parentHasSizeMain = false;
+  parentHasSizeCross = false;
     
   SizeDimensionTypes::Fixed * fp;
   if (parent->layoutSizeOverride.isSet && (fp = std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.width))) {
@@ -46,12 +54,32 @@ void FlexLayout::getAvailableSize(LayoutConstraint constraints, PossibleLayoutSi
     availableSize.width.set(constraints.maxWidth.value);
   }
 
+  if (parent->layoutSizeOverride.isSet && (
+    std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.width) || std::get_if<SizeDimensionTypes::Fill>(&parent->layoutSizeOverride.value.width)
+  )) {
+    if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
+      parentHasSizeMain = true;
+    } else {
+      parentHasSizeCross = true;
+    }
+  }
+
   if (parent->layoutSizeOverride.isSet && (fp = std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.height))) {
     availableSize.height.set(fp->size);
   } else if (parentSize.height.isSet) {
     availableSize.height.set(parentSize.height.value);
   } else if (constraints.maxHeight.isSet) {
     availableSize.height.set(constraints.maxHeight.value);
+  }
+
+  if (parent->layoutSizeOverride.isSet && (
+    std::get_if<SizeDimensionTypes::Fixed>(&parent->layoutSizeOverride.value.height) || std::get_if<SizeDimensionTypes::Fill>(&parent->layoutSizeOverride.value.height)
+  )) {
+    if (direction == FlexDirection::Column || direction == FlexDirection::ColumnReverse) {
+      parentHasSizeMain = true;
+    } else {
+      parentHasSizeCross = true;
+    }
   }
 
   if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
@@ -177,10 +205,11 @@ void FlexLayout::positionChildren() {
 
   float crossPos = 0.0;
 
-
   auto ownSizeCross = availableCrossAxis.value;
-  if (alignItems == FlexAlignItems::FlexEnd) {
-    ownSizeCross = childrenMaxCross;
+  if (!parentHasSizeCross && totalFlex == 0) {
+    if (alignItems == FlexAlignItems::FlexEnd || alignItems == FlexAlignItems::Center) {
+      ownSizeCross = childrenMaxCross;
+    }
   }
 
   for (auto item : children) {
@@ -197,7 +226,8 @@ void FlexLayout::positionChildren() {
     mainPos += childSizeMain + spacing;
 
     if (alignItems == FlexAlignItems::Center) {
-      setChildCrossPos(item.item, (availableCrossAxis.value - childSizeCross) / 2.0);
+      // setChildCrossPos(item.item, (availableCrossAxis.value - childSizeCross) / 2.0);
+      setChildCrossPos(item.item, (ownSizeCross - childSizeCross) / 2.0);
     } else if (alignItems == FlexAlignItems::Stretch) {
       setChildCrossSize(item.item, availableCrossAxis.value);
       setChildCrossPos(item.item, 0);

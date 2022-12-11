@@ -25,10 +25,10 @@ void ContextMenuItem::setPressHandler(std::function<void(void)> handler) {
 }
 
 void ContextMenuItem::onPressStarted(PressStartedEvent & event) {
-  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
-    setBackgroundColor(::fluxe::Color::RGBA(1, 1, 1, 0.1));
-  } else {
+  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemLight) {
     setBackgroundColor(::fluxe::Color::RGBA(0, 0, 0, 0.1));
+  } else {
+    setBackgroundColor(::fluxe::Color::RGBA(1, 1, 1, 0.1));
   }
 }
 
@@ -42,11 +42,11 @@ void ContextMenuItem::onPressCanceled(PressCanceledEvent & event) {
 }
 
 ContextMenu::ContextMenu() {
-  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
-    setBackgroundColor(::fluxe::Color::RGBA(0.136, 0.136, 0.136, 1.0));
+  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemLight) {
+    setBackgroundColor(::fluxe::Color::RGBA(0.936, 0.936, 0.936, 1.0));
     setBorderColor(Color::RGBA(0.6, 0.6, 0.6, 0.8));
   } else {
-    setBackgroundColor(::fluxe::Color::RGBA(0.936, 0.936, 0.936, 1.0));
+    setBackgroundColor(::fluxe::Color::RGBA(0.136, 0.136, 0.136, 1.0));
     setBorderColor(Color::RGBA(0.6, 0.6, 0.6, 0.8));
   }
   setBorderWidth(1);

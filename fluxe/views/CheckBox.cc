@@ -14,6 +14,11 @@ CheckBox::CheckBox()
   addEventListener<PressDetector>(this);
 }
 
+std::string CheckBox::description()
+{
+  return "CheckBox";
+}
+
 // ObjectPointer<Text> CheckBox::getTitle()
 // {
 //   return title;

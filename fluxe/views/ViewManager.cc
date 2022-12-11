@@ -24,6 +24,11 @@ void ViewManager::renderCallback(int width, int height, float scale, sk_sp<SkSur
   hasRenderedOnce = true;
 }
 
+void ViewManager::setDebugViews(bool debug)
+{
+  pipeline.setDebugViews(debug);
+}
+
 void ViewManager::mouseCallback(ShellMouseInstruction instruction)
 {
   mouseEventsManager.handleInstruction(instruction);

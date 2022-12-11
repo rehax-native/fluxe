@@ -6,6 +6,7 @@
 #include "fluxe/views/TextInput.h"
 #include "fluxe/layout/StackLayout.h"
 #include "fluxe/views/EngineUtility.h"
+#include "fluxe/views/ViewManager.h"
 #include <rehaxUtils/app/app.h>
 
 #include <iostream>
@@ -28,6 +29,7 @@ int main() {
   button->onClick = [&text] (ObjectPointer<Button> btn) {
     std::cout << "Clicked" << std::endl;
     text->removeFromParent();
+    btn->getViewManager()->setDebugViews(true);
   };
 
   auto textInput = Object<TextInput>::Create();

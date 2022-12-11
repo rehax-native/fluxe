@@ -95,6 +95,8 @@ private:
   float totalFlex = 0.0;
   float childrenMainSizeFixed = 0.0;
   float childrenMaxCross = 0.0;
+  bool parentHasSizeMain = false;
+  bool parentHasSizeCross = false;
 
 
 };

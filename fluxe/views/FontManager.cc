@@ -31,3 +31,8 @@ sk_sp<FontCollection> FontManager::getFontCollection()
 {
   return collection;
 }
+
+SkFont FontManager::getDefaultFont()
+{
+  return SkFont();
+}

@@ -17,6 +17,8 @@ public:
     void build();
     void compose();
 
+    void setDebugViews(bool debug);
+
 protected:
 
     void layoutResetTraverse(ObjectPointer<View> view);
@@ -27,6 +29,8 @@ protected:
 
     int width = 0;
     int height = 0;
+
+    bool debugViews = false;
 
 };
 

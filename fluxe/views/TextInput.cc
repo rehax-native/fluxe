@@ -47,6 +47,11 @@ TextInput::TextInput()
   });
 }
 
+std::string TextInput::description()
+{
+  return "TextInput";
+}
+
 void TextInput::setValue(std::string value)
 {
   if (this->value != value)
@@ -130,10 +135,10 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
   }
 
   paint.setStyle(Paint::Style::kFill_Style);
-  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
-    paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 0.3).color);
-  } else {
+  if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemLight) {
     paint.setColor(Color::RGBA(0.0, 0.0, 0.0, 0.3).color);
+  } else {
+    paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 0.3).color);
   }
 
   if (needsCaretUpdate) {
@@ -186,10 +191,10 @@ void TextInput::build(ObjectPointer<ViewBuilder> builder)
   if (isShowingCaret) {
     auto caretRect = Rect::MakeXYWH(text->layoutPosition.value.left + caretPosition.x, text->layoutPosition.value.top + caretPosition.y, 1, caretHeight);
     paint.setStyle(Paint::Style::kFill_Style);
-    if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemDark) {
-      paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 1.0).color);
-    } else {
+    if (rehaxUtils::App::getApplicationTheme() == rehaxUtils::App::ApplicationTheme::SystemLight) {
       paint.setColor(Color::RGBA(0.0, 0.0, 0.0, 1.0).color);
+    } else {
+      paint.setColor(Color::RGBA(1.0, 1.0, 1.0, 1.0).color);
     }
     builder->getCanvas()->drawRect(caretRect, paint);
   }

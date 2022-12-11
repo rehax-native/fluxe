@@ -12,6 +12,11 @@ Button::Button()
   addEventListener<PressDetector>(this);
 }
 
+std::string Button::description()
+{
+  return "Button";
+}
+
 ObjectPointer<Text> Button::getTitle()
 {
   return title;

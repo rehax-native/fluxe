@@ -12,6 +12,7 @@ public:
   void addFontFromPath(std::string path);
     
   sk_sp<FontCollection> getFontCollection();
+  SkFont getDefaultFont();
 
 private:
   static FontManager sharedManager;

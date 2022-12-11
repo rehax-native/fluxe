@@ -32,6 +32,7 @@ protected:
 public:
 
     Button();
+    virtual std::string description() override;
     ObjectPointer<Text> getTitle();
     std::function<void (ObjectPointer<Button>)> onClick = [] (ObjectPointer<Button> btn) {};
 

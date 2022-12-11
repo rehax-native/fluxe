@@ -14,6 +14,11 @@ ObjectPointer<RenderStrategy> View::renderStrategy()
 View::View()
 {}
 
+std::string View::description()
+{
+  return "View";
+}
+
 WeakObjectPointer<ViewManager> View::getViewManager()
 {
   if (!parent.isValid()) {

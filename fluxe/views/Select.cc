@@ -29,6 +29,11 @@ Select::Select()
   addEventListener<PressDetector>(this);
 }
 
+std::string Select::description()
+{
+  return "Select";
+}
+
 void Select::setOptions(std::vector<SelectOption> options)
 {
   this->options = options;
