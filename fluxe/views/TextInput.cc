@@ -214,7 +214,15 @@ void TextInput::blur() {
 }
 
 void TextInput::onPressStarted(PressStartedEvent & event)
-{}
+{
+  if (event.button == 0) {
+    auto position = text->getIndexAtPosition(event.left - text->layoutPosition.value.left, event.top - text->layoutPosition.value.top);
+    selectionRange.start = position;
+    selectionRange.end = position;
+    needsCaretUpdate = true;
+    startCaretBlink();
+  }
+}
 
 void TextInput::onPressFinished(PressFinishedEvent & event)
 {

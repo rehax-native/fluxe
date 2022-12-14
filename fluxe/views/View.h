@@ -47,6 +47,9 @@ public:
   void setPosition(LayoutPositionOverride position);
   void setBackgroundColor(Nullable<Color> color);
 
+  Nullable<LayoutPosition> getPositionInParent();
+  Nullable<LayoutPosition> getPositionInWindow();
+
   virtual void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize);
   virtual void buildEnter(ObjectPointer<ViewBuilder> builder);
   virtual void build(ObjectPointer<ViewBuilder> builder);

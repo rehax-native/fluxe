@@ -32,8 +32,9 @@ class Engine {
 
   /**
    * Attach the engine to a native platform window.
+   * Returns the pointer to the view attached (HWND, NSView*)
    */
-  void attachToPlatformWindow(void * platformWindow);
+  void * attachToPlatformWindow(void * platformWindow);
 
   /**
    * Detach the engine from the native platform window it is currently attached to.
@@ -42,8 +43,9 @@ class Engine {
 
   /**
    * Attach the engine to a native platform view.
+   * Returns the pointer to the view attached (HWND, NSView*)
    */
-  void attachToPlatformView(void * platformView);
+  void * attachToPlatformView(void * platformView);
 
   /**
    * Detach the engine from the native platform view it is currently attached to.

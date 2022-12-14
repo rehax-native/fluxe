@@ -138,9 +138,10 @@ void Select::onPressFinished(PressFinishedEvent & event)
   getViewManager()->getFocusManager().gainFocus(getThisPointer());
   if (event.button == 0) {
     auto menu = Object<SelectContextMenu>::Create(dynamic_pointer_cast<Select>(getThisPointer()));
+    auto pos = getPositionInWindow();
     menu->setPosition({
-      .left = PositionDimensionTypes::Fixed{event.left},
-      .top = PositionDimensionTypes::Fixed{event.top},
+      .left = PositionDimensionTypes::Fixed{pos.value.left + event.left},
+      .top = PositionDimensionTypes::Fixed{pos.value.top + event.top},
     });
 
     getViewManager()->showContextMenu(menu);

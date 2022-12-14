@@ -149,6 +149,42 @@ void View::setPosition(LayoutPositionOverride position)
   this->layoutPositionOverride = position;
 }
 
+Nullable<LayoutPosition> View::getPositionInParent()
+{
+  Nullable<LayoutPosition> pos;
+  if (!layoutPosition.isSet) {
+    pos.isSet = false;
+  } else {
+    pos.isSet = true;
+    pos.value.left = layoutPosition.value.left;
+    pos.value.top = layoutPosition.value.top;
+  }
+  return pos;
+}
+
+Nullable<LayoutPosition> View::getPositionInWindow()
+{
+  Nullable<LayoutPosition> pos;
+  if (!layoutPosition.isSet) {
+    pos.isSet = false;
+  } else {
+    pos.isSet = true;
+    pos.value.left = layoutPosition.value.left;
+    pos.value.top = layoutPosition.value.top;
+    auto parent = getParent();
+    while (parent) {
+      if (!parent->layoutPosition.isSet) {
+        pos.isSet = false;
+        break;
+      }
+      pos.value.left += parent->layoutPosition.value.left;
+      pos.value.top += parent->layoutPosition.value.top;
+      parent = parent->getParent();
+    }
+  }
+  return pos;
+}
+
 void View::setBackgroundColor(Nullable<Color> color)
 {
   this->backgroundColor = color;

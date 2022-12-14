@@ -10,6 +10,7 @@
 #include <functional>
 #include <windows.h>
 #include "render_backend/skia/canvas.h"
+#include <rehaxUtils/app/app.h>
 #include "../callbacks.h"
 
 #include "include/gpu/GrBackendSurface.h"
@@ -32,6 +33,7 @@ class FluxePlatformView
 public:
 
   FluxePlatformView();
+  ~FluxePlatformView();
   void attachToWindow(HWND parentWindow);
 
   /**
@@ -67,6 +69,8 @@ public:
   GrDirectContext * sContext = nullptr;
   GLFWwindow * glWindow = nullptr;
   sk_sp<SkSurface> sSurface;
+
+  rehaxUtils::App::ApplicationThemeListenerId themeChangeListener;
 
 private:
 //   HINSTANCE mHInstance = nullptr;

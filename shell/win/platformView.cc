@@ -418,6 +418,14 @@ fluxe::FluxePlatformView::FluxePlatformView()
     }
     EnableMouseInPointer(true);
   }
+  themeChangeListener = rehaxUtils::App::addApplicationThemeChangeListener([this] (rehaxUtils::App::ApplicationTheme theme) {
+    this->setNeedsRerender();
+  });
+}
+
+fluxe::FluxePlatformView::~FluxePlatformView()
+{
+  rehaxUtils::App::removeApplicationThemeChangeListener(themeChangeListener);
 }
 
 void fluxe::FluxePlatformView::attachToWindow(HWND parentWindow)

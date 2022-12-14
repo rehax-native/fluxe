@@ -27,13 +27,13 @@ void * fluxe::Engine::createPlatformWindow()
 void fluxe::Engine::closePlatformWindow(void * window)
 {}
 
-void fluxe::Engine::attachToPlatformWindow(void * platformWindow)
+void * fluxe::Engine::attachToPlatformWindow(void * platformWindow)
 // fluxe::FluxePlatformView * fluxe::Engine::attachToPlatformWindow(void * platformWindow)
 {
   auto view = new FluxePlatformView();
   this->view = view;
   view->attachToWindow((HWND) platformWindow);
-//   return view;
+  return view->hWnd;
 }
 
 // void fluxe::Engine::detachFromPlatformWindow(fluxe::FluxePlatformView * platformWindow)
@@ -41,10 +41,11 @@ void fluxe::Engine::detachFromPlatformWindow()
 {}
 
 
-void fluxe::Engine::attachToPlatformView(void * platformView)
+void * fluxe::Engine::attachToPlatformView(void * platformView)
 {
   auto view = new FluxePlatformView();
   view->attachToWindow((HWND) platformView);
+  return view->hWnd;
 }
 
 void fluxe::Engine::detachFromPlatformView()

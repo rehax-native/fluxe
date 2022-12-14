@@ -198,6 +198,7 @@ if (${WIN})
         opengl32
         glfw
         Comctl32
+        windowsapp
     )
 
     # add_executable(

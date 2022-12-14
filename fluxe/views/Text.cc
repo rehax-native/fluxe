@@ -88,6 +88,16 @@ std::vector<TextBox> Text::getRectsForRange(int start, int end)
   return rects;
 }
 
+int Text::getIndexAtPosition(float left, float top)
+{
+  if (needsLayout) {
+    buildAndMeasureText({}, {});
+    needsLayout = false;
+  }
+  auto index = paragraph->getGlyphPositionAtCoordinate(left, top);
+  return index.position;
+}
+
 void Text::buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize parentSize)
 {
   TextStyle textStyle;

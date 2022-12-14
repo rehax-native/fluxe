@@ -33,6 +33,7 @@ public:
   // float getTextSize();
   // std::vector<std::string> setFontFamilies();
 
+  int getIndexAtPosition(float left, float top);
   std::vector<TextBox> getRectsForRange(int start, int end);
   void buildAndMeasureText(LayoutConstraint constraints, PossibleLayoutSize parentSize);
   void measureLayout(LayoutConstraint constraints, PossibleLayoutSize parentSize) override;
