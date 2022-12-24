@@ -41,7 +41,7 @@ lib_extension = 'lib' if is_win else 'a'
 if is_win and build_shared_skia_library:
   lib_extension = 'dll.lib'
 
-pathlib.Path('dist/out').mkdir(parents=True, exist_ok=True)
+pathlib.Path('dist/out/{}'.format(build_type)).mkdir(parents=True, exist_ok=True)
 
 if not os.path.exists('third_party/skia/third_party/externals/jinja2'):
   print('Setting up Skia build tools')
@@ -53,7 +53,7 @@ if not os.path.exists('third_party/skia/third_party/externals/jinja2'):
   else:
     os.system('cd third_party/skia && {} tools/git-sync-deps'.format(python))
 
-if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + lib_extension):
+if not os.path.exists('third_party/skia/out/' + build_type + '/' + lib_prefix + 'skia.' + lib_extension):
 # if True:
   print('Building Skia')
   print('This takes a little bit')
@@ -104,10 +104,10 @@ if not os.path.exists('third_party/skia/out/Static/' + lib_prefix + 'skia.' + li
 
   if is_win:
     # --with-data-packaging=library is the only one supported on windows
-    os.system('cd third_party/skia && gn gen out/Static --args="{}" --with-data-packaging=static'.format(' '.join(flags)))
-    os.system('cd third_party/skia && ninja -C out/Static')
+    os.system('cd third_party/skia && gn gen out/{} --args="{}" --with-data-packaging=static'.format(build_type, ' '.join(flags)))
+    os.system('cd third_party/skia && ninja -C out/{}'.format(build_type))
   else:
-    cmd = 'cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/Static --args=\'{}\' --with-data-packaging=static && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/Static'.format(depot_tools, ' '.join(flags), depot_tools)
+    cmd = 'cd third_party/skia && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 gn gen out/{} --args=\'{}\' --with-data-packaging=static && PATH=$PATH:{} MACOSX_DEPLOYMENT_TARGET=10.9 ninja -C out/{}'.format(depot_tools, build_type, ' '.join(flags), depot_tools, build_type)
     os.system(cmd)
   # os.system('cd third_party/skia && PATH=$PATH:{} gn args out/Static --list'.format(depot_tools))
 
@@ -135,7 +135,7 @@ if is_win:
     'icudtl.dat', # This file must be copied next to the binary
   ]
   for lib in copy_libs:
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib), 'dist/out/{}'.format(lib))
+    shutil.copyfile('third_party/skia/out/{}/{}'.format(build_type, lib), 'dist/out/{}/{}'.format(build_type, lib))
 else:
   copy_libs = [
     'skia',
@@ -149,17 +149,17 @@ else:
   ]
   for lib in copy_libs:
     lib_full_name = lib_prefix + lib + '.' + lib_extension
-    shutil.copyfile('third_party/skia/out/Static/{}'.format(lib_full_name), 'dist/out/{}'.format(lib_full_name))
+    shutil.copyfile('third_party/skia/out/{}/{}'.format(build_type, lib_full_name), 'dist/out/{}/{}'.format(build_type, lib_full_name))
 
 header_source_paths = [
-  ('third_party/skia/include', 'dist/out/include/third_party/skia/include'),
-  ('third_party/skia/modules/skparagraph/include', 'dist/out/include/third_party/skia/modules/skparagraph/include'),
-  ('third_party/skia/modules/skshaper/include', 'dist/out/include/third_party/skia/modules/skshaper/include'),
-  ('third_party/skia/modules/skunicode/include', 'dist/out/include/third_party/skia/modules/skunicode/include'),
+  ('third_party/skia/include', 'dist/out/{}/include/third_party/skia/include'.format(build_type)),
+  ('third_party/skia/modules/skparagraph/include', 'dist/out/{}/include/third_party/skia/modules/skparagraph/include'.format(build_type)),
+  ('third_party/skia/modules/skshaper/include', 'dist/out/{}/include/third_party/skia/modules/skshaper/include'.format(build_type)),
+  ('third_party/skia/modules/skunicode/include', 'dist/out/{}/include/third_party/skia/modules/skunicode/include'.format(build_type)),
 ]
 header_files = [
-  ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'dist/out/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'),
-] + [[path, 'dist/out/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
+  ('third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h', 'dist/out/{}/include/third_party/skia/modules/skparagraph/src/ParagraphBuilderImpl.h'.format(build_type)),
+] + [[path, 'dist/out/' + build_type + '/include/' + path] for path in glob.glob('third_party/skia/src/**/*.h')]
 
 print('Building fluxe core')
 build_type_capital = 'Debug' if build_type == 'debug' else 'Release'
@@ -177,11 +177,11 @@ if is_win:
 
   # os.system('cd build && msbuild fluxe-win.vcxproj && cp libfluxe-win.a ../dist/fluxe.lib')
   print("WARNING: You must build the fluxe library manually with a developer shell and msbuild fluxe-win.vcxproj")
-  os.system('cd build && cp Debug/fluxe-win.lib ../dist/out/fluxe.lib')
+  os.system('cd build && cp {}/fluxe-win.lib ../dist/out/{}/fluxe.lib'.format(build_type_capital, build_type))
 elif is_mac:
   os.system('cd build && xcodebuild -target fluxe-mac -configuration {} ONLY_ACTIVE_ARCH=NO -arch=universal && cp {}/libfluxe-mac.a ../dist/out/libfluxe.a'.format(build_type_capital, build_type_capital))
-else:
-  os.system('cd dev && make fluxe-cpp-core config={} && cp fluxe-cpp-core/bin/{}/libfluxe-cpp-core.a ../dist/libfluxe.a'.format(build_type, build_type_capital))
+# else:
+#   os.system('cd dev && make fluxe-cpp-core config={} && cp fluxe-cpp-core/bin/{}/libfluxe-cpp-core.a ../dist/libfluxe.a'.format(build_type, build_type_capital))
 
 dist_headers = []
 for source, target in header_source_paths:
